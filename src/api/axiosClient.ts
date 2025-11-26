@@ -3,7 +3,8 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { getAccessToken, setAccessToken, clearAccessToken } from "./token";
 
 // --- Base URL: ưu tiên Vite env, fallback localhost ---
-const baseURL = process.env?.REACT_APP_API_BASE_URL ;
+const baseURL =   (import.meta.env.VITE_API_BASE_URL as string | undefined) ??
+  "https://backend-ipte.onrender.com/api"; // fallback nếu env không có
 
 // --- Axios instance ---
 const http = axios.create({

@@ -24,6 +24,7 @@ import Home from "./pages/Dashboard/Home";
 
 import { AuthProvider } from "@/contexts/AuthContext";
 import { useAuth } from "@/hooks/useAuth";
+import CreateCoursePage from "./pages/Courses/Create";
 
 function RequireAuth({ children }: { children: React.ReactElement }) {
   const { token, loading } = useAuth();
@@ -61,6 +62,8 @@ export default function App() {
             <Route path="/form-elements" element={<FormElements />} />
             <Route path="/users" element={<UsersTable />} />
             <Route path="/courses" element={<CoursesTable />} />
+            <Route path="/courses/create" element={<CreateCoursePage />} />
+            
             <Route path="/knowledges" element={<KnowledgesTable />} />
             <Route path="/alerts" element={<Alerts />} />
             <Route path="/avatars" element={<Avatars />} />

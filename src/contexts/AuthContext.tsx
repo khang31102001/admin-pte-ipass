@@ -2,10 +2,11 @@ import React, { createContext, useCallback, useEffect, useMemo, useState } from 
 import { setAccessToken, getAccessToken, clearAccessToken } from "@/api/token";
 import { authService } from "@/services/auth/authService"; // class-based service
 import { userService } from "@/services/user/userService";
+import { User } from "@/types/author";
 
 
 type AuthContextType = {
-  user: any;
+  user: User;
   token: string | null;
   loading: boolean;
   signIn: (payload: { username: string; password: string; remember?: boolean }) => Promise<void>;
@@ -22,7 +23,7 @@ export const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User>(null);
   const [loading, setLoading] = useState(true);
 
   // Rehydrate từ localStorage
@@ -50,7 +51,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       await authService.logout();
       console.log("Logged out successfully");
-    } catch {}
+    } catch(error) {
+      throw new error;
+    }
     clearAccessToken();
     setToken(null);
     setUser(null);
