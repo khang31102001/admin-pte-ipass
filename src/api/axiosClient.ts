@@ -3,10 +3,7 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { getAccessToken, setAccessToken, clearAccessToken } from "./token";
 
 // --- Base URL: ưu tiên Vite env, fallback localhost ---
-const baseURL =
-  // import.meta.env?.VITE_API_URL ||
-  // process.env?.REACT_APP_API_BASE_URL ||
-  "http://localhost:4000/api";
+const baseURL = process.env?.REACT_APP_API_BASE_URL ;
 
 // --- Axios instance ---
 const http = axios.create({
@@ -84,7 +81,10 @@ http.interceptors.response.use(
       );
 
       // Giả định BE trả về { access_token: string }
-      const newToken = (data as any)?.access_token as string | undefined;
+      const newToken =
+      typeof data === "object" && data !== null && "access_token" in data
+        ? (data as { access_token?: string }).access_token
+        : undefined;
 
       if (!newToken) {
         // Không có token mới -> coi như fail
@@ -106,7 +106,7 @@ http.interceptors.response.use(
         original.headers.Authorization = `Bearer ${newToken}`;
       }
       return http(original);
-    } catch (e) {
+    } catch (error) {
       // Refresh fail: xoá token, đánh thức hàng đợi với null
       clearAccessToken();
       onRrefreshed(null);

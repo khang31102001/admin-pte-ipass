@@ -11,7 +11,9 @@ export class AuthService {
   async logout(): Promise<void> {
     try {
       await post("/auth/logout");
-    } catch {}
+    } catch(error) {
+      console.log("error:", error)
+    }
   }
 }
 

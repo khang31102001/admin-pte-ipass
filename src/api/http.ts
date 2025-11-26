@@ -1,6 +1,6 @@
 import api from "./axiosClient";
 
-export type QueryParams = Record<string, any>;
+export type QueryParams = Record<string, unknown>;
 
 function toQuery(params?: QueryParams) {
   if (!params) return "";
@@ -20,19 +20,19 @@ export async function get<T>(path: string, params?: QueryParams): Promise<T> {
 }
 
 /** POST (JSON) */
-export async function post<T, B = any>(path: string, body?: B): Promise<T> {
+export async function post<T, B = unknown>(path: string, body?: B): Promise<T> {
   const { data } = await api.post<T>(path, body);
   return data;
 }
 
 /** PUT (JSON) */
-export async function put<T, B = any>(path: string, body?: B): Promise<T> {
+export async function put<T, B = unknown>(path: string, body?: B): Promise<T> {
   const { data } = await api.put<T>(path, body);
   return data;
 }
 
 /** PATCH (JSON) */
-export async function patch<T, B = any>(path: string, body?: B): Promise<T> {
+export async function patch<T, B = unknown>(path: string, body?: B): Promise<T> {
   const { data } = await api.patch<T>(path, body);
   return data;
 }

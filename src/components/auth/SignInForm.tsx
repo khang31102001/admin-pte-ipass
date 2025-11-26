@@ -15,7 +15,7 @@ export default function SignIn() {
   const [isChecked, setIsChecked] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(true);
+  const [remember] = useState(true);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -26,9 +26,10 @@ export default function SignIn() {
     try {
       await signIn({ username, password, remember });
       navigate("/", { replace: true });
-    } catch (error: any) {
-      const msg = error?.response?.data?.message || "Đăng nhập thất bại.";
-      setErr(msg);
+    } catch (error: unknown) {
+      // const msg = error?.response?.data?.message || "Đăng nhập thất bại.";
+      console.log(error);
+      setErr("Đăng nhập thất bại");
     } finally {
       setLoading(false);
     }
