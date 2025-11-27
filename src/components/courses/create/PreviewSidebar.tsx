@@ -27,7 +27,7 @@ export default function PreviewSidebar({ courseData }: PreviewSidebarProps) {
     {/* Course Image */}
     <div className="border rounded-lg bg-white shadow-sm">
       <div className="px-4 py-3 border-b">
-        <h3 className="text-base font-semibold">Course Image</h3>
+        <h3 className="text-base font-semibold">Hình ảnh khóa học</h3>
       </div>
       <div className="p-4 space-y-4">
         <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center bg-slate-50">
@@ -46,7 +46,7 @@ export default function PreviewSidebar({ courseData }: PreviewSidebarProps) {
                   // có thể dùng ref cho input hoặc để trống nếu không cần
                 }}
               >
-                Change Image
+               Thay đổi hình ảnh
               </button>
             </div>
           ) : (
@@ -99,7 +99,7 @@ export default function PreviewSidebar({ courseData }: PreviewSidebarProps) {
             htmlFor="featured"
             className="text-sm cursor-pointer text-slate-700"
           >
-            Mark as featured course
+           Đánh dấu là khóa học nổi bật
           </label>
 
           {/* Switch đơn giản bằng checkbox + Tailwind */}
@@ -119,21 +119,21 @@ export default function PreviewSidebar({ courseData }: PreviewSidebarProps) {
         {/* Course Info Summary */}
         <div className="pt-4 border-t border-slate-200 space-y-3">
           <div>
-            <p className="text-xs text-slate-500">Title</p>
+            <p className="text-xs text-slate-500">Tiêu đề</p>
             <p className="text-sm font-medium truncate">
-              {courseData.title || "Untitled Course"}
+              {courseData.title || "Khóa học không có tiêu đề"}
             </p>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Level</p>
+            <p className="text-xs text-slate-500">Mức độ</p>
             <p className="text-sm font-medium">
-              {courseData.level || "N/A"}
+              {courseData.level || "chưa có mức độ"}
             </p>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Duration</p>
+            <p className="text-xs text-slate-500">Khoảng thời gian</p>
             <p className="text-sm font-medium">
-              {courseData.duration || "N/A"}
+              {courseData.duration || "có thể bỏ trống"}
             </p>
           </div>
         </div>
@@ -144,8 +144,8 @@ export default function PreviewSidebar({ courseData }: PreviewSidebarProps) {
     <div className="border rounded-lg bg-blue-50 border-blue-200">
       <div className="p-4">
         <p className="text-xs text-slate-600 leading-relaxed">
-          💡 Fill in the required fields (marked with *) before publishing.
-          All information helps with course visibility and SEO ranking.
+          💡 Vui lòng điền đầy đủ thông tin vào các trường bắt buộc (có dấu *) trước khi đăng.
+            Mọi thông tin đều giúp tăng khả năng hiển thị khóa học và thứ hạng SEO.
         </p>
       </div>
     </div>

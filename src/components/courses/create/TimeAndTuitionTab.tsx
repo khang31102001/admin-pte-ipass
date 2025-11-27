@@ -19,7 +19,7 @@ export default function TimeAndTuitionTab({ courseData, updateCourseData }: Time
   }
 
   const calculateStatus = () => {
-    if (!courseData.startDate) return "N/A"
+    if (!courseData.startDate) return "không có ngày bắt đầu - ngày kết thúc"
     const now = new Date()
     const start = new Date(courseData.startDate)
     const end = courseData.endDate ? new Date(courseData.endDate) : null
@@ -34,11 +34,11 @@ export default function TimeAndTuitionTab({ courseData, updateCourseData }: Time
       {/* Duration */}
       <div>
         <Label htmlFor="duration" className="text-sm font-medium">
-          Course duration
+          Thời lượng khóa học
         </Label>
         <Input
           id="duration"
-          placeholder="e.g., 6 weeks, 4 weeks, 3 months"
+          placeholder="ví dụ, 6 tuần, 4 tuần, 3 tháng"
           value={courseData.duration}
           onChange={(e) => updateCourseData({ duration: e.target.value })}
           className="mt-2"
@@ -48,37 +48,37 @@ export default function TimeAndTuitionTab({ courseData, updateCourseData }: Time
       {/* Schedule */}
       <div>
         <Label htmlFor="schedule" className="text-sm font-medium">
-          Schedule
+          Lịch trình
         </Label>
       </div>
 
       {/* Tuition */}
       <div>
         <Label htmlFor="tuition" className="text-sm font-medium">
-          Tuition
+         Học phí(có thể bỏ trống)
         </Label>
         <div className="mt-2 space-y-2">
           <Input
             id="tuition"
             type="number"
-            placeholder="Enter amount in VND"
+            placeholder="Nhập số tiền bằng VND"
             value={courseData.tuition}
             onChange={(e) => updateCourseData({ tuition: String(e.target.value) })}
           />
           {Number(courseData.tuition) > 0 && (
             <div className="text-sm">
-              <span className="text-muted-foreground">Displayed as: </span>
+              <span className="text-muted-foreground">Hiển thị như sau: </span>
               <span className="font-semibold">{formatCurrency(Number(courseData.tuition))}</span>
             </div>
           )}
-          <p className="text-xs text-muted-foreground">This is the listed tuition displayed for students</p>
+          <p className="text-xs text-muted-foreground">Đây là học phí được liệt kê hiển thị cho sinh viên</p>
         </div>
       </div>
 
       {/* Start Date */}
       <div>
         <Label htmlFor="startDate" className="text-sm font-medium">
-          Start Date *
+          Ngày bắt đầu *(có thể bỏ trống)
         </Label>
         <Input
           id="startDate"
@@ -92,7 +92,7 @@ export default function TimeAndTuitionTab({ courseData, updateCourseData }: Time
       {/* End Date */}
       <div>
         <Label htmlFor="endDate" className="text-sm font-medium">
-          End Date (Optional)
+          Ngày kết thúc (Tùy chọn)-(có thể bỏ trống)
         </Label>
         <Input
           id="endDate"
@@ -101,7 +101,7 @@ export default function TimeAndTuitionTab({ courseData, updateCourseData }: Time
           onChange={(e) => updateCourseData({ endDate: e.target.value })}
           className="mt-2"
         />
-        <p className="mt-2 text-xs text-muted-foreground">Leave empty for unlimited/open continuously</p>
+        <p className="mt-2 text-xs text-muted-foreground">Để trống không giới hạn/mở liên tục</p>
       </div>
 
       {/* Status Display */}

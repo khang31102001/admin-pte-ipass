@@ -40,8 +40,10 @@ import { ContentTab } from "@/components/courses";
   },
 ];
 
-export default function CreateCoursePage() {
+export default function UpdateCoursePage() {
   const [activeTab, setActiveTab] = useState("basic");
+  /// lấy param slug tren url call api or lấy course khóa học để chỉnh sửa
+  // khởi tạo giá trị qua sate này
   const [courseData, setCourseData] = useState<Course>({
     title: "",
     slug: "",
@@ -79,18 +81,15 @@ export default function CreateCoursePage() {
         <div className="max-w-7xl mx-auto px-6 py-6 flex items-start justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-foreground">
-             Tạo khóa học mới
+             Cập nhật khóa học
             </h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              Điền đầy đủ thông tin khóa học PTE trước khi xuất bản
+              Điều chỉnh đầy đủ thông tin khóa học PTE trước khi lưu
             </p>
           </div>
           <div className="flex gap-3">
             <Button variant="primary">Cancel</Button>
-            <Button variant="outline">Save draft</Button>
-            <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
-              Save & publish
-            </Button>
+            <Button variant="outline">Save</Button>
           </div>
         </div>
       </header>

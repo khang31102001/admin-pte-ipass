@@ -17,6 +17,7 @@ import BarChart from "@/pages/Charts/BarChart";
 import CreateCoursePage from "@/pages/Courses/CreateCoursePage";
 // import { RequireAuth } from "./RequireAuth";
 import ListCoursesPage from "@/pages/Courses/ListCoursesPage";
+import UpdateCoursePage from "@/pages/Courses/UpdateCoursePage";
 
 
 export const protectedRoutes: RouteObject[] = [
@@ -58,6 +59,10 @@ export const protectedRoutes: RouteObject[] = [
           {
             path: "create", 
             element: <CreateCoursePage />,
+          },
+          {
+            path: "update", 
+            element: <UpdateCoursePage />,
           },
         ],
       },

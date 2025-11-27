@@ -2,6 +2,7 @@
 import Input from "@/components/form/input/InputField"
 import TextArea from "@/components/form/input/TextArea"
 import Label from "@/components/form/Label"
+import SearchSelect from "@/components/form/SearchSelect"
 import Button from "@/components/ui/button/Button"
 import { Course } from "@/types/courses"
 import { useState, useEffect } from "react"
@@ -12,7 +13,29 @@ interface BasicInformationTabProps {
   updateCourseData: (updates: Partial<Course>) => void
 }
 
-// const CATEGORIES = ["PTE Foundation", "PTE 65+", "PTE 79+", "PTE Study Abroad", "PTE Work"]
+export const CATEGORY_OPTIONS = [
+  { value: "pte-basic", label: "PTE Cơ bản" },
+  { value: "pte-advanced", label: "PTE Nâng cao" },
+  { value: "pte-30", label: "PTE cho người mới (30+)" },
+  { value: "pte-36", label: "PTE Foundation (36+)" },
+  { value: "pte-50", label: "PTE Target 50+" },
+  { value: "pte-58", label: "PTE Target 58+" },
+  { value: "pte-65", label: "PTE Target 65+" },
+  { value: "pte-79", label: "PTE Target 79+" },
+  { value: "pte-migration", label: "PTE dành cho định cư" },
+  { value: "pte-academic", label: "PTE Academic" },
+  { value: "pronunciation", label: "Phát âm & Speaking" },
+  { value: "writing", label: "Writing chuyên sâu" },
+  { value: "speaking", label: "Speaking chuyên sâu" },
+  { value: "test-strategies", label: "Chiến lược làm bài thi" },
+];
+
+export const LEVEL = [
+  { value: "1", label: "PTE Basic" },
+  { value: "2", label: "PTE Advanced" },
+  { value: "3", label: "Speaking Mastery" },
+];
+
 
 export default function BasicInformationTab({ courseData, updateCourseData }: BasicInformationTabProps) {
   const [charCount, setCharCount] = useState(courseData.description.length)
@@ -36,7 +59,7 @@ export default function BasicInformationTab({ courseData, updateCourseData }: Ba
       {/* Course Title */}
       <div>
         <Label htmlFor="title" className="text-sm font-medium">
-          Course title *
+          Tên khóa học *
         </Label>
         <Input
           id="title"
@@ -57,7 +80,7 @@ export default function BasicInformationTab({ courseData, updateCourseData }: Ba
             id="slug"
             value={courseData.slug}
             onChange={(e) => updateCourseData({ slug: e.target.value })}
-            placeholder="auto-generated-from-title"
+            placeholder="tự động tạo từ tiêu đề"
           />
           <Button onClick={generateSlug} variant="outline" className="whitespace-nowrap bg-transparent">
             Generate
@@ -69,48 +92,62 @@ export default function BasicInformationTab({ courseData, updateCourseData }: Ba
       </div>
 
       {/* Category */}
-      {/* <div>
+      <div>
         <Label htmlFor="category" className="text-sm font-medium">
           Category *
         </Label>
-        <Select value={courseData.category} onValueChange={(value) => updateCourseData({ category: value })}>
-          <SelectTrigger id="category" className="mt-2">
-            <SelectValue placeholder="Select a category" />
-          </SelectTrigger>
-          <SelectContent>
-            {CATEGORIES.map((cat) => (
-              <SelectItem key={cat} value={cat}>
-                {cat}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div> */}
+        <div className="max-w-md">
+          <SearchSelect
+            options={CATEGORY_OPTIONS}
+            value={
+              CATEGORY_OPTIONS.find(opt => Number(opt.value) === courseData.category_id) || null
+            }
+            onChange={(newValue) => {
+              updateCourseData({
+                category_id: Number(newValue.value),
+                category: {
+                  category_id: Number(newValue.value),
+                  name: newValue.label,
+                }
+              });
+            }}
+            placeholder="Search course level..."
+          />
+
+          <p className="mt-3 text-sm text-gray-600">
+            Selected: {courseData.category?.name ?? "Chưa chọn"}
+          </p>
+        </div>
+      </div>
 
       {/* Level */}
-      {/* <div>
+      <div>
         <Label htmlFor="level" className="text-sm font-medium">
           Level
         </Label>
-        <Select value={courseData.level} onValueChange={(value) => updateCourseData({ level: value })}>
-          <SelectTrigger id="level" className="mt-2">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Beginner">Beginner</SelectItem>
-            <SelectItem value="Intermediate">Intermediate</SelectItem>
-            <SelectItem value="Advanced">Advanced</SelectItem>
-          </SelectContent>
-        </Select>
-      </div> */}
+        <div className="max-w-md">
+          <SearchSelect
+            options={LEVEL}
+            value={
+              LEVEL.find((i) => i.label === courseData.level) || null
+            }
+            onChange={(newValue) => updateCourseData({ level: newValue.label })}
+            placeholder="Search course level..."
+          />
+
+          <p className="mt-3 text-sm text-gray-600">
+            Selected: {courseData.level ?? " Chưa chọn"}
+          </p>
+        </div>
+      </div>
 
       {/* Description */}
       <div>
         <Label htmlFor="description" className="text-sm font-medium">
-          Short description
+          Mô tả ngắn
         </Label>
         <TextArea
-          placeholder="Brief course description for SEO snippets..."
+          placeholder="Mô tả ngắn gọn về khóa học..."
           value={courseData.description}
           rows={3}
           className="mt-2"

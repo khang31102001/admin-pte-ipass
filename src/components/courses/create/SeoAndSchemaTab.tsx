@@ -9,6 +9,7 @@ import TextArea from "@/components/form/input/TextArea"
 import Button from "@/components/ui/button/Button"
 import Switch from "@/components/form/switch/Switch"
 import { Course } from "@/types/courses"
+import { X } from "lucide-react"
 
 
 
@@ -55,7 +56,7 @@ export default function SeoAndSchemaTab({ courseData, updateCourseData }: SeoAnd
       educationalLevel: courseData.level || "Intermediate",
       offers: {
         "@type": "Offer",
-        price: courseData.tuition.toString(),
+        price: courseData.tuition ?? "",
         priceCurrency: "VND",
         availability: "https://schema.org/InStock",
       },
@@ -85,7 +86,7 @@ export default function SeoAndSchemaTab({ courseData, updateCourseData }: SeoAnd
             className="mt-2"
           />
           <p className="mt-1 text-xs text-muted-foreground">
-            Title displayed on Google. Should contain main keywords & brand name.
+           Tiêu đề hiển thị trên Google. Phải chứa từ khóa chính và tên thương hiệu.
           </p>
         </div>
 
@@ -104,7 +105,7 @@ export default function SeoAndSchemaTab({ courseData, updateCourseData }: SeoAnd
             rows={2}
             className="mt-2"
           />
-          <p className="mt-1 text-xs text-muted-foreground">Should be clear, with call-to-action.</p>
+          <p className="mt-1 text-xs text-muted-foreground">Phải rõ ràng và có lời kêu gọi hành động.</p>
         </div>
 
         {/* Keywords */}
@@ -121,11 +122,11 @@ export default function SeoAndSchemaTab({ courseData, updateCourseData }: SeoAnd
             
             />
             <Button onClick={addKeyword} variant="outline">
-              Add
+              Thêm
             </Button>
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            For example: 'pte 65+', 'pte intensive course', 'pte speaking template'...
+          <p className="mt-4 text-xs text-muted-foreground">
+           Ví dụ: 'pte 65+', 'khóa học pte chuyên sâu', 'mẫu bài thi nói pte'...
           </p>
 
           {courseData.keywords.length > 0 && (
@@ -134,7 +135,7 @@ export default function SeoAndSchemaTab({ courseData, updateCourseData }: SeoAnd
                 <div key={index} className="inline-flex items-center gap-2 bg-secondary px-3 py-1 rounded-full text-sm">
                   {keyword}
                   <button onClick={() => removeKeyword(index)} className="text-muted-foreground hover:text-foreground">
-                    {/* <X className="h-4 w-4" /> */}
+                    <X className="h-4 w-4" />
                   </button>
                 </div>
               ))}

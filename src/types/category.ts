@@ -44,7 +44,7 @@ export interface CategoryItem {
     url?: string;
     description?: string;
     parent_id?: number | null;
-    level: number | null;
+    level?: number | null;
     category_type?: string,
     children?: CategoryItem[];
      is_featured?: boolean;
@@ -58,7 +58,7 @@ export interface CategoryItem {
     seo_content_bottom?: string;
     canonical_url?: string;
     noindex?: boolean;
-    version: number | null;
+    version?: number | null;
 }
 
 export interface CourseCategory extends Omit<CategoryItem, "children"> {

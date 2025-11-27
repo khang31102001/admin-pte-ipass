@@ -6,13 +6,16 @@ export interface Course {
   image?: string | null;
   title?: string | null;
   slug?: string | null;
-  description?: string | null; // Tóm tắt ngắn
-  content?: string | null;     // Nội dung chi tiết
+  description?: string | null; 
+  content?: string | null;  
+  benefits?: string
+  audience?: string[]  
   level?: string | null;
   duration?: string | null;
   schedule?: string | null;
   tuition?: string | null;
   category?: CategoryItem | null;
+  category_id?: number | null;
   created_at?: string | null;
   updated_at?: string | null;
   isFeatured?: boolean | null;
@@ -34,8 +37,8 @@ export interface CourseListResponse {
   total_pages: number | null;
 }
 
-
 export type TabValue = "basic" | "content" | "time-tuition" | "seo";
+
 export type TabItem = {
   label: string;
   value: TabValue;
