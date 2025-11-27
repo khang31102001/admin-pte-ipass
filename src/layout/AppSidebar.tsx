@@ -7,11 +7,9 @@ import {
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
-  ListIcon,
   PageIcon,
   PieChartIcon,
   PlugInIcon,
-  TableIcon,
   UserCircleIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
@@ -24,34 +22,18 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-  // {
-  //   icon: <GridIcon />,
-  //   name: "Dashboard",
-  //   subItems: [{ name: "Ecommerce", path: "/", pro: false }],
-  // },
-  // {
-  //   icon: <CalenderIcon />,
-  //   name: "Calendar",
-  //   path: "/calendar",
-  // },
   {
     icon: <UserCircleIcon />,
     name: "User Profile",
     path: "/profile",
   },
-  // {
-  //   name: "Forms",
-  //   icon: <ListIcon />,
-  //   subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
-  // },
   {
-    name: "Categories",
+    name: "Quản lý Khóa Học",
     icon: <GridIcon />,
     subItems: [
-
-      { name: "Users", path: "/users", pro: false },
-      { name: "Courses", path: "/courses", pro: false },
-      { name: "Knowledges", path: "/knowledges", pro: false }
+      { name: "Danh sách khoa học", path: "/courses", pro: false },
+      { name: "Tạo mới khóa học ", path: "/courses/create", pro: false },
+      { name: "Cập nhật lại khóa học", path: "/courses/update", pro: false }
     ],
   },
   {

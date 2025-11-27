@@ -3,22 +3,13 @@ import Input from "@/components/form/input/InputField"
 import TextArea from "@/components/form/input/TextArea"
 import Label from "@/components/form/Label"
 import Button from "@/components/ui/button/Button"
+import { Course } from "@/types/courses"
 import { useState, useEffect } from "react"
 
 
-interface CourseData {
-  title: string
-  slug: string
-  category: string
-  level: string
-  description: string
-  featured: boolean
-  image: string | null
-}
-
 interface BasicInformationTabProps {
-  courseData: CourseData
-  updateCourseData: (updates: Partial<CourseData>) => void
+  courseData: Course
+  updateCourseData: (updates: Partial<Course>) => void
 }
 
 // const CATEGORIES = ["PTE Foundation", "PTE 65+", "PTE 79+", "PTE Study Abroad", "PTE Work"]

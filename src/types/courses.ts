@@ -21,6 +21,9 @@ export interface Course {
   metaTitle?: string | null;
   metaDescription?: string | null;
   keywords?: string[] | null;
+  schemaEnabled: boolean;
+  schemaMode: "auto" | "custom";
+  schemaData: string;
 }
 
 export interface CourseListResponse {
@@ -31,3 +34,14 @@ export interface CourseListResponse {
   total_pages: number | null;
 }
 
+
+export type TabValue = "basic" | "content" | "time-tuition" | "seo";
+export type TabItem = {
+  label: string;
+  value: TabValue;
+  content: React.ComponentType<CourseTabProps>;
+};
+export interface CourseTabProps {
+  courseData: Course;
+  updateCourseData: (updates: Partial<Course>) => void;
+}

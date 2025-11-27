@@ -1,18 +1,12 @@
 
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
+import { Course } from "@/types/courses";
 
-type CourseDataType = {
-  duration: string
-  schedule: string
-  tuition: number
-  startDate: string
-  endDate: string
-}
 
 interface TimeAndTuitionTabProps {
-  courseData: CourseDataType
-  updateCourseData: (updates: Partial<CourseDataType>) => void
+  courseData: Course
+  updateCourseData: (updates: Partial<Course>) => void
 }
 
 export default function TimeAndTuitionTab({ courseData, updateCourseData }: TimeAndTuitionTabProps) {
@@ -69,12 +63,12 @@ export default function TimeAndTuitionTab({ courseData, updateCourseData }: Time
             type="number"
             placeholder="Enter amount in VND"
             value={courseData.tuition}
-            onChange={(e) => updateCourseData({ tuition: Number(e.target.value) })}
+            onChange={(e) => updateCourseData({ tuition: String(e.target.value) })}
           />
-          {courseData.tuition > 0 && (
+          {Number(courseData.tuition) > 0 && (
             <div className="text-sm">
               <span className="text-muted-foreground">Displayed as: </span>
-              <span className="font-semibold">{formatCurrency(courseData.tuition)}</span>
+              <span className="font-semibold">{formatCurrency(Number(courseData.tuition))}</span>
             </div>
           )}
           <p className="text-xs text-muted-foreground">This is the listed tuition displayed for students</p>

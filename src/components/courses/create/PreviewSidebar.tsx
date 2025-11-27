@@ -1,16 +1,11 @@
 "use client"
 
+import { Course } from "@/types/courses"
 import type React from "react"
 import { useState } from "react"
 
 interface PreviewSidebarProps {
-  courseData: {
-    title: string
-    image: string | null
-    featured: boolean
-    duration: string
-    level: string
-  }
+  courseData: Course
 }
 
 export default function PreviewSidebar({ courseData }: PreviewSidebarProps) {

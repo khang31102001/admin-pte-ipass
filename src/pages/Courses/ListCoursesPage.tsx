@@ -48,7 +48,7 @@ const columns: TableColumn<Course>[] = [
   },
 ];
 
-export default function CoursesTable() {
+export default function ListCoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
 
   useEffect(() => {

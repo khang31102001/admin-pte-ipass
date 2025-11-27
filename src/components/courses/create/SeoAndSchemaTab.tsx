@@ -8,25 +8,14 @@ import Input from "@/components/form/input/InputField"
 import TextArea from "@/components/form/input/TextArea"
 import Button from "@/components/ui/button/Button"
 import Switch from "@/components/form/switch/Switch"
+import { Course } from "@/types/courses"
 
 
-type SeoDataType = {
-  title: string
-  metaTitle: string
-  metaDescription: string
-  keywords: string[]
-  description: string
-  duration: string
-  level: string
-  tuition: number
-  schemaEnabled: boolean
-  schemaMode: "auto" | "custom"
-  schemaData: string
-}
+
 
 interface SeoAndSchemaTabProps {
-  courseData: SeoDataType
-  updateCourseData: (updates: Partial<SeoDataType>) => void
+  courseData: Course
+  updateCourseData: (updates: Partial<Course>) => void
 }
 
 export default function SeoAndSchemaTab({ courseData, updateCourseData }: SeoAndSchemaTabProps) {
