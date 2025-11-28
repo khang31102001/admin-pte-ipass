@@ -15,7 +15,7 @@ import Videos from "@/pages/UiElements/Videos";
 import LineChart from "@/pages/Charts/LineChart";
 import BarChart from "@/pages/Charts/BarChart";
 import CreateCoursePage from "@/pages/Courses/CreateCoursePage";
-// import { RequireAuth } from "./RequireAuth";
+import { RequireAuth } from "./RequireAuth";
 import ListCoursesPage from "@/pages/Courses/ListCoursesPage";
 import UpdateCoursePage from "@/pages/Courses/UpdateCoursePage";
 import CreateNewsPage from "@/pages/News/CreateNewsPage";
@@ -27,9 +27,9 @@ import NewsDetailPage from "@/pages/News/NewsDetailPage";
 export const protectedRoutes: RouteObject[] = [
   {
     element: (
-  
+      <RequireAuth>
         <AppLayout />
-     
+      </RequireAuth>
     ),
     children: [
       {
