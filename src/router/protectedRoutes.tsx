@@ -18,6 +18,10 @@ import CreateCoursePage from "@/pages/Courses/CreateCoursePage";
 // import { RequireAuth } from "./RequireAuth";
 import ListCoursesPage from "@/pages/Courses/ListCoursesPage";
 import UpdateCoursePage from "@/pages/Courses/UpdateCoursePage";
+import CreateNewsPage from "@/pages/News/CreateNewsPage";
+import EditNewsPage from "@/pages/News/EditNewsPage";
+import ListNewsPage from "@/pages/News/ListNewsPage";
+import NewsDetailPage from "@/pages/News/NewsDetailPage";
 
 
 export const protectedRoutes: RouteObject[] = [
@@ -64,8 +68,34 @@ export const protectedRoutes: RouteObject[] = [
             path: "update", 
             element: <UpdateCoursePage />,
           },
+          {
+            path: "details/:slug", 
+            element: <UpdateCoursePage />,
+          },
         ],
       },
+       {
+        path: "/news",
+        children: [
+          {
+            index: true, 
+            element: <ListNewsPage />,
+          },
+          {
+            path: "create", 
+            element: <CreateNewsPage />,
+          },
+          {
+            path: "update", 
+            element: <EditNewsPage/>,
+          },
+           {
+            path: "detail/:slug", 
+            element: <NewsDetailPage/>,
+          },
+        ],
+      },
+
 
       {
         path: "/knowledges",

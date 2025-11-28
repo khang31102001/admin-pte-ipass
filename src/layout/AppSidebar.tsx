@@ -36,6 +36,15 @@ const navItems: NavItem[] = [
       { name: "Cập nhật lại khóa học", path: "/courses/update", pro: false }
     ],
   },
+   {
+    name: "Quản lý tin tức",
+    icon: <GridIcon />,
+    subItems: [
+      { name: "Danh sách tin tức", path: "/news", pro: false },
+      { name: "Tạo mới tin tức", path: "/news/create", pro: false },
+      { name: "Cập nhật tin tức", path: "/news/update", pro: false }
+    ],
+  },
   {
     name: "Pages",
     icon: <PageIcon />,

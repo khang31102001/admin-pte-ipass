@@ -19,7 +19,7 @@ export interface News {
     endDate?: string;   
     metaTitle?: string;
     metaDescription?: string;
-    tags?: any[];
+    tags?: string[];
     keywords?: string[];
 }
 
@@ -32,5 +32,3 @@ export interface NewsItemsRes {
 }
 
 
-
-export interface NewsItem extends News{} 
