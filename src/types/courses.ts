@@ -29,7 +29,7 @@ export interface Course {
   schemaData: string;
 }
 
-export interface CourseListResponse {
+export interface CourseItemsRes {
   items: Course[];
   page: number | null;
   page_size: number | null;

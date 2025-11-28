@@ -14,7 +14,7 @@ export interface Knowledges {
   keywords?: string[] | null;
 }
 
-export interface KnowledgeListRes {
+export interface KnowledgeItemsRes {
   items: Knowledges[];
   page: number;
   page_size: number;

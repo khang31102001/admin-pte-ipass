@@ -22,7 +22,7 @@ export interface About {
     youtube_url?: string | null
 }
 
-export interface AboutItem {
+export interface AboutItemRes {
     items: About[];
     page: number | null;
     page_size: number | null;

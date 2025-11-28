@@ -13,6 +13,15 @@ export interface Comment {
   parentId?: string;
 }
 
+export interface CommentsItemsRes {
+  items: Comment[];
+  page: number | null;
+  page_size: number | null;
+  total: number | null;
+  total_pages: number | null;
+}
+
+
 export interface CommentFormData {
   content: string;
   rating?: number;

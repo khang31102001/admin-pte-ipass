@@ -47,7 +47,7 @@ export interface CategoryItem {
     level?: number | null;
     category_type?: string,
     children?: CategoryItem[];
-     is_featured?: boolean;
+    is_featured?: boolean;
     is_disable?: boolean;
      created_at?: string ;
     updated_at?: string;
@@ -60,6 +60,15 @@ export interface CategoryItem {
     noindex?: boolean;
     version?: number | null;
 }
+
+export interface CategoryItemsRes {
+  items: CategoryItem[];
+  page: number | null;
+  page_size: number | null;
+  total: number | null;
+  total_pages: number | null;
+}
+
 
 export interface CourseCategory extends Omit<CategoryItem, "children"> {
     children?: CourseCategory[];

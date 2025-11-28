@@ -23,5 +23,14 @@ export interface News {
     keywords?: string[];
 }
 
+export interface NewsItemsRes {
+  items: News[];
+  page: number;
+  page_size: number;
+  total: number;
+  total_pages: number;
+}
+
+
 
 export interface NewsItem extends News{} 

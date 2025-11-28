@@ -10,5 +10,12 @@ export interface User{
   email?: string;
   full_name?: string;
   avatar?: string;
+}
 
+export interface UserItemsRes {
+  items: User[];
+  page: number | null;
+  page_size: number | null;
+  total: number | null;
+  total_pages: number | null;
 }
