@@ -5,6 +5,9 @@ import PageMeta from "../../components/common/PageMeta";
 import TableComponent, { TableColumn } from "../../components/tables/BasicTables/TableComponent";
 import Button from "@/components/ui/button/Button";
 import { userService } from "@/services/course/courseService";
+import SearchInput from "@/components/form/input/SearchInput";
+import { Plus } from "lucide-react";
+
 
 interface Course {
   course_id: number;
@@ -48,8 +51,32 @@ const columns: TableColumn<Course>[] = [
   },
 ];
 
+
+ const courseUI = {
+  search: (search: string, setSearch: (v: string) => void) => (
+    <SearchInput
+      value={search}
+      placeholder="Tìm khóa học..."
+      onChange={(v) => setSearch(v)}
+    />
+  ),
+
+  actions: {
+    create: (
+      <Button
+        size="sm"
+        variant="primary"
+        startIcon={<Plus className="h-4 w-4" />}
+      >
+        Thêm Khóa Học
+      </Button>
+    ),
+  },
+};
+
 export default function ListCoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -68,15 +95,24 @@ export default function ListCoursesPage() {
     fetchCourses();
   }, []);
 
+
+ 
+
+
   return (
     <>
       <PageMeta
-        title="Courses Table | TailAdmin"
-        description="Courses list with dynamic table"
+        title="Danh sách khóa học | Admin Dashboard"
+        description="Trang quản lý danh sách tất cả các khóa học trong hệ thống. Xem, tìm kiếm, lọc, chỉnh sửa và quản lý trạng thái khóa học."
       />
-      <PageBreadcrumb pageTitle="Course" />
+      <PageBreadcrumb pageTitle="Khóa học" />
       <div className="space-y-6">
-        <ComponentCard title="Course List">
+        <ComponentCard 
+        title="Danh sách tất cả các khóa học"
+        desc="Quản lý danh sách và trạng thái các khóa học."
+        filtersSlot={courseUI.search(search, setSearch)}
+        actionsSlot={courseUI.actions.create}
+        >
           <TableComponent columns={columns} data={courses} />
         </ComponentCard>
       </div>

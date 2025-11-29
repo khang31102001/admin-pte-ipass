@@ -1,6 +1,5 @@
 
 import Input from "@/components/form/input/InputField"
-import TextArea from "@/components/form/input/TextArea"
 import Label from "@/components/form/Label"
 import Button from "@/components/ui/button/Button"
 import RichTextEditor from "@/components/ui/textEditor/RichTextEditor"
@@ -10,7 +9,7 @@ import { useState } from "react"
 
 interface ContentTabProps {
   courseData: Course
-  updateCourseData: (updates: Partial<{ content: string; benefits: string; audience: string[] }>) => void
+  updateCourseData: (updates: Partial<Course>) => void
 }
 
 export default function ContentTab({ courseData, updateCourseData }: ContentTabProps) {
@@ -43,6 +42,7 @@ export default function ContentTab({ courseData, updateCourseData }: ContentTabP
           onChange={(newContent) => {
             updateCourseData({ content: newContent })
           }}
+          variant="full"
         />
         <p className="mt-4 text-xs text-muted-foreground">
           Rich text editor - supports headings, bullets, bold, links, and images
@@ -54,12 +54,14 @@ export default function ContentTab({ courseData, updateCourseData }: ContentTabP
         <Label htmlFor="benefits" className="text-sm font-medium">
           Lợi ích / Kết quả (Tùy chọn)
         </Label>
-        <TextArea
-          placeholder="After the course, students will...&#10;• Benefit 1&#10;• Benefit 2"
-          value={courseData.benefits}
-          rows={4}
-          className="mt-2"
-        />
+        <div className="mt-2">
+          <RichTextEditor
+            value={courseData.benefits ?? ""}
+            onChange={(value) => updateCourseData({ benefits: value })}
+            height={280}
+            variant="simple" 
+          />
+        </div>
       </div>
 
       {/* Suitable Audience */}
@@ -74,7 +76,7 @@ export default function ContentTab({ courseData, updateCourseData }: ContentTabP
             value={newAudience}
             onChange={(e) => setNewAudience(e.target.value)}
           />
-          <Button onClick={addAudience} variant="outline">
+          <Button onClick={addAudience} size="sm" variant="outline">
             Thêm
           </Button>
         </div>

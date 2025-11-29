@@ -101,7 +101,7 @@ export default function SeoAndSchemaTab({ courseData, updateCourseData }: SeoAnd
           <TextArea
             placeholder="Short description displayed under title on Google"
             value={courseData.metaDescription}
-            onChange={() => {}}
+            onChange={(value) => updateCourseData({metaDescription: value})}
             rows={2}
             className="mt-2"
           />
@@ -121,7 +121,7 @@ export default function SeoAndSchemaTab({ courseData, updateCourseData }: SeoAnd
               onChange={(e) => setNewKeyword(e.target.value)}
             
             />
-            <Button onClick={addKeyword} variant="outline">
+            <Button onClick={addKeyword} size="sm" variant="outline">
               Thêm
             </Button>
           </div>

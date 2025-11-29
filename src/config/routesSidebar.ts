@@ -1,20 +1,19 @@
 
-export const ROUTES = {
+export const ROUTESIDEBAR = {
     HOME: "/",
 
     PROFILE: "/profile",
 
     COURSES: {
         LIST: "/courses",
-        CREATE: "/courses/create",
-  
+        CREATE: "/courses/create-infor",
+        UPDATE: "/courses/update-infor",
     },
 
     NEWS: {
         LIST: "/news",
         CREATE: "/news/create",
-        UPDATE: (slug: string) => `/news/update/${slug}`,
-        DETAIL: (slug: string) => `/courses/detail/${slug}`,
+        UPDATE: "/news/update-infor/:slug",       
     },
 
     PAGES: {

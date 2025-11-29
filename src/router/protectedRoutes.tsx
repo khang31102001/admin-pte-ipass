@@ -17,11 +17,12 @@ import BarChart from "@/pages/Charts/BarChart";
 import CreateCoursePage from "@/pages/Courses/CreateCoursePage";
 import { RequireAuth } from "./RequireAuth";
 import ListCoursesPage from "@/pages/Courses/ListCoursesPage";
-import UpdateCoursePage from "@/pages/Courses/UpdateCoursePage";
+
 import CreateNewsPage from "@/pages/News/CreateNewsPage";
 import EditNewsPage from "@/pages/News/EditNewsPage";
 import ListNewsPage from "@/pages/News/ListNewsPage";
 import NewsDetailPage from "@/pages/News/NewsDetailPage";
+import UpdateCoursePage from "@/pages/Courses/UpdateCoursesPage";
 
 
 export const protectedRoutes: RouteObject[] = [
@@ -61,15 +62,11 @@ export const protectedRoutes: RouteObject[] = [
             element: <ListCoursesPage />,
           },
           {
-            path: "create", 
+            path: "create-infor", 
             element: <CreateCoursePage />,
           },
           {
-            path: "update", 
-            element: <UpdateCoursePage />,
-          },
-          {
-            path: "details/:slug", 
+            path: "update-infor", 
             element: <UpdateCoursePage />,
           },
         ],

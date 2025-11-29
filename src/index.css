@@ -41,18 +41,18 @@ layer(base);
   --color-white: #ffffff;
   --color-black: #101828;
 
-  --color-brand-25: #f2f7ff;
-  --color-brand-50: #ecf3ff;
-  --color-brand-100: #dde9ff;
-  --color-brand-200: #c2d6ff;
-  --color-brand-300: #9cb9ff;
-  --color-brand-400: #7592ff;
-  --color-brand-500: #465fff;
-  --color-brand-600: #3641f5;
-  --color-brand-700: #2a31d8;
-  --color-brand-800: #252dae;
-  --color-brand-900: #262e89;
-  --color-brand-950: #161950;
+  --color-brand-25:  #FFFBCC;
+  --color-brand-50:  #FFF7A3;
+  --color-brand-100: #FFF07A;
+  --color-brand-200: #FFE94F;
+  --color-brand-300: #F6E10E; /* BASE */
+  --color-brand-400: #E0CC09;
+  --color-brand-500: #C7B407;
+  --color-brand-600: #AA9805;
+  --color-brand-700: #8A7903;
+  --color-brand-800: #6A5A02;
+  --color-brand-900: #4A3D01;
+  --color-brand-950: #2E2400;
 
   --color-blue-light-25: #f5fbff;
   --color-blue-light-50: #f0f9ff;
@@ -318,6 +318,10 @@ layer(base);
 }
 .apexcharts-legend-text {
   @apply !pl-5 !text-gray-700 dark:!text-gray-400;
+}
+
+.border-primary {
+  @apply border [border-color:var(--color-brand-500)];
 }
 .apexcharts-tooltip-series-group {
   @apply !p-0;

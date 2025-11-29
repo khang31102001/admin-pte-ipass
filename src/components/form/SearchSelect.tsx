@@ -1,7 +1,5 @@
-"use client";
 
-import { useState } from "react";
-import { Combobox } from "@headlessui/react";
+import { useState, useEffect, useRef } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 
 interface Option {
@@ -23,6 +21,8 @@ export default function SearchSelect({
   placeholder = "Search...",
 }: SearchSelectProps) {
   const [query, setQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   const filtered =
     query === ""
@@ -31,54 +31,79 @@ export default function SearchSelect({
           item.label.toLowerCase().includes(query.toLowerCase())
         );
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSelect = (option: Option) => {
+    onChange(option);
+    setQuery(option.label);
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    // sync value -> input
+    if (value) setQuery(value.label);
+  }, [value]);
+
   return (
-    <Combobox value={value} onChange={onChange}>
-      <div className="relative mt-1">
-        <Combobox.Input
-          className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-          displayValue={(option: Option) => option?.label ?? ""}
-          onChange={(event) => setQuery(event.target.value)}
+    <div ref={wrapperRef} className="relative w-full mt-1">
+      {/* Input */}
+      <div
+        className="relative w-full"
+        onClick={() => setOpen((prev) => !prev)}
+      >
+        <input
+          className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-3 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setOpen(true);
+          }}
           placeholder={placeholder}
         />
 
-        <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
-          <ChevronsUpDown className="h-4 w-4 text-gray-400" />
-        </Combobox.Button>
-
-        {filtered.length > 0 && (
-          <Combobox.Options className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-sm shadow-lg ring-1 ring-black/5 focus:outline-none">
-            {filtered.map((option) => (
-              <Combobox.Option
-                key={option.value}
-                value={option}
-                className={({ active }) =>
-                  `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
-                    active ? "bg-primary/10 text-primary" : "text-gray-900"
-                  }`
-                }
-              >
-                {({ selected }) => (
-                  <>
-                    <span
-                      className={`block truncate ${
-                        selected ? "font-medium" : "font-normal"
-                      }`}
-                    >
-                      {option.label}
-                    </span>
-
-                    {selected && (
-                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-primary">
-                        <Check className="h-4 w-4" />
-                      </span>
-                    )}
-                  </>
-                )}
-              </Combobox.Option>
-            ))}
-          </Combobox.Options>
-        )}
+        <ChevronsUpDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
       </div>
-    </Combobox>
+
+      {/* Dropdown */}
+      {open && (
+        <div className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white shadow-lg ring-1 ring-black/5">
+          {filtered.length > 0 ? (
+            filtered.map((option) => {
+              const selected = value?.value === option.value;
+
+              return (
+                <div
+                  key={option.value}
+                  onClick={() => handleSelect(option)}
+                  className={`flex cursor-pointer items-center gap-2 px-3 py-2 text-sm
+                    ${
+                      selected
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "hover:bg-gray-100 text-gray-900"
+                    }
+                  `}
+                >
+                  {selected && <Check className="h-4 w-4 text-primary" />}
+                  <span>{option.label}</span>
+                </div>
+              );
+            })
+          ) : (
+            <div className="px-3 py-2 text-sm text-gray-500">
+              Không tìm thấy…
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

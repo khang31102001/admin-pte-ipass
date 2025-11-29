@@ -1,5 +1,6 @@
 // src/config/sidebar.tsx
 import { UserCircleIcon, GridIcon, PageIcon, PieChartIcon, BoxCubeIcon, PlugInIcon } from "../icons";
+import { ROUTESIDEBAR } from "./routesSidebar";
 // hoặc import từ chỗ bạn đang dùng hiện tại
 
 export type NavSubItem = {
@@ -26,18 +27,18 @@ export const mainNavItems: NavItem[] = [
     name: "Quản lý Khóa Học",
     icon: <GridIcon />,
     subItems: [
-      { name: "Danh sách khoa học", path: "/courses", pro: false },
-      { name: "Tạo mới khóa học ", path: "/courses/create", pro: false },
-      { name: "Cập nhật lại khóa học", path: "/courses/update", pro: false },
+      { name: "Danh sách khoa học", path: ROUTESIDEBAR.COURSES.LIST, pro: false },
+      { name: "Tạo mới khóa học ", path: ROUTESIDEBAR.COURSES.CREATE, pro: false },
+      { name: "Cập nhật lại khóa học", path: ROUTESIDEBAR.COURSES.UPDATE, pro: false },
     ],
   },
   {
     name: "Quản lý tin tức",
     icon: <GridIcon />,
     subItems: [
-      { name: "Danh sách tin tức", path: "/news", pro: false },
-      { name: "Tạo mới tin tức", path: "/news/create", pro: false },
-      { name: "Cập nhật tin tức", path: "/news/update", pro: false },
+      { name: "Danh sách tin tức", path: ROUTESIDEBAR.NEWS.LIST, pro: false },
+      { name: "Tạo mới tin tức", path: ROUTESIDEBAR.NEWS.CREATE, pro: false },
+      { name: "Cập nhật tin tức", path: ROUTESIDEBAR.NEWS.UPDATE, pro: false },
     ],
   },
   {

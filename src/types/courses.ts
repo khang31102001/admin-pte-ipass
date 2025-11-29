@@ -12,13 +12,13 @@ export interface Course {
   audience?: string[]  
   level?: string | null;
   duration?: string | null;
-  schedule?: string | null;
   tuition?: string | null;
   category?: CategoryItem | null;
   category_id?: number | null;
   created_at?: string | null;
   updated_at?: string | null;
-  isFeatured?: boolean | null;
+  is_featured?: boolean | null;
+  is_disbale?: boolean | null;
   startDate?: string | null;
   endDate?: string | null;
   metaTitle?: string | null;
@@ -37,14 +37,4 @@ export interface CourseItemsRes {
   total_pages: number | null;
 }
 
-export type TabValue = "basic" | "content" | "time-tuition" | "seo";
 
-export type TabItem = {
-  label: string;
-  value: TabValue;
-  content: React.ComponentType<CourseTabProps>;
-};
-export interface CourseTabProps {
-  courseData: Course;
-  updateCourseData: (updates: Partial<Course>) => void;
-}
