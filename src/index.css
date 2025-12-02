@@ -41,18 +41,31 @@ layer(base);
   --color-white: #ffffff;
   --color-black: #101828;
 
-  --color-brand-25:  #FFFBCC;
-  --color-brand-50:  #FFF7A3;
-  --color-brand-100: #FFF07A;
-  --color-brand-200: #FFE94F;
-  --color-brand-300: #F6E10E; /* BASE */
-  --color-brand-400: #E0CC09;
-  --color-brand-500: #C7B407;
-  --color-brand-600: #AA9805;
-  --color-brand-700: #8A7903;
-  --color-brand-800: #6A5A02;
-  --color-brand-900: #4A3D01;
-  --color-brand-950: #2E2400;
+   --color-brand-25:  #E8E9F7;
+  --color-brand-50:  #C7C9EE;
+  --color-brand-100: #A5A8E4;
+  --color-brand-200: #7F82D9;
+  --color-brand-300: #595CCD;
+  --color-brand-400: #3C3FBF;
+  --color-brand-500: #2528A7; 
+  --color-brand-600: #1C208C;
+  --color-brand-700: #14196F;
+  --color-brand-800: #0C1252;
+  --color-brand-900: #070B38;
+  --color-brand-950: #04016C;  
+
+   --color-accent-25:  #FFFBCC;
+  --color-accent-50:  #FFF7A3;
+  --color-accent-100: #FFF07A;
+  --color-accent-200: #FFE94F;
+  --color-accent-300: #F6E10E; 
+  --color-accent-400: #E0CC09;
+  --color-accent-500: #C7B407;
+  --color-accent-600: #AA9805;
+  --color-accent-700: #8A7903;
+  --color-accent-800: #6A5A02;
+  --color-accent-900: #4A3D01;
+  --color-accent-950: #2E2400;
 
   --color-blue-light-25: #f5fbff;
   --color-blue-light-50: #f0f9ff;
