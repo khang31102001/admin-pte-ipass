@@ -8,7 +8,7 @@ import {
 
 export interface TableColumn<T> {
   key: keyof T | string; // accessor key
-  header: string;        // header label
+  header: string | React.ReactNode ;        // header label
   render?: (row: T) => React.ReactNode; // custom render function
 }
 
@@ -22,8 +22,8 @@ export default function TableComponent<T>({
   data,
 }: TableComponentProps<T>) {
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-      <div className="max-w-full overflow-x-auto">
+    <div className="rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+      <div className="max-w-full ">
         <Table>
           {/* Table Header */}
           <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
@@ -47,7 +47,7 @@ export default function TableComponent<T>({
                 {columns.map((col) => (
                   <TableCell
                     key={String(col.key)}
-                    className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400"
+                    className="px-5 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400"
                   >
                     {col.render
                       ? col.render(row)

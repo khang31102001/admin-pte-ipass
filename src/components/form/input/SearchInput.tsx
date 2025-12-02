@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
+import Input from "./InputField";
 
 interface SearchInputProps {
 
@@ -53,7 +54,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
 
   return (
     <div className={cn("relative w-full max-w-xs", className)}>
-      <input
+      <Input
         type="text"
         value={internalValue}
         onChange={handleChange}
@@ -66,7 +67,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
         )}
       />
       {/* Nếu bạn dùng icon search thì thêm vào đây */}
-      <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+      <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 " />
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
-import { Link, useNavigate } from "react-router";
+import {  useNavigate } from "react-router";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function UserDropdown() {
@@ -9,7 +9,7 @@ export default function UserDropdown() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
-  console.log("User in UserDropdown:", user);
+  // console.log("User in UserDropdown:", user);
 
   function toggleDropdown() {
     setIsOpen(!isOpen);

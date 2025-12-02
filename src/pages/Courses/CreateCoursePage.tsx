@@ -41,7 +41,7 @@ export default function CreateCoursePage() {
   };
   console.log("courseData: ", courseData)
 
-  const courseUI = {
+  const btnUI = {
     actions: (
       <div className="flex items-center gap-2">
         <Button size="sm" variant="outline">
@@ -70,7 +70,7 @@ export default function CreateCoursePage() {
         <ComponentCard
           title="Thông tin khóa học"
           desc="Điền thông tin để tạo khóa học mới."
-          actionsSlot={courseUI.actions}
+          actionsSlot={btnUI.actions}
         >
           <CoursesForm
             courseData={courseData}

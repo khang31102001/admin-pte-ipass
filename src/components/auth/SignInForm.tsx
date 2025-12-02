@@ -25,7 +25,7 @@ export default function SignIn() {
     setLoading(true);
     try {
       await signIn({ username, password, remember });
-      navigate("/", { replace: true });
+      navigate("/admin", { replace: true });
     } catch (error: unknown) {
       // const msg = error?.response?.data?.message || "Đăng nhập thất bại.";
       console.log(error);
@@ -38,7 +38,7 @@ export default function SignIn() {
     <div className="flex flex-col flex-1">
       <div className="w-full max-w-md pt-10 mx-auto">
         <Link
-          to="/"
+          to="/admin"
           className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
         >
           <ChevronLeftIcon className="size-5" />

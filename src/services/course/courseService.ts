@@ -1,11 +1,11 @@
+import { CourseItemsRes } from './../../types/courses';
 import { get } from "@/api/http";
 
 export class CourseService {
-  async getAllCourses(): Promise<any> {
-    const response = await get("/courses");
-    return response;
-  }
-
+    async getAllCourses(): Promise<CourseItemsRes> {
+      const response = await get("/courses");
+      return response as CourseItemsRes;
+    }
   async getCourseById(id: number): Promise<any> {
     const response = await get(`/courses/${id}`);
     return response;

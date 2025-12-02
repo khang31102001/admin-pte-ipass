@@ -145,6 +145,7 @@ const Header: React.FC<HeaderProps> = ({ onClick, onToggle }) => {
             </form>
           </div>
         </div>
+
         <div
           className={`${
             isApplicationMenuOpen ? "flex" : "hidden"
@@ -160,6 +161,7 @@ const Header: React.FC<HeaderProps> = ({ onClick, onToggle }) => {
           {/* <!-- User Area --> */}
           <UserDropdown />
         </div>
+        
       </div>
     </header>
   );
