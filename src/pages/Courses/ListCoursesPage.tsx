@@ -15,10 +15,7 @@ import { DataTablePagination } from "@/components/ui/pagination/DataTablePaginat
 import { useCoursesQuery } from "@/hooks/courses/useCoursesQuery";
 import { RenderConfirmDelete } from "@/components/common/ConfirmDelete";
 import ActionButtons from "@/components/common/ActionButtons";
-
-
-
-
+import { courseService } from "@/services/course/courseService";
 
 type CourseColumnHandlers = {
   selectedIds: number[];
@@ -171,6 +168,7 @@ export default function ListCoursesPage() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [courseId, setCourseId] = useState<number | null>(null);
    const { data, isLoading} = useCoursesQuery({
     page,
     pageSize,
@@ -197,17 +195,24 @@ export default function ListCoursesPage() {
     };
     
     setIsDeleteOpen(true);
+    setCourseId(course.course_id);
     // ví dụ: delete one or delete all
 
     // await userService.deleteCourse(course.course_id);
     // setCourses(prev => prev.filter(c => c.course_id !== course.course_id));
   };
 
-  const handleDeleteConfirmed =() =>{
+  const handleDeleteConfirmed = async () =>{
 
     try{
-
-      console.log("call api  delete")
+      console.log("Deleting course with ID:", courseId);
+      if (courseId !== null) {
+        await courseService.deleteCourse(courseId);
+        console.log("Course deleted successfully.");
+        setPage(1);
+        setPageSize(15);
+        setSearch(null); 
+      }
     }catch(error){
       console.log(error)
      

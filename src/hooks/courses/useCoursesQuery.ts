@@ -1,5 +1,5 @@
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { userService } from "@/services/course/courseService";
+import { courseService } from "@/services/course/courseService";
 import { CourseItemsRes } from "@/types/courses";
 
 
@@ -12,7 +12,7 @@ export interface CoursesQueryParams {
 export function useCoursesQuery(params?: CoursesQueryParams) {
   return useQuery<CourseItemsRes, Error>({
     queryKey: ["courses", params],
-    queryFn: () => userService.getAllCourses(),
+    queryFn: () => courseService.getAllCourses(params),
     placeholderData: keepPreviousData,
     staleTime: 1000 * 30,
   });

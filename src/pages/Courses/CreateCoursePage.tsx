@@ -8,6 +8,7 @@ import { ROUTES } from "@/config/routes";
 import { Course } from "@/types/courses";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+// import { courseService } from "@/services/course/courseService";
 
 
 
@@ -17,7 +18,7 @@ export default function CreateCoursePage() {
   const [courseData, setCourseData] = useState<Course>({
     title: "",
     slug: "",
-    level: "Beginner",
+    level: "BEGINER",
     category: null,
     categoryId: null,
     description: "",
@@ -46,19 +47,7 @@ export default function CreateCoursePage() {
   };
 
   const handleSave = ()=>{
-     // 1. Validate toàn bộ courseData
-    const validationErrors = validateCourse(courseData);
-    setErrors(validationErrors);
-
-    if (!isCourseValid(validationErrors)) {
-      // Có lỗi -> không cho save, có thể scroll lên đầu hoặc show toast
-      // toast.error("Vui lòng kiểm tra lại thông tin khóa học");
-      return;
-    }
-
-    // 2. Nếu hợp lệ -> gọi API lưu
-    // await courseService.create(courseData);
-    // navigate về list
+    
   }
 
 
