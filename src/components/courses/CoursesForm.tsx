@@ -9,6 +9,8 @@ import { Course } from "@/types/courses";
 import { ContentTab } from "@/components/courses";
 import Tabs from "../common/Tabs";
 import { CategoryItem } from "@/types/category";
+import { CourseValidationErrors } from "../validators/courseValidation";
+import FormErrorSummary from "../common/FormErrorSummary";
 
 export type TabValue = "basic" | "content" | "time-tuition" | "seo";
 export type TabItem = {
@@ -52,11 +54,13 @@ interface CoursesFormProps{
   categories: CategoryItem[];
   courseData: Course 
   updateCourseData?: (updates: Partial<Course>) => void;
+   errors?: CourseValidationErrors;
 
 }
 export default function CoursesForm({
   courseData,
-  updateCourseData
+  updateCourseData,
+  errors
 }: CoursesFormProps) {
   const [activeTab, setActiveTab] = useState<number>(tabsConfig[0].id ?? 1);
   
@@ -71,6 +75,7 @@ export default function CoursesForm({
 
           {/* Left Column - Form */}      
             <div className="bg-card border border-border rounded-lg">
+              <FormErrorSummary errors={errors} />
               <Tabs
                 items={[...tabsConfig]}
                 defaultActiveId={activeTab}

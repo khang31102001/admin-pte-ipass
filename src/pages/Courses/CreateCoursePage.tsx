@@ -3,6 +3,7 @@ import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import PageMeta from "@/components/common/PageMeta";
 import CoursesForm from "@/components/courses/CoursesForm";
+import { CourseValidationErrors, isCourseValid, validateCourse } from "@/components/validators/courseValidation";
 import { ROUTES } from "@/config/routes";
 import { Course } from "@/types/courses";
 import { useState } from "react";
@@ -18,10 +19,10 @@ export default function CreateCoursePage() {
     slug: "",
     level: "Beginner",
     category: null,
-    category_id: null,
+    categoryId: null,
     description: "",
-    is_disbale: false,
-    is_featured: false,
+    isDisabled: false,
+    isFeatured: false,
     image: null,
     content: "",
     duration: "",
@@ -35,7 +36,7 @@ export default function CreateCoursePage() {
     schemaMode: "auto",
     schemaData: "",
   });
-
+  const [errors, setErrors] = useState<CourseValidationErrors>({});
   const navigate = useNavigate();
 
 
@@ -45,7 +46,19 @@ export default function CreateCoursePage() {
   };
 
   const handleSave = ()=>{
-    
+     // 1. Validate toàn bộ courseData
+    const validationErrors = validateCourse(courseData);
+    setErrors(validationErrors);
+
+    if (!isCourseValid(validationErrors)) {
+      // Có lỗi -> không cho save, có thể scroll lên đầu hoặc show toast
+      // toast.error("Vui lòng kiểm tra lại thông tin khóa học");
+      return;
+    }
+
+    // 2. Nếu hợp lệ -> gọi API lưu
+    // await courseService.create(courseData);
+    // navigate về list
   }
 
 
@@ -74,6 +87,7 @@ export default function CreateCoursePage() {
             courseData={courseData}
             updateCourseData={updateCourseData}
             categories={[]}
+            errors={errors}
           />
         </ComponentCard>
       </div>

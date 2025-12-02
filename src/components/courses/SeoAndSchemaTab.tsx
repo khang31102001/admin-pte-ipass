@@ -10,6 +10,7 @@ import Button from "@/components/ui/button/Button"
 import Switch from "@/components/form/switch/Switch"
 import { Course } from "@/types/courses"
 import { X } from "lucide-react"
+import { SeoCheckerBox } from "../common/SeoCheckerBox"
 
 
 
@@ -70,86 +71,122 @@ export default function SeoAndSchemaTab({ courseData, updateCourseData }: SeoAnd
       <div className="border-b border-border pb-8">
         <h3 className="text-lg font-semibold mb-6">SEO (Meta)</h3>
 
-        {/* Meta Title */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="metaTitle" className="text-sm font-medium">
-              Meta Title
-            </Label>
-            <span className="text-xs text-muted-foreground">{courseData.metaTitle.length}/70</span>
-          </div>
-          <Input
-            id="metaTitle"
-            placeholder={generateDefaultMetaTitle()}
-            value={courseData.metaTitle}
-            onChange={(e) => updateCourseData({ metaTitle: e.target.value.slice(0, 70) })}
-            className="mt-2"
-          />
-          <p className="mt-1 text-xs text-muted-foreground">
-           Tiêu đề hiển thị trên Google. Phải chứa từ khóa chính và tên thương hiệu.
-          </p>
-        </div>
-
-        {/* Meta Description */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="metaDescription" className="text-sm font-medium">
-              Meta Description
-            </Label>
-            <span className="text-xs text-muted-foreground">{courseData.metaDescription.length}/160</span>
-          </div>
-          <TextArea
-            placeholder="Short description displayed under title on Google"
-            value={courseData.metaDescription}
-            onChange={(value) => updateCourseData({metaDescription: value})}
-            rows={2}
-            className="mt-2"
-          />
-          <p className="mt-1 text-xs text-muted-foreground">Phải rõ ràng và có lời kêu gọi hành động.</p>
-        </div>
-
-        {/* Keywords */}
-        <div className="mb-6">
-          <Label htmlFor="keywords" className="text-sm font-medium">
-            Keywords
-          </Label>
-          <div className="mt-2 flex gap-2">
-            <Input
-              id="keywords"
-              placeholder="e.g., pte 65+, pte intensive course"
-              value={newKeyword}
-              onChange={(e) => setNewKeyword(e.target.value)}
-            
-            />
-            <Button onClick={addKeyword} size="sm" variant="outline">
-              Thêm
-            </Button>
-          </div>
-          <p className="mt-4 text-xs text-muted-foreground">
-           Ví dụ: 'pte 65+', 'khóa học pte chuyên sâu', 'mẫu bài thi nói pte'...
-          </p>
-
-          {courseData.keywords.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-2">
-              {courseData.keywords.map((keyword, index) => (
-                <div key={index} className="inline-flex items-center gap-2 bg-secondary px-3 py-1 rounded-full text-sm">
-                  {keyword}
-                  <button onClick={() => removeKeyword(index)} className="text-muted-foreground hover:text-foreground">
-                    <X className="h-4 w-4" />
-                  </button>
-                </div>
-              ))}
+        <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[minmax(0,2fr),minmax(260px,1fr)] lg:items-start">
+          {/* LEFT: form SEO */}
+          <div className="space-y-6">
+            {/* Meta Title */}
+            <div>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="metaTitle" className="text-sm font-medium">
+                  Meta Title
+                </Label>
+                <span className="text-xs text-muted-foreground">
+                  {courseData.metaTitle.length}/70
+                </span>
+              </div>
+              <Input
+                id="metaTitle"
+                placeholder={generateDefaultMetaTitle()}
+                value={courseData.metaTitle}
+                onChange={(e) =>
+                  updateCourseData({ metaTitle: e.target.value.slice(0, 70) })
+                }
+                className="mt-2"
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                Tiêu đề hiển thị trên Google. Phải chứa từ khóa chính và tên thương hiệu.
+              </p>
             </div>
-          )}
-        </div>
 
-        {/* Google Snippet Preview */}
-        <div className="mt-6 p-4 bg-muted rounded-lg">
-          <p className="text-xs text-muted-foreground mb-3">Google Search Preview</p>
-          <div className="space-y-1">
-            <p className="text-blue-600 text-sm font-medium">{courseData.metaTitle || generateDefaultMetaTitle()}</p>
-            <p className="text-green-700 text-xs">https://pteipass.com/khoa-hoc/course-slug</p>
-            <p className="text-gray-600 text-sm line-clamp-2">{courseData.metaDescription || courseData.description}</p>
+            {/* Meta Description */}
+            <div>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="metaDescription" className="text-sm font-medium">
+                  Meta Description
+                </Label>
+                <span className="text-xs text-muted-foreground">
+                  {courseData.metaDescription.length}/160
+                </span>
+              </div>
+              <TextArea
+                placeholder="Short description displayed under title on Google"
+                value={courseData.metaDescription}
+                onChange={(value) => updateCourseData({ metaDescription: value })}
+                rows={2}
+                className="mt-2"
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                Phải rõ ràng và có lời kêu gọi hành động.
+              </p>
+            </div>
+
+            {/* Keywords */}
+            <div className="mb-6">
+              <Label htmlFor="keywords" className="text-sm font-medium">
+                Keywords
+              </Label>
+              <div className="mt-2 flex gap-2">
+                <Input
+                  id="keywords"
+                  placeholder="e.g., pte 65+, pte intensive course"
+                  value={newKeyword}
+                  onChange={(e) => setNewKeyword(e.target.value)}
+
+                />
+                <Button onClick={addKeyword} size="sm" variant="outline">
+                  Thêm
+                </Button>
+              </div>
+              <p className="mt-4 text-xs text-muted-foreground">
+                Ví dụ: 'pte 65+', 'khóa học pte chuyên sâu', 'mẫu bài thi nói pte'...
+              </p>
+
+              {courseData.keywords.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {courseData.keywords.map((keyword, index) => (
+                    <div key={index} className="inline-flex items-center gap-2 bg-secondary px-3 py-1 rounded-full text-sm">
+                      {keyword}
+                      <button onClick={() => removeKeyword(index)} className="text-muted-foreground hover:text-foreground">
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Google Snippet Preview */}
+            <div className="mt-6 p-4 bg-muted rounded-lg">
+              <p className="text-xs text-muted-foreground mb-3">Google Search Preview</p>
+              <div className="space-y-1">
+                <p className="text-blue-600 text-sm font-medium">
+                  {courseData.metaTitle || generateDefaultMetaTitle()}
+                </p>
+                <p className="text-green-700 text-xs">
+                  https://pteipass.com/khoa-hoc/{courseData.slug || "course-slug"}
+                </p>
+                <p className="text-gray-600 text-sm line-clamp-2">
+                  {courseData.metaDescription || courseData.description}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT: SEO Checker box */}
+          <div className="lg:sticky lg:top-24">
+            
+            <SeoCheckerBox
+              data={{
+                title: courseData.title ?? "",
+                slug: courseData.slug ?? "",
+                metaTitle: courseData.metaTitle ?? "",
+                metaDescription: courseData.metaDescription ?? "",
+                description: courseData.description ?? "",
+                contentHtml: courseData.content ?? "",
+                keywords: courseData.keywords ?? [],
+                image: courseData.image ?? "",
+              }}
+            />
           </div>
         </div>
       </div>
