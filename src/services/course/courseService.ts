@@ -1,11 +1,11 @@
-import { CourseItemsRes } from './../../types/courses';
+import { CourseItemsRes } from "./../../types/courses";
 import { get } from "@/api/http";
 
 export class CourseService {
-    async getAllCourses(): Promise<CourseItemsRes> {
-      const response = await get("/courses");
-      return response as CourseItemsRes;
-    }
+  async getAllCourses(params: any): Promise<CourseItemsRes> {
+    const response = await get("/courses", params);
+    return response as CourseItemsRes;
+  }
   async getCourseById(id: number): Promise<any> {
     const response = await get(`/courses/${id}`);
     return response;
@@ -16,10 +16,10 @@ export class CourseService {
     return response;
   }
 
-    async deleteCourse(id: number): Promise<any> {
-        const response = await get(`/courses/${id}`);
-        return response;
-    }
+  async deleteCourse(id: number): Promise<any> {
+    const response = await get(`/courses/${id}`);
+    return response;
+  }
 }
 
 export const userService = new CourseService();

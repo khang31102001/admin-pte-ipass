@@ -12,7 +12,7 @@ export interface CoursesQueryParams {
 export function useCoursesQuery(params?: CoursesQueryParams) {
   return useQuery<CourseItemsRes, Error>({
     queryKey: ["courses", params],
-    queryFn: () => userService.getAllCourses(),
+    queryFn: () => userService.getAllCourses(params),
     placeholderData: keepPreviousData,
     staleTime: 1000 * 30,
   });
