@@ -130,8 +130,8 @@ export default function PreviewSidebar({ courseData, updateCourseData }: Preview
 
             <Switch
               label="Nổi bật"
-              defaultChecked={courseData.is_featured ?? false}
-              onChange={(checked) => updateCourseData({ is_featured: checked })}
+              defaultChecked={courseData.isFeatured ?? false}
+              onChange={(checked) => updateCourseData({ isFeatured: checked })}
             />
           </div>
 
@@ -143,8 +143,8 @@ export default function PreviewSidebar({ courseData, updateCourseData }: Preview
 
             <Switch
               label="Kích hoạt"
-              defaultChecked={courseData.is_disbale ?? true}
-              onChange={(checked) => updateCourseData({ is_disbale: checked })}
+              defaultChecked={courseData.isDisabled ?? true}
+              onChange={(checked) => updateCourseData({ isDisabled: checked })}
             />
           </div>
 

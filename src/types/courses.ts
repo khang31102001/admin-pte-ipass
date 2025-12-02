@@ -7,19 +7,19 @@ export interface Course {
   image?: string | null;
   title?: string | null;
   slug?: string | null;
-  description?: string | null; 
-  content?: string | null;  
+  description?: string | null;
+  content?: string | null;
   benefits?: string
-  audience?: string[]  
+  audience?: string[]
   level?: string | null;
   duration?: string | null;
   tuition?: string | null;
   category?: CategoryItem | null;
-  category_id?: number | null;
+  categoryId?: number | null;
   created_at?: string | null;
   updated_at?: string | null;
-  is_featured?: boolean | null;
-  is_disbale?: boolean | null;
+  isFeatured?: boolean | null;
+  isDisabled?: boolean | null;
   startDate?: string | null;
   endDate?: string | null;
   metaTitle?: string | null;
@@ -30,16 +30,17 @@ export interface Course {
   schemaData: string;
 }
 
+
 export interface CourseDetail {
   course_id?: number | null;
   author_id?: number | null;
   image?: string | null;
   title?: string | null;
   slug?: string | null;
-  description?: string | null; 
-  content?: string | null;  
+  description?: string | null;
+  content?: string | null;
   benefits?: string;
-  audience?: string[]  ;
+  audience?: string[];
   tags?: string[];
   level?: string | null;
   duration?: string | null;
@@ -47,11 +48,11 @@ export interface CourseDetail {
   schedule?: string | null;
   author?: User | null;
   category?: CategoryItem | null;
-  category_id?: number | null;
+  categoryId?: number | null;
   created_at?: string | null;
   updated_at?: string | null;
-  is_featured?: boolean | null;
-  is_disbale?: boolean | null;
+  isFeatured?: boolean | null;
+  isDisabled?: boolean | null;
   startDate?: string | null;
   endDate?: string | null;
   metaTitle?: string | null;
@@ -67,9 +68,7 @@ export interface CourseItemsRes {
   page_size?: number | null;
   total?: number | null;
   total_pages?: number | null;
-  filter?:{
-    search?: string;
-  }
+
 }
 
 

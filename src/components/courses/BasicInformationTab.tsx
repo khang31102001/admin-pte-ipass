@@ -122,7 +122,7 @@ export default function BasicInformationTab({
 
     // Reset category con khi đổi cha
     updateCourseData({
-      category_id: undefined,
+      categoryId: undefined,
       category: undefined,
     });
   };
@@ -139,7 +139,7 @@ export default function BasicInformationTab({
     if (!child) return;
 
     updateCourseData({
-      category_id: child.category_id,
+      categoryId: child.category_id,
       category: child,
     });
   };

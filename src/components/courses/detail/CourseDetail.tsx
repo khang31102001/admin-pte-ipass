@@ -22,7 +22,7 @@ const DetailCourse = ({ data }: CourseDetailPageProps) => {
             </span>
           )}
 
-          {data.is_featured && (
+          {data.isFeatured && (
             <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#F6E10E]/90 text-[#04016C] text-[11px] font-semibold uppercase tracking-[0.18em]">
               ★ Featured
             </span>
