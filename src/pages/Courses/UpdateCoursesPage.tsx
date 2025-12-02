@@ -4,9 +4,9 @@ import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import PageMeta from "@/components/common/PageMeta";
 import CoursesForm from "@/components/courses/CoursesForm";
-import Button from "@/components/ui/button/Button";
 import { Course } from "@/types/courses";
 import SearchBoxInput from "@/components/form/input/SearchBoxInput";
+import ActionButtons from "@/components/common/ActionButtons";
 
 export default function UpdateCoursePage() {
     // TODO: sau này bạn fetch course theo slug/id ở đây rồi setCourseData
@@ -37,13 +37,6 @@ export default function UpdateCoursePage() {
         setCourseData((prev) => ({ ...prev, ...updates }));
     };
 
-    const RenderBtnSave = () => {
-        return(
-             <Button onClick={() => console.log("handle call api push change")} size="sm" variant="primary">
-                Lưu thay đổi
-            </Button>
-        )
-    }
     const RenderSearchBox = () => {
         return (
             <SearchBoxInput
@@ -51,6 +44,10 @@ export default function UpdateCoursePage() {
                 onSearch={(value) => console.log("call api từ giá trị search value:", value)}
             />
         )
+    }
+
+    const handleSave = ()=>{
+
     }
     return (
         <>
@@ -65,7 +62,12 @@ export default function UpdateCoursePage() {
                 <ComponentCard
                     title="Thông tin khóa học"
                     desc="Chỉnh sửa thông tin, nội dung và cấu hình khóa học."
-                    actionsSlot={RenderBtnSave()}
+                    actionsSlot={
+                        <ActionButtons
+                            saveLabel= "Lưu thay đổi"
+                            onSave={handleSave}
+                        />
+                    }
                     filtersSlot={RenderSearchBox()}
                 >
                     <CoursesForm

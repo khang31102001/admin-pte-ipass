@@ -1,10 +1,12 @@
+import ActionButtons from "@/components/common/ActionButtons";
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import PageMeta from "@/components/common/PageMeta";
 import CoursesForm from "@/components/courses/CoursesForm";
-import Button from "@/components/ui/button/Button";
+import { ROUTES } from "@/config/routes";
 import { Course } from "@/types/courses";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 
 
@@ -34,28 +36,19 @@ export default function CreateCoursePage() {
     schemaData: "",
   });
 
+  const navigate = useNavigate();
+
 
   const updateCourseData = (updates: Partial<Course>) => {
     setCourseData((prev) => ({ ...prev, ...updates }));
 
   };
-  console.log("courseData: ", courseData)
 
-  const btnUI = {
-    actions: (
-      <div className="flex items-center gap-2">
-        <Button size="sm" variant="outline">
-          Hủy
-        </Button>
-        <Button size="sm" >
-          Lưu nháp
-        </Button>
-        <Button size="sm" variant="primary">
-          Lưu &amp; xuất bản
-        </Button>
-      </div>
-    ),
-  };
+  const handleSave = ()=>{
+    
+  }
+
+
 
 
 
@@ -70,7 +63,12 @@ export default function CreateCoursePage() {
         <ComponentCard
           title="Thông tin khóa học"
           desc="Điền thông tin để tạo khóa học mới."
-          actionsSlot={btnUI.actions}
+          actionsSlot={
+          <ActionButtons
+            onCancel={() => navigate(ROUTES.COURSES.LIST)}
+            onSave={handleSave}
+          />
+        }
         >
           <CoursesForm
             courseData={courseData}

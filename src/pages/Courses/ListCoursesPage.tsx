@@ -14,6 +14,7 @@ import { ROUTES } from "@/config/routes";
 import { DataTablePagination } from "@/components/ui/pagination/DataTablePagination";
 import { useCoursesQuery } from "@/hooks/courses/useCoursesQuery";
 import { RenderConfirmDelete } from "@/components/common/ConfirmDelete";
+import ActionButtons from "@/components/common/ActionButtons";
 
 
 
@@ -265,7 +266,12 @@ export default function ListCoursesPage() {
           title="Danh sách tất cả các khóa học"
           desc="Quản lý danh sách và trạng thái các khóa học."
           filtersSlot={btnUI.search(search, setSearch)}
-          actionsSlot={btnUI.actions.create(handleCreateCourse)}
+          actionsSlot={
+            <ActionButtons
+                saveLabel="Thêm khóa học"
+                onSave={handleCreateCourse}
+            />
+          }
         >
 
           {
