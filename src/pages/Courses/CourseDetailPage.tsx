@@ -5,7 +5,7 @@ import DetailCourse from "@/components/courses/detail/CourseDetail";
 import { CourseDetail } from "@/types/courses";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { courseService } from "@/services/course/courseService";
+
 
 interface DetailActionButtonsProps {
   onBack: () => void;
@@ -45,10 +45,7 @@ const CourseDetailPage: React.FC = () => {
     const fetchCourseDetail = async () => {
       setLoading(true);
       try {
-        // TODO: gọi API thật sau này
-        // const res = await api.get(`/courses/${slug}`);
-        // setData(res.data);
-
+      
         const detail: CourseDetail = {
           title: "PTE 50+ Intensive Course – 4 Weeks",
           slug: slug || "pte-50-plus-intensive-course-4-weeks",
@@ -81,11 +78,11 @@ const CourseDetailPage: React.FC = () => {
           created_at: "2025-11-20T10:00:00Z",
           updated_at: "2025-11-22T12:30:00Z",
           tags: ["PTE", "PTE 50+", "Intensive", "Online Course"],
-          is_featured: true,
+          isFeatured: true,
         };
 
         setData(detail);
-        // const detail: CourseDetail = {
+        
         //   title: "PTE 50+ Intensive Course – 4 Weeks",
         //   slug: slug || "pte-50-plus-intensive-course-4-weeks",
         //   description:

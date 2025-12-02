@@ -1,8 +1,6 @@
-"use client"
 
 import { useState } from "react"
 
-// import { X } from "lucide-react"
 import Label from "@/components/form/Label"
 import Input from "@/components/form/input/InputField"
 import TextArea from "@/components/form/input/TextArea"
@@ -144,12 +142,19 @@ export default function SeoAndSchemaTab({ courseData, updateCourseData }: SeoAnd
               {courseData.keywords.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-2">
                   {courseData.keywords.map((keyword, index) => (
-                    <div key={index} className="inline-flex items-center gap-2 bg-secondary px-3 py-1 rounded-full text-sm">
+                    <span
+                      key={index}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#04016C]/5 text-[#04016C] text-xs"
+                    >
                       {keyword}
-                      <button onClick={() => removeKeyword(index)} className="text-muted-foreground hover:text-foreground">
+                      <button
+                        type="button"
+                        onClick={() => removeKeyword(index)}
+                        className="text-[10px] hover:text-red-500"
+                      >
                         <X className="h-4 w-4" />
                       </button>
-                    </div>
+                    </span>
                   ))}
                 </div>
               )}
@@ -174,7 +179,7 @@ export default function SeoAndSchemaTab({ courseData, updateCourseData }: SeoAnd
 
           {/* RIGHT: SEO Checker box */}
           <div className="lg:sticky lg:top-24">
-            
+
             <SeoCheckerBox
               data={{
                 title: courseData.title ?? "",
@@ -257,6 +262,7 @@ export default function SeoAndSchemaTab({ courseData, updateCourseData }: SeoAnd
                   <TextArea
                     value={courseData.schemaData}
                     placeholder={generateAutoSchema()}
+                    onChange={(v) => updateCourseData({ schemaData: v })}
                     rows={12}
                     className="font-mono text-xs"
                   />

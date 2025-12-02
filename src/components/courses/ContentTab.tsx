@@ -128,18 +128,19 @@ export default function ContentTab({ courseData, updateCourseData }: ContentTabP
         {courseData.audience?.length ? (
           <div className="mt-3 flex flex-wrap gap-2">
             {courseData.audience.map((tag, index) => (
-              <div
-                key={index}
-                className="inline-flex items-center gap-2 bg-secondary px-3 py-1 rounded-full text-sm"
-              >
-                {tag}
-                <button
-                  onClick={() => removeAudience(index)}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
+                  <span
+                      key={index}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#04016C]/5 text-[#04016C] text-xs"
+                    >
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() => removeAudience(index)}
+                        className="text-[10px] hover:text-red-500"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </span>
             ))}
           </div>
         ) : null}

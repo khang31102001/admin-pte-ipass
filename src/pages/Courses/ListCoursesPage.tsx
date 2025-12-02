@@ -177,6 +177,8 @@ export default function ListCoursesPage() {
   const courses = data?.items ?? [];
   const total = data?.total ?? 0;
 
+  console.log(data)
+
 
 
   // ----- HANDLERS -----

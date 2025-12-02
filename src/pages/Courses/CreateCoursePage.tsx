@@ -46,8 +46,16 @@ export default function CreateCoursePage() {
 
   };
 
+  console.log("courseData: ", courseData)
+
   const handleSave = ()=>{
-    
+    const validatError = validateCourse(courseData);
+    setErrors(validatError);
+
+    if(!isCourseValid(validatError)){
+        // Có lỗi -> không cho save, có thể scroll lên đầu hoặc show toast
+      // toast.error("Vui lòng kiểm tra lại thông tin khóa học");
+    }
   }
 
 
