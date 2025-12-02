@@ -7,6 +7,7 @@ import { ROUTES } from "@/config/routes";
 import { Course } from "@/types/courses";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { courseService } from "@/services/course/courseService";
 
 
 
@@ -16,12 +17,12 @@ export default function CreateCoursePage() {
   const [courseData, setCourseData] = useState<Course>({
     title: "",
     slug: "",
-    level: "Beginner",
+    level: "BEGINER",
     category: null,
-    category_id: null,
+    categoryId: null,
     description: "",
-    is_disbale: false,
-    is_featured: false,
+    isDisabled: false,
+    isFeatured: false,
     image: null,
     content: "",
     duration: "",
@@ -44,13 +45,14 @@ export default function CreateCoursePage() {
 
   };
 
-  const handleSave = ()=>{
-    
-  }
-
-
-
-
+  const handleSave = async () => {
+    try {
+      await courseService.createCourse(courseData);
+      navigate(ROUTES.COURSES.LIST);
+    } catch (error) {
+      console.error("Failed to create course:", error);
+    }
+  };
 
   return (
     <>

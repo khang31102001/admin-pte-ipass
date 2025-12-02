@@ -20,9 +20,9 @@ interface BasicInformationTabProps {
 }
 
 export const LEVEL = [
-  { value: "1", label: "PTE Basic" },
-  { value: "2", label: "PTE Advanced" },
-  { value: "3", label: "Speaking Mastery" },
+  { value: "BEGINNER", label: "PTE Basic" },
+  { value: "ADVANCED", label: "PTE Advanced" },
+  { value: "INTERMEDIATE", label: "Intermediate" },
 ];
 
 interface Option {

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
@@ -7,14 +8,16 @@ import CoursesForm from "@/components/courses/CoursesForm";
 import { Course } from "@/types/courses";
 import SearchBoxInput from "@/components/form/input/SearchBoxInput";
 import ActionButtons from "@/components/common/ActionButtons";
+import { courseService } from "@/services/course/courseService";
+
 
 export default function UpdateCoursePage() {
-    // TODO: sau này bạn fetch course theo slug/id ở đây rồi setCourseData
-    // const { slug } = useParams<{ slug?: string }>(); // slug lấy từ /:slug
+    const { slug } = useParams<{ slug: string }>();
     const [courseData, setCourseData] = useState<Course>({
+        course_id: undefined,
         title: "",
         slug: "",
-        level: "Beginner",
+        level: "BEGINNER",
         category: null,
         description: "",
         image: null,
@@ -26,12 +29,27 @@ export default function UpdateCoursePage() {
         metaDescription: "",
         audience: [],
         keywords: [],
-        is_featured: false,
-        is_disbale: true,
+        isFeatured: false,
+        isDisabled: true,
         schemaEnabled: true,
         schemaMode: "auto",
         schemaData: "",
     });
+
+    useEffect(() => {
+        const fetchCourseDetail = async () => {
+        //   setLoading(true);
+          try {
+            const detail = await courseService.getCourseDetail({ slug });
+            setCourseData(detail);
+            
+          } finally {
+            // setLoading(false);
+          }
+        };
+    
+        fetchCourseDetail();
+      }, [slug]);
 
     const updateCourseData = (updates: Partial<Course>) => {
         setCourseData((prev) => ({ ...prev, ...updates }));
@@ -46,8 +64,12 @@ export default function UpdateCoursePage() {
         )
     }
 
-    const handleSave = ()=>{
-
+    const handleUpdate = async () =>{
+        try {
+            await courseService.updateCourse(courseData.course_id!, courseData);
+        } catch (error) {
+            console.error("Failed to update course:", error);
+        }
     }
     return (
         <>
@@ -65,7 +87,7 @@ export default function UpdateCoursePage() {
                     actionsSlot={
                         <ActionButtons
                             saveLabel= "Lưu thay đổi"
-                            onSave={handleSave}
+                            onSave={handleUpdate}
                         />
                     }
                     filtersSlot={RenderSearchBox()}
