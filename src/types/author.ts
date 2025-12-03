@@ -4,11 +4,11 @@ export interface Author {
 }
 
 export interface User{
-  user_id: number;
+  userId: number;
   username?: string;
   password?: string;
   email?: string;
-  full_name?: string;
+  fullName?: string;
   avatar?: string;
 }
 
@@ -17,5 +17,5 @@ export interface UserItemsRes {
   page: number | null;
   pageSize: number | null;
   total: number | null;
-  total_pages: number | null;
+  totalPages: number | null;
 }

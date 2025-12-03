@@ -48,12 +48,12 @@ const DetailCourse = ({ data }: CourseDetailPageProps) => {
               {data.author.avatar ? (
                 <img
                   src={data.author.avatar}
-                  alt={data.author.full_name}
+                  alt={data.author.fullName}
                   className="w-8 h-8 rounded-full object-cover"
                 />
               ) : (
                 <div className="w-8 h-8 rounded-full bg-[#3B3F4E] flex items-center justify-center text-[11px] font-semibold text-white">
-                  {data.author.full_name.charAt(0)}
+                  {data.author.fullName.charAt(0)}
                 </div>
               )}
             </div>
