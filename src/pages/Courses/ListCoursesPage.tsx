@@ -2,7 +2,9 @@ import { useState } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import ComponentCard from "../../components/common/ComponentCard";
 import PageMeta from "../../components/common/PageMeta";
-import TableComponent, { TableColumn } from "../../components/tables/BasicTables/TableComponent";
+import TableComponent, {
+  TableColumn,
+} from "../../components/tables/BasicTables/TableComponent";
 import Button from "@/components/ui/button/Button";
 import SearchInput from "@/components/form/input/SearchInput";
 import { MoreVertical, Plus } from "lucide-react";
@@ -37,7 +39,6 @@ function createCourseColumns({
   onView,
   onEdit,
   onDelete,
-
 }: CourseColumnHandlers): TableColumn<Course>[] {
   return [
     {
@@ -46,20 +47,22 @@ function createCourseColumns({
         <input
           type="checkbox"
           onChange={onToggleSelectAll}
-          checked={selectedIds.length > 0 && selectedIds.length === selectedIds.length}
+          checked={
+            selectedIds.length > 0 && selectedIds.length === selectedIds.length
+          }
         />
       ),
       render: (row) => (
         <input
           type="checkbox"
-          checked={row.course_id ? selectedIds.includes(row.course_id) : false}
-          onChange={() => row.course_id && onToggleSelectOne(row.course_id)}
+          checked={row.courseId ? selectedIds.includes(row.courseId) : false}
+          onChange={() => row.courseId && onToggleSelectOne(row.courseId)}
         />
       ),
     },
-    { key: "course_id", header: "ID" },
-    { key: "course_code", header: "Code" },
-    { key: "course_name", header: "Name" },
+    { key: "courseId", header: "ID" },
+    { key: "courseCode", header: "Code" },
+    { key: "courseName", header: "Name" },
     { key: "level", header: "Level" },
     { key: "mode", header: "Mode" },
     { key: "language", header: "Language" },
@@ -68,18 +71,17 @@ function createCourseColumns({
       key: "actions",
       header: "Actions",
       render: (row) => {
-        if (!row.course_id) return null;
-        const isOpen = openMenuId === row.course_id;
+        if (!row.courseId) return null;
+        const isOpen = openMenuId === row.courseId;
         const closeDropdown = () => {
-          onToggleDropdown(row.course_id!);
+          onToggleDropdown(row.courseId!);
         };
 
         return (
           <div className="relative flex justify-end pr-4">
-
             <button
               type="button"
-              onClick={() => onToggleDropdown(row.course_id!)}
+              onClick={() => onToggleDropdown(row.courseId!)}
               className="inline-flex items-center justify-center h-9 w-9 rounded-full border border-gray-200 bg-white text-gray-500 shadow-sm hover:bg-gray-50 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800"
             >
               <MoreVertical className="h-4 w-4" />
@@ -128,13 +130,11 @@ function createCourseColumns({
               </ul>
             </Dropdown>
           </div>
-        )
-      }
+        );
+      },
     },
   ];
 }
-
-
 
 const btnUI = {
   search: (search: string, setSearch: (v: string) => void) => (
@@ -146,9 +146,9 @@ const btnUI = {
   ),
 
   actions: {
-    create: (onCreate: ()=> void) =>(
-       <Button
-       onClick={onCreate}
+    create: (onCreate: () => void) => (
+      <Button
+        onClick={onCreate}
         size="sm"
         variant="primary"
         startIcon={<Plus className="h-4 w-4" />}
@@ -159,7 +159,6 @@ const btnUI = {
   },
 };
 
-
 export default function ListCoursesPage() {
   const [search, setSearch] = useState("");
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -169,17 +168,13 @@ export default function ListCoursesPage() {
   const [pageSize, setPageSize] = useState(15);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [courseId, setCourseId] = useState<number | null>(null);
-   const { data, isLoading} = useCoursesQuery({
+  const { data, isLoading } = useCoursesQuery({
     page,
     pageSize,
     search,
   });
   const courses = data?.items ?? [];
   const total = data?.total ?? 0;
-
-  console.log(data)
-
-
 
   // ----- HANDLERS -----
   const handleViewCourse = (course: Course) => {
@@ -192,38 +187,34 @@ export default function ListCoursesPage() {
   };
 
   const handleDeleteCourse = async (course: Course) => {
-    if (!course.course_id) {
+    if (!course.courseId) {
       setIsDeleteOpen(false);
-    };
-    
+    }
+
     setIsDeleteOpen(true);
-    setCourseId(course.course_id);
+    setCourseId(course.courseId);
     // ví dụ: delete one or delete all
 
-    // await userService.deleteCourse(course.course_id);
-    // setCourses(prev => prev.filter(c => c.course_id !== course.course_id));
+    // await userService.deleteCourse(course.courseId);
+    // setCourses(prev => prev.filter(c => c.courseId !== course.courseId));
   };
 
-  const handleDeleteConfirmed = async () =>{
-
-    try{
+  const handleDeleteConfirmed = async () => {
+    try {
       console.log("Deleting course with ID:", courseId);
       if (courseId !== null) {
         await courseService.deleteCourse(courseId);
         console.log("Course deleted successfully.");
         setPage(1);
         setPageSize(15);
-        setSearch(null); 
+        setSearch(null);
       }
-    }catch(error){
-      console.log(error)
-     
-    }finally{
-      setIsDeleteOpen(false)
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsDeleteOpen(false);
     }
-
-  }
-
+  };
 
   const handleToggleSelectOne = (courseId: number) => {
     setSelectedIds((prev) =>
@@ -237,7 +228,7 @@ export default function ListCoursesPage() {
     if (selectedIds.length === courses.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(courses.map((c) => c.course_id!).filter(Boolean));
+      setSelectedIds(courses.map((c) => c.courseId!).filter(Boolean));
     }
   };
 
@@ -245,9 +236,9 @@ export default function ListCoursesPage() {
     setOpenMenuId((prev) => (prev === courseId ? null : courseId));
   };
 
-    const handleCreateCourse = () => {
+  const handleCreateCourse = () => {
     navigate(ROUTES.COURSES.CREATE);
-  }
+  };
 
   // Tạo columns bằng factory function, truyền handler & state vào
   const columns = createCourseColumns({
@@ -260,14 +251,14 @@ export default function ListCoursesPage() {
     onEdit: handleEditCourse,
     onDelete: handleDeleteCourse,
   });
-  
+
   return (
     <>
       <PageMeta
         title="Danh sách khóa học | Admin Dashboard"
         description="Trang quản lý danh sách tất cả các khóa học trong hệ thống. Xem, tìm kiếm, lọc, chỉnh sửa và quản lý trạng thái khóa học."
       />
-      <PageBreadcrumb pageTitle="Khóa học" />
+      <PageBreadcrumb pageTitle="Danh sách khóa học" />
       <div className="space-y-6">
         <ComponentCard
           title="Danh sách tất cả các khóa học"
@@ -275,40 +266,36 @@ export default function ListCoursesPage() {
           filtersSlot={btnUI.search(search, setSearch)}
           actionsSlot={
             <ActionButtons
-                saveLabel="Thêm khóa học"
-                onSave={handleCreateCourse}
+              saveLabel="Thêm khóa học"
+              onSave={handleCreateCourse}
             />
           }
         >
-
-          {
-            isLoading ? (
-              <div className="py-10 text-center text-sm text-gray-500">
-                Đang tải dữ liệu...
-              </div>
-            ) : (
-              <>
-                <TableComponent<Course> columns={columns} data={courses} />
-                <DataTablePagination
-                  page={page}
-                  pageSize={pageSize}
-                  total={total}
-                  pageSizeOptions={[15, 30, 50, 100]}
-                  onPageChange={setPage}
-                  onPageSizeChange={(size) => {
-                    setPageSize(size);
-                    setPage(1);
-                  }}
-                />
-                <RenderConfirmDelete
-                  isOpen={isDeleteOpen}
-                  onClose={() => setIsDeleteOpen(false)}
-                  onConfirm={handleDeleteConfirmed}
-                />
-              </>
-            )
-          }
-
+          {isLoading ? (
+            <div className="py-10 text-center text-sm text-gray-500">
+              Đang tải dữ liệu...
+            </div>
+          ) : (
+            <>
+              <TableComponent<Course> columns={columns} data={courses} />
+              <DataTablePagination
+                page={page}
+                pageSize={pageSize}
+                total={total}
+                pageSizeOptions={[15, 30, 50, 100]}
+                onPageChange={setPage}
+                onPageSizeChange={(size) => {
+                  setPageSize(size);
+                  setPage(1);
+                }}
+              />
+              <RenderConfirmDelete
+                isOpen={isDeleteOpen}
+                onClose={() => setIsDeleteOpen(false)}
+                onConfirm={handleDeleteConfirmed}
+              />
+            </>
+          )}
         </ComponentCard>
       </div>
     </>

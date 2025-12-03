@@ -26,7 +26,7 @@ export interface News {
 export interface NewsItemsRes {
   items: News[];
   page: number;
-  page_size: number;
+  pageSize: number;
   total: number;
   total_pages: number;
 }

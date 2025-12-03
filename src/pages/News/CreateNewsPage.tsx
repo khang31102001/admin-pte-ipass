@@ -37,7 +37,7 @@ const CreateNewsPage: React.FC = () => {
   };
 
   const handleCancel = () => {
-    // Có thể navigate về /admin/news
+    // Có thể navigate về //news
     console.log("Cancel create news");
   };
 

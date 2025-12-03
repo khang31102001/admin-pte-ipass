@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import ComponentCard from "@/components/common/ComponentCard";
@@ -14,7 +14,7 @@ import { courseService } from "@/services/course/courseService";
 export default function UpdateCoursePage() {
     const { slug } = useParams<{ slug: string }>();
     const [courseData, setCourseData] = useState<Course>({
-        course_id: undefined,
+        courseId: undefined,
         title: "",
         slug: "",
         level: "BEGINNER",
@@ -66,7 +66,7 @@ export default function UpdateCoursePage() {
 
     const handleUpdate = async () =>{
         try {
-            await courseService.updateCourse(courseData.course_id!, courseData);
+            await courseService.updateCourse(courseData.courseId!, courseData);
         } catch (error) {
             console.error("Failed to update course:", error);
         }

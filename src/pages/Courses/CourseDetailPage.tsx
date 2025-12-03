@@ -5,6 +5,7 @@ import DetailCourse from "@/components/courses/detail/CourseDetail";
 import { CourseDetail } from "@/types/courses";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { courseService } from "@/services/course/courseService";
 
 
 interface DetailActionButtonsProps {
@@ -45,77 +46,8 @@ const CourseDetailPage: React.FC = () => {
     const fetchCourseDetail = async () => {
       setLoading(true);
       try {
-      
-        const detail: CourseDetail = {
-          title: "PTE 50+ Intensive Course – 4 Weeks",
-          slug: slug || "pte-50-plus-intensive-course-4-weeks",
-          description:
-            "Khóa học PTE 50+ chuyên sâu trong 4 tuần, tập trung Speaking, Writing và kỹ thuật làm bài thi thực chiến.",
-          content: `
-            <p>Khóa học PTE 50+ Intensive được thiết kế cho những bạn cần đạt mục tiêu PTE 50 trong thời gian ngắn.</p>
-            <h2>1. Lộ trình học trong 4 tuần</h2>
-            <ul>
-              <li>Tuần 1: Nền tảng & phát âm, cấu trúc bài thi PTE</li>
-              <li>Tuần 2: Speaking & Writing task quan trọng (RA, DI, RL, WE...)</li>
-              <li>Tuần 3: Reading & Listening, kỹ thuật time management</li>
-              <li>Tuần 4: Mock test, chữa bài chi tiết, fix lỗi cá nhân</li>
-            </ul>
-            <h2>2. Hình thức học</h2>
-            <p>Học online qua Zoom, 2–3 buổi/tuần, kèm theo hệ thống bài tập & template trên nền tảng PTE iPASS.</p>
-          `,
-          image: "/images/courses/pte-50-intensive.jpg",
-          category: { category_id: 2, name: "PTE Intensive", slug: "pte-intensive" },
-          author: {
-            user_id: 1,
-            full_name: "Hanna",
-          },
-          level: "Intermediate – Target 50+",
-          duration: "4 tuần",
-          schedule: "Tối 2-4-6, 19:00–21:00 (GMT+7)",
-          tuition: "9,900,000 VND",
-          startDate: "2025-01-10T00:00:00Z",
-          endDate: "2025-02-05T00:00:00Z",
-          created_at: "2025-11-20T10:00:00Z",
-          updated_at: "2025-11-22T12:30:00Z",
-          tags: ["PTE", "PTE 50+", "Intensive", "Online Course"],
-          isFeatured: true,
-        };
-
+        const detail = await courseService.getCourseDetail({ slug });
         setData(detail);
-        
-        //   title: "PTE 50+ Intensive Course – 4 Weeks",
-        //   slug: slug || "pte-50-plus-intensive-course-4-weeks",
-        //   description:
-        //     "Khóa học PTE 50+ chuyên sâu trong 4 tuần, tập trung Speaking, Writing và kỹ thuật làm bài thi thực chiến.",
-        //   content: `
-        //     <p>Khóa học PTE 50+ Intensive được thiết kế cho những bạn cần đạt mục tiêu PTE 50 trong thời gian ngắn.</p>
-        //     <h2>1. Lộ trình học trong 4 tuần</h2>
-        //     <ul>
-        //       <li>Tuần 1: Nền tảng & phát âm, cấu trúc bài thi PTE</li>
-        //       <li>Tuần 2: Speaking & Writing task quan trọng (RA, DI, RL, WE...)</li>
-        //       <li>Tuần 3: Reading & Listening, kỹ thuật time management</li>
-        //       <li>Tuần 4: Mock test, chữa bài chi tiết, fix lỗi cá nhân</li>
-        //     </ul>
-        //     <h2>2. Hình thức học</h2>
-        //     <p>Học online qua Zoom, 2–3 buổi/tuần, kèm theo hệ thống bài tập & template trên nền tảng PTE iPASS.</p>
-        //   `,
-        //   image: "/images/courses/pte-50-intensive.jpg",
-        //   category: { category_id: 2, name: "PTE Intensive", slug: "pte-intensive" },
-        //   author: {
-        //     user_id: 1,
-        //     full_name: "Hanna",
-        //   },
-        //   level: "Intermediate – Target 50+",
-        //   duration: "4 tuần",
-        //   schedule: "Tối 2-4-6, 19:00–21:00 (GMT+7)",
-        //   tuition: "9,900,000 VND",
-        //   startDate: "2025-01-10T00:00:00Z",
-        //   endDate: "2025-02-05T00:00:00Z",
-        //   created_at: "2025-11-20T10:00:00Z",
-        //   updated_at: "2025-11-22T12:30:00Z",
-        //   tags: ["PTE", "PTE 50+", "Intensive", "Online Course"],
-        //   isFeatured: true,
-        // };
       } finally {
         setLoading(false);
       }

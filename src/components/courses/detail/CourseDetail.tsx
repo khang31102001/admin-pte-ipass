@@ -59,17 +59,17 @@ const DetailCourse = ({ data }: CourseDetailPageProps) => {
             </div>
           )}
 
-          {data.created_at && (
+          {data.createdAt && (
             <>
               <span className="w-1 h-1 rounded-full bg-gray-400" />
-              <span>Published {formatDate(data.created_at)}</span>
+              <span>Published {formatDate(data.createdAt)}</span>
             </>
           )}
 
-          {data.updated_at && (
+          {data.updatedAt && (
             <>
               <span className="w-1 h-1 rounded-full bg-gray-400" />
-              <span>Updated {formatDate(data.updated_at)}</span>
+              <span>Updated {formatDate(data.updatedAt)}</span>
             </>
           )}
         </div>

@@ -17,7 +17,7 @@ export interface Knowledges {
 export interface KnowledgeItemsRes {
   items: Knowledges[];
   page: number;
-  page_size: number;
+  pageSize: number;
   total: number;
   total_pages: number;
 }

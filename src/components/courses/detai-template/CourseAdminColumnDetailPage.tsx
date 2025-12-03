@@ -26,22 +26,21 @@ export default function CourseAdminColumnDetailPage({
     tuition,
     startDate,
     endDate,
-    is_featured,
-    is_disbale,
-    created_at,
-    updated_at,
+    isFeatured,
+    isDisabled,
+    createdAt,
+    updatedAt,
     metaTitle,
     metaDescription,
     keywords,
     schemaEnabled,
     schemaMode,
     schemaData,
-    author_id,
-    course_id,
+    authorId,
+    courseId,
   } = course;
 
-  const isActive = !is_disbale;
-
+  const isActive = !isDisabled;
   return (
     <div className="min-h-screen bg-slate-50/80">
       <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 lg:py-10">
@@ -103,7 +102,7 @@ export default function CourseAdminColumnDetailPage({
                 label={isActive ? "Đang kích hoạt" : "Đang tắt"}
                 type={isActive ? "success" : "muted"}
               />
-              {is_featured && (
+              {isFeatured && (
                 <StatusPill label="Khóa học nổi bật" type="warning" />
               )}
               <StatusPill
@@ -118,8 +117,8 @@ export default function CourseAdminColumnDetailPage({
             {/* COLUMN 1 – Basic info */}
             <div className="space-y-4">
               <ColumnGroup title="Thông tin cơ bản">
-                <FieldRow label="Course ID" value={course_id?.toString()} />
-                <FieldRow label="Author ID" value={author_id?.toString()} />
+                <FieldRow label="Course ID" value={courseId?.toString()} />
+                <FieldRow label="Author ID" value={authorId?.toString()} />
                 <FieldRow label="Slug" value={slug} mono />
                 <FieldRow
                   label="Danh mục"
@@ -135,11 +134,11 @@ export default function CourseAdminColumnDetailPage({
               <ColumnGroup title="Thời gian tạo / cập nhật">
                 <FieldRow
                   label="Ngày tạo"
-                  value={created_at || "Chưa có dữ liệu"}
+                  value={createdAt || "Chưa có dữ liệu"}
                 />
                 <FieldRow
                   label="Lần cập nhật gần nhất"
-                  value={updated_at || "Chưa có dữ liệu"}
+                  value={updatedAt || "Chưa có dữ liệu"}
                 />
               </ColumnGroup>
             </div>

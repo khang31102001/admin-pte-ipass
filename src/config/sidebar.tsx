@@ -18,28 +18,26 @@ export type NavItem = {
 };
 
 export const mainNavItems: NavItem[] = [
+  
   {
-    icon: <UserCircleIcon />,
-    name: "User Profile",
-    path: "/profile",
-  },
-  {
-    name: "Quản lý Khóa Học",
+    name: "Quản lý khóa học",
     icon: <GridIcon />,
-    subItems: [
-      { name: "Danh sách khoa học", path: ROUTES.COURSES.LIST, pro: false },
-      { name: "Tạo mới khóa học ", path: ROUTES.COURSES.CREATE, pro: false },
-      { name: "Cập nhật lại khóa học", path: ROUTES.COURSES.UPDATE_BY_SEARCH, pro: false },
-    ],
+    path: ROUTES.COURSES.LIST,
   },
   {
     name: "Quản lý tin tức",
     icon: <GridIcon />,
-    subItems: [
-      { name: "Danh sách tin tức", path: ROUTES.NEWS.LIST, pro: false },
-      { name: "Tạo mới tin tức", path: ROUTES.NEWS.CREATE, pro: false },
-      { name: "Cập nhật tin tức", path: ROUTES.NEWS.UPDATE(""), pro: false },
-    ],
+    path: ROUTES.NEWS.LIST,
+  },
+  {
+    icon: <UserCircleIcon />,
+    name: "Quản lý học sinh",
+    path: "/students",
+  },
+  {
+    icon: <UserCircleIcon />,
+    name: "Quản lý giáo viên",
+    path: "/teachers",
   },
   {
     name: "Pages",

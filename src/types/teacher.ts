@@ -22,7 +22,7 @@ export interface Teacher {
 export interface TeacherItemsRes {
   items: Teacher[];
   page: number;
-  page_size: number;
+  pageSize: number;
   total: number;
   total_pages: number;
 }

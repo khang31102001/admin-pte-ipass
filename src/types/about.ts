@@ -25,7 +25,7 @@ export interface About {
 export interface AboutItemRes {
     items: About[];
     page: number | null;
-    page_size: number | null;
+    pageSize: number | null;
     total: number | null;
     total_pages: number | null;
 }

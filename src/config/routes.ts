@@ -1,42 +1,42 @@
 
 export const ROUTES = {
-  ADMIN: "/admin",
+  ADMIN: "/",
 
   // Dashboard
-  HOME: "/admin",
+  HOME: "/",
 
-  PROFILE: "/admin/profile",
-  BLANK: "/admin/blank",
-  FORM_ELEMENTS: "/admin/form-elements",
-  USERS: "/admin/users",
+  PROFILE: "/profile",
+  BLANK: "/blank",
+  FORM_ELEMENTS: "/form-elements",
+  USERS: "/users",
 
   // ─────────────── COURSES ───────────────
   COURSES: {
-    ROOT: "/admin/courses",
-    LIST: "/admin/courses",
-    CREATE: "/admin/courses/create-infor",
-    UPDATE_BY_SEARCH: "/admin/courses/update-infor",
-    UPDATE_BY_SLUG: (slug: string) => `/admin/courses/update-infor/${slug}`,
-    DETAIL: (slug: string) => `/admin/courses/detail-infor/${slug}`,
+    ROOT: "/courses",
+    LIST: "/courses",
+    CREATE: "/courses/create",
+    UPDATE_BY_SEARCH: "/courses/update",
+    UPDATE_BY_SLUG: (slug: string) => `/courses/update/${slug}`,
+    DETAIL: (slug: string) => `/courses/detail/${slug}`,
   },
 
   // ─────────────── NEWS ───────────────
   NEWS: {
-    ROOT: "/admin/news",
-    LIST: "/admin/news",
-    CREATE: "/admin/news/create",
-    UPDATE: (slug: string) => `/admin/news/update/${slug}`,
-    DETAIL: (slug: string) => `/admin/news/detail/${slug}`,
+    ROOT: "/news",
+    LIST: "/news",
+    CREATE: "/news/create",
+    UPDATE: (slug: string) => `/news/update/${slug}`,
+    DETAIL: (slug: string) => `/news/detail/${slug}`,
   },
 
-  KNOWLEDGES: "/admin/knowledges",
-  ALERTS: "/admin/alerts",
-  AVATARS: "/admin/avatars",
-  BADGE: "/admin/badge",
-  BUTTONS: "/admin/buttons",
-  IMAGES: "/admin/images",
-  VIDEOS: "/admin/videos",
-  LINE_CHART: "/admin/line-chart",
-  BAR_CHART: "/admin/bar-chart",
+  KNOWLEDGES: "/knowledges",
+  ALERTS: "/alerts",
+  AVATARS: "/avatars",
+  BADGE: "/badge",
+  BUTTONS: "/buttons",
+  IMAGES: "/images",
+  VIDEOS: "/videos",
+  LINE_CHART: "/line-chart",
+  BAR_CHART: "/bar-chart",
 } as const;
 

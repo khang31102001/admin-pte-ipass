@@ -15,7 +15,7 @@ export interface User{
 export interface UserItemsRes {
   items: User[];
   page: number | null;
-  page_size: number | null;
+  pageSize: number | null;
   total: number | null;
   total_pages: number | null;
 }

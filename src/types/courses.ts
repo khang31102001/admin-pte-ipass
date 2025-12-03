@@ -2,8 +2,8 @@ import { User } from "./author";
 import { CategoryItem } from "./category";
 
 export interface Course {
-  course_id?: number | null;
-  author_id?: number | null;
+  courseId?: number | null;
+  authorId?: number | null;
   image?: string | null;
   title?: string | null;
   slug?: string | null;
@@ -16,8 +16,8 @@ export interface Course {
   tuition?: string | null;
   category?: CategoryItem | null;
   categoryId?: number | null;
-  created_at?: string | null;
-  updated_at?: string | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
   isFeatured?: boolean | null;
   isDisabled?: boolean | null;
   startDate?: string | null;
@@ -32,8 +32,8 @@ export interface Course {
 
 
 export interface CourseDetail {
-  course_id?: number | null;
-  author_id?: number | null;
+  courseId?: number | null;
+  authorId?: number | null;
   image?: string | null;
   title?: string | null;
   slug?: string | null;
@@ -49,8 +49,8 @@ export interface CourseDetail {
   author?: User | null;
   category?: CategoryItem | null;
   categoryId?: number | null;
-  created_at?: string | null;
-  updated_at?: string | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
   isFeatured?: boolean | null;
   isDisabled?: boolean | null;
   startDate?: string | null;
@@ -65,9 +65,9 @@ export interface CourseDetail {
 export interface CourseItemsRes {
   items: Course[];
   page?: number | null;
-  page_size?: number | null;
+  pageSize?: number | null;
   total?: number | null;
-  total_pages?: number | null;
+  totalPages?: number | null;
 
 }
 

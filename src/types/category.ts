@@ -64,7 +64,7 @@ export interface CategoryItem {
 export interface CategoryItemsRes {
   items: CategoryItem[];
   page: number | null;
-  page_size: number | null;
+  pageSize: number | null;
   total: number | null;
   total_pages: number | null;
 }
