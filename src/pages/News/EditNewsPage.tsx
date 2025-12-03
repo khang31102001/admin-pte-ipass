@@ -1,12 +1,17 @@
-// EditNewsPage.tsx (chỉ phần thêm preview)
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router";
+import ActionButtons from "@/components/common/ActionButtons";
+import ComponentCard from "@/components/common/ComponentCard";
+import PageBreadcrumb from "@/components/common/PageBreadCrumb";
+import PageMeta from "@/components/common/PageMeta";
 import NewsForm, {
-  CategoryOption,
   AuthorOption,
+  CategoryOption,
   NewsFormValues,
 } from "@/components/news/NewsForm";
-import NewsPreview from "@/components/news/detail/NewsPreview";
+import { ROUTES } from "@/config/routes";
+import { newsService } from "@/services/news/newsService";
+import { News } from "@/types/news";
 
 const mockCategories: CategoryOption[] = [
   { id: 1, name: "PTE Tips" },
@@ -18,107 +23,122 @@ const mockAuthors: AuthorOption[] = [
   { id: 2, name: "Hanna" },
 ];
 
+const normalizeStatus = (
+  status?: News["status"]
+): NewsFormValues["status"] => {
+  if (!status) return "draft";
+  const normalized = status.toString().toLowerCase();
+  if (normalized === "published") return "published";
+  if (normalized === "scheduled") return "scheduled";
+  return "draft";
+};
+
+const mapNewsToFormValues = (news: News): NewsFormValues => ({
+  title: news.title ?? "",
+  slug: news.slug ?? "",
+  description: news.description ?? "",
+  content: news.content ?? "",
+  image: news.image ?? "",
+  status: normalizeStatus(news.status),
+  startDate: news.startDate ?? "",
+  endDate: news.endDate ?? "",
+  categoryId: news.categoryId ?? undefined,
+  authorId: news.authorId ?? undefined,
+  metaTitle: news.metaTitle ?? "",
+  metaDescription: news.metaDescription ?? "",
+  keywords: news.keywords ?? [],
+  tags: news.tags ?? [],
+  isFeatured: news.isFeatured ?? false,
+});
+
 const EditNewsPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const [initialValues, setInitialValues] = useState<Partial<NewsFormValues>>();
+  const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
+  const [initialValues, setInitialValues] = useState<NewsFormValues | null>(
+    null
+  );
+  const [newsId, setNewsId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const [previewData, setPreviewData] = useState<NewsFormValues | null>(null);
-
   useEffect(() => {
+    if (!slug) return;
     const fetchNewsDetail = async () => {
       setLoading(true);
       try {
-        // TODO: fetch API
-        const data: Partial<NewsFormValues> = {
-          title: "PTE Exam date updates 2025",
-          slug: "pte-exam-date-updates-2025",
-          description: "Latest PTE exam dates and booking tips.",
-          content: "<p>Rich HTML content from backend...</p>",
-          coverImageUrl: "/images/sample-cover.jpg",
-          status: "published",
-          startDate: "2025-11-01T09:00",
-          metaTitle: "PTE Exam date updates 2025 | PTE iPASS",
-          metaDescription: "SEO desc...",
-          keywords: ["pte", "exam"],
-          tags: ["exam", "update"],
-          isFeatured: true,
-          categoryId: 2,
-          authorId: 2,
-        };
-        setInitialValues(data);
+        const detail: News = await newsService.getNewsDetail({ slug });
+        setNewsId(detail?.id ?? null);
+        setInitialValues(mapNewsToFormValues(detail));
+      } catch (error) {
+        console.error("Failed to fetch news detail:", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchNewsDetail();
-  }, [id]);
+  }, [slug]);
 
-  const handleUpdateNews = (values: NewsFormValues) => {
-    console.log("Update news payload:", values);
-    // TODO: API update
+  const submitForm = () => {
+    const form = document.getElementById("news-form") as HTMLFormElement | null;
+    form?.requestSubmit();
+  };
+
+  const handleUpdateNews = async (values: NewsFormValues) => {
+    if (!newsId) return;
+    try {
+      await newsService.updateNews(newsId, values);
+      navigate(ROUTES.NEWS.LIST);
+    } catch (error) {
+      console.error("Failed to update news:", error);
+    }
   };
 
   const handleCancel = () => {
-    console.log("Cancel edit");
+    navigate(ROUTES.NEWS.LIST);
   };
-
-  const handlePreview = (values: NewsFormValues) => {
-    setPreviewData(values);
-  };
-
-  if (loading || !initialValues) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-sm text-gray-500">
-        Loading...
-      </div>
-    );
-  }
-
-  // chọn tên category & author hiện tại để truyền cho preview
-  // const currentCategory = mockCategories.find(
-  //   (c) => c.id === initialValues.categoryId
-  // );
-  // const currentAuthor = mockAuthors.find(
-  //   (a) => a.id === initialValues.authorId
-  // );
 
   return (
     <>
-      <NewsForm
-        mode="update"
-        initialValues={initialValues}
-        categories={mockCategories}
-        authors={mockAuthors}
-        onSubmit={handleUpdateNews}
-        onCancel={handleCancel}
-        onPreview={handlePreview}
+      <PageMeta
+        title="Cập nhật tin tức | Admin Dashboard"
+        description="Chỉnh sửa thông tin, nội dung, SEO và trạng thái tin tức."
       />
 
-      {/* Simple overlay modal cho preview */}
-      {previewData && (
-        <div className="fixed inset-0 z-40 bg-black/40 flex items-center justify-center">
-          <div className="relative z-50 w-full max-w-5xl max-h-[90vh] bg-white rounded-3xl overflow-hidden shadow-2xl">
-            <div className="h-[90vh] overflow-y-auto">
-              <NewsPreview
-                values={previewData}
-                categoryName={
-                  mockCategories.find(
-                    (c) => c.id.toString() === previewData.categoryId?.toString()
-                  )?.name
-                }
-                authorName={
-                  mockAuthors.find(
-                    (a) => a.id.toString() === previewData.authorId?.toString()
-                  )?.name
-                }
-                onClose={() => setPreviewData(null)}
-              />
+      <PageBreadcrumb pageTitle="Cập nhật tin tức" />
+
+      <div className="space-y-6">
+        <ComponentCard
+          title="Thông tin tin tức"
+          desc="Chỉnh sửa nội dung, SEO và trạng thái hiển thị."
+          actionsSlot={
+            <ActionButtons
+              saveLabel="Lưu thay đổi"
+              onSave={submitForm}
+              onCancel={handleCancel}
+            />
+          }
+        >
+          {loading ? (
+            <div className="py-10 text-center text-sm text-gray-500">
+              Đang tải dữ liệu...
             </div>
-          </div>
-        </div>
-      )}
+          ) : initialValues ? (
+            <NewsForm
+              mode="update"
+              initialValues={initialValues}
+              categories={mockCategories}
+              authors={mockAuthors}
+              onSubmit={handleUpdateNews}
+              onCancel={handleCancel}
+              showHeader={false}
+            />
+          ) : (
+            <div className="py-10 text-center text-sm text-red-500">
+              Không tìm thấy dữ liệu tin tức.
+            </div>
+          )}
+        </ComponentCard>
+      </div>
     </>
   );
 };

@@ -33,10 +33,10 @@ export function validateCourse(course: Course): CourseValidationErrors {
     errors.level = "Vui lòng chọn level";
   }
 
-  // Category
-  if (!course.categoryId && !course.category) {
-    errors.categoryId = "Vui lòng chọn danh mục cho khóa học";
-  }
+  // // Category
+  // if (!course.categoryId && !course.category) {
+  //   errors.categoryId = "Vui lòng chọn danh mục cho khóa học";
+  // }
 
   // Mô tả ngắn
   if (course.description && course.description.length > 250) {

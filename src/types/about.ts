@@ -27,5 +27,5 @@ export interface AboutItemRes {
     page: number | null;
     pageSize: number | null;
     total: number | null;
-    total_pages: number | null;
+    totalPages: number | null;
 }

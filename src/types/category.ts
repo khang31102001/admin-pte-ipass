@@ -37,26 +37,26 @@ export interface Category {
 }
 
 export interface CategoryItem {
-    category_id: number;
+    categoryId: number;
     icon?: string;
     name: string;
     slug?: string;
     url?: string;
     description?: string;
-    parent_id?: number | null;
+    parentId?: number | null;
     level?: number | null;
-    category_type?: string,
+    categoryType?: string,
     children?: CategoryItem[];
-    is_featured?: boolean;
-    is_disable?: boolean;
-     created_at?: string ;
-    updated_at?: string;
-    meta_title?: string;
-    meta_description?: string;
-    h1_heading?: string;
-    seo_content_top?: string;
-    seo_content_bottom?: string;
-    canonical_url?: string;
+    isFeatured?: boolean;
+    isDisable?: boolean;
+    createdAt?: string ;
+    updatedAt?: string;
+    metaTitle?: string;
+    metaDescription?: string;
+    h1Heading?: string;
+    seoContentTop?: string;
+    seoContentBottom?: string;
+    canonicalUrl?: string;
     noindex?: boolean;
     version?: number | null;
 }
@@ -66,7 +66,7 @@ export interface CategoryItemsRes {
   page: number | null;
   pageSize: number | null;
   total: number | null;
-  total_pages: number | null;
+  totalPages: number | null;
 }
 
 

@@ -101,15 +101,15 @@ export const protectedRoutes: RouteObject[] = [
             element: <ListNewsPage />,
           },
           {
-            path: "create", // //news/create
+            path: "create",
             element: <CreateNewsPage />,
           },
           {
-            path: "update", // //news/update
+            path: "update/:slug",
             element: <EditNewsPage />,
           },
           {
-            path: "detail/:slug", // //news/detail/:slug
+            path: "detail/:slug",
             element: <NewsDetailPage />,
           },
         ],

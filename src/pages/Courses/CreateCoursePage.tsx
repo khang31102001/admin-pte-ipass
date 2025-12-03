@@ -3,18 +3,18 @@ import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import PageMeta from "@/components/common/PageMeta";
 import CoursesForm from "@/components/courses/CoursesForm";
-import { CourseValidationErrors, isCourseValid, validateCourse } from "@/components/validators/courseValidation";
+import {
+  CourseValidationErrors,
+  isCourseValid,
+  validateCourse,
+} from "@/components/validators/courseValidation";
 import { ROUTES } from "@/config/routes";
 import { Course } from "@/types/courses";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-// import { courseService } from "@/services/course/courseService";
-
-
-
+import { courseService } from "@/services/course/courseService";
 
 export default function CreateCoursePage() {
-
   const [courseData, setCourseData] = useState<Course>({
     title: "",
     slug: "",
@@ -40,27 +40,26 @@ export default function CreateCoursePage() {
   const [errors, setErrors] = useState<CourseValidationErrors>({});
   const navigate = useNavigate();
 
-
   const updateCourseData = (updates: Partial<Course>) => {
     setCourseData((prev) => ({ ...prev, ...updates }));
-
   };
 
-  console.log("courseData: ", courseData)
-
-  const handleSave = ()=>{
+  const handleSave = async () => {
     const validatError = validateCourse(courseData);
     setErrors(validatError);
 
-    if(!isCourseValid(validatError)){
-        // Có lỗi -> không cho save, có thể scroll lên đầu hoặc show toast
+    if (!isCourseValid(validatError)) {
+      // Có lỗi -> không cho save, có thể scroll lên đầu hoặc show toast
       // toast.error("Vui lòng kiểm tra lại thông tin khóa học");
+      return;
     }
-  }
-
-
-
-
+    try {
+      await courseService.createCourse(courseData);
+      navigate(ROUTES.COURSES.LIST);
+    } catch (error) {
+      console.error("Failed to create course:", error);
+    }
+  };
 
   return (
     <>
@@ -74,11 +73,11 @@ export default function CreateCoursePage() {
           title="Thông tin khóa học"
           desc="Điền thông tin để tạo khóa học mới."
           actionsSlot={
-          <ActionButtons
-            onCancel={() => navigate(ROUTES.COURSES.LIST)}
-            onSave={handleSave}
-          />
-        }
+            <ActionButtons
+              onCancel={() => navigate(ROUTES.COURSES.LIST)}
+              onSave={handleSave}
+            />
+          }
         >
           <CoursesForm
             courseData={courseData}

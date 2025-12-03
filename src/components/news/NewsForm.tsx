@@ -31,8 +31,7 @@ export interface NewsFormValues {
   slug: string;
   description: string;
   content: string;
-  coverImageFile?: File | null;
-  coverImageUrl?: string;
+  image?: string;
   status: "draft" | "published" | "scheduled";
   startDate?: string;
   endDate?: string;
@@ -53,6 +52,7 @@ interface NewsFormProps {
   onSubmit: (values: NewsFormValues) => void;
   onCancel?: () => void;
   onPreview?: (values: NewsFormValues) => void; // dùng cho update
+  showHeader?: boolean;
 }
 
 const defaultValues: NewsFormValues = {
@@ -60,8 +60,7 @@ const defaultValues: NewsFormValues = {
   slug: "",
   description: "",
   content: "",
-  coverImageFile: null,
-  coverImageUrl: "",
+  image: "",
   status: "draft",
   startDate: "",
   endDate: "",
@@ -84,6 +83,15 @@ const slugify = (value: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
+// Convert file to base64 string for sending as payload
+const fileToBase64 = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(new Error("Failed to read file"));
+    reader.readAsDataURL(file);
+  });
+
 const NewsForm: React.FC<NewsFormProps> = ({
   mode,
   initialValues,
@@ -92,16 +100,18 @@ const NewsForm: React.FC<NewsFormProps> = ({
   onSubmit,
   onCancel,
   onPreview,
+  showHeader = true,
 }) => {
   const [values, setValues] = useState<NewsFormValues>({
     ...defaultValues,
     ...initialValues,
     keywords: initialValues?.keywords ?? [],
     tags: initialValues?.tags ?? [],
+    image: initialValues?.image ?? "",
   });
 
   const [coverPreview, setCoverPreview] = useState<string | undefined>(
-    initialValues?.coverImageUrl
+    initialValues?.image
   );
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
 
@@ -137,15 +147,21 @@ const NewsForm: React.FC<NewsFormProps> = ({
     }));
   };
 
-  const handleCoverChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleCoverChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setValues((prev) => ({
-        ...prev,
-        coverImageFile: file,
-      }));
-      const previewUrl = URL.createObjectURL(file);
-      setCoverPreview(previewUrl);
+      try {
+        const base64 = await fileToBase64(file);
+        setValues((prev) => ({
+          ...prev,
+          coverImageFile: file,
+          coverImageUrl: base64,
+          image: base64, // lưu base64 vào biến image để gửi lên server
+        }));
+        setCoverPreview(base64);
+      } catch (error) {
+        console.error("Failed to convert file to base64", error);
+      }
     }
   };
 
@@ -154,6 +170,7 @@ const NewsForm: React.FC<NewsFormProps> = ({
       ...prev,
       coverImageFile: null,
       coverImageUrl: "",
+      image: "",
     }));
     setCoverPreview(undefined);
   };
@@ -218,16 +235,19 @@ const NewsForm: React.FC<NewsFormProps> = ({
     <div className="min-h-screen bg-white text-[#1A1A1A]">
       <div className="max-w-6xl mx-auto px-4 py-8 lg:py-10">
         {/* HEADER */}
-        <NewsHeader
-          pageTitle={pageTitle}
-          mode={mode}
-          primaryButtonLabel={primaryButtonLabel}
-          onPreviewClick={mode === "update" ? handlePreviewClick : undefined}
-          onCancel={onCancel}
-        />
+        {showHeader && (
+          <NewsHeader
+            pageTitle={pageTitle}
+            mode={mode}
+            primaryButtonLabel={primaryButtonLabel}
+            onPreviewClick={mode === "update" ? handlePreviewClick : undefined}
+            onCancel={onCancel}
+          />
+        )}
 
         {/* MAIN FORM */}
         <form id="news-form" onSubmit={handleSubmit}>
+          <button type="submit" className="hidden" aria-hidden />
           <div className="grid gap-6 lg:gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
             {/* LEFT */}
             <div className="space-y-6 lg:space-y-8">

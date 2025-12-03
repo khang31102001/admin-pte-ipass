@@ -1,19 +1,19 @@
 
 export interface News {
     id: number,
-    author_id?: number;
+    authorId?: number;
     image?: string | null
     title?: string | null,
     slug?: string,
     description?: string | null; // Tóm tắt ngắn
     content?: string | null; // Nội dung chi tiết render bằng html
-    category_id?: number | null,
+    categoryId?: number | null,
     category?: string | null;
-    created_at?: string;
-    updated_at?: string;
-    authorname?: string | null;
-    authoravatar?: string | null;
-    status?: "Draft" | "Published" | "Archived";
+    createdAt?: string;
+    updatedAt?: string;
+    authorName?: string | null;
+    authorAvatar?: string | null;
+    status?: "DRAFT" | "PUBLISHED" | "ARCHIVED";
     isFeatured?: boolean;
     startDate?: string; 
     endDate?: string;   
@@ -28,7 +28,7 @@ export interface NewsItemsRes {
   page: number;
   pageSize: number;
   total: number;
-  total_pages: number;
+  totalPages: number;
 }
 
 

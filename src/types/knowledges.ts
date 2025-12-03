@@ -19,7 +19,7 @@ export interface KnowledgeItemsRes {
   page: number;
   pageSize: number;
   total: number;
-  total_pages: number;
+  totalPages: number;
 }
 
 

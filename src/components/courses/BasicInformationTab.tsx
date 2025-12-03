@@ -51,7 +51,7 @@ export default function BasicInformationTab({
   // Lấy category cha (level 1 / parent_id null)
   const parentCategories = useMemo(() => {
     return categories.filter(
-      (cate) => !cate.parent_id || cate.level === 1
+      (cate) => !cate.parentId || cate.level === 1
     );
   }, [categories]);
 
@@ -63,9 +63,9 @@ export default function BasicInformationTab({
 
   //  Khi load form (edit course), tự set parent theo category hiện tại (nếu có)
   useEffect(() => {
-    if (courseData.category && courseData.category.parent_id) {
+    if (courseData.category && courseData.category.parentId) {
       const parent = categories.find(
-        (c) => c.category_id === courseData.category!.parent_id
+        (c) => c.categoryId === courseData.category!.parentId
       );
       if (parent?.slug) {
         setSelectedParentSlug(parent.slug);
@@ -76,7 +76,7 @@ export default function BasicInformationTab({
   const parentOptions: Option[] = useMemo(() => {
     return parentCategories.map((cate) => ({
       label: cate.name,
-      value: cate.slug ?? String(cate.category_id),
+      value: cate.slug ?? String(cate.categoryId),
     }));
   }, [parentCategories]);
 
@@ -97,7 +97,7 @@ export default function BasicInformationTab({
   const childOptions: Option[] = useMemo(() => {
     return childCategories.map((child) => ({
       label: child.name,
-      value: child.slug ?? String(child.category_id),
+      value: child.slug ?? String(child.categoryId),
     }));
   }, [childCategories]);
 
@@ -133,13 +133,13 @@ export default function BasicInformationTab({
     const parent = findParentBySlug(selectedParentSlug);
     const child =
       parent?.children?.find(
-        (c) => c.slug === slugOrId || String(c.category_id) === slugOrId
+        (c) => c.slug === slugOrId || String(c.categoryId) === slugOrId
       ) ?? null;
 
     if (!child) return;
 
     updateCourseData({
-      categoryId: child.category_id,
+      categoryId: child.categoryId,
       category: child,
     });
   };
