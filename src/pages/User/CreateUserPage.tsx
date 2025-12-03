@@ -15,7 +15,7 @@ import { useNavigate } from "react-router";
 import { courseService } from "@/services/course/courseService";
 import { useCategoryQuery } from "@/hooks/category/useCategoryQuery";
 
-export default function CreateCoursePage() {
+export default function CreateUserPage() {
   const [courseData, setCourseData] = useState<Course>({
     title: "",
     slug: "",
@@ -41,9 +41,9 @@ export default function CreateCoursePage() {
   const [errors, setErrors] = useState<CourseValidationErrors>({});
   const navigate = useNavigate();
   const { data} = useCategoryQuery({categoryType: "COURSE_MENU"});
-  const categories = data?.[0]?.children ?? [];
+  const categories = data?.children ?? [];
 
-  console.log("categories data:", categories);
+  console.log("categories data:", data.children);
 
   const updateCourseData = (updates: Partial<Course>) => {
     setCourseData((prev) => ({ ...prev, ...updates }));

@@ -3,19 +3,15 @@ import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import PageMeta from "@/components/common/PageMeta";
 import NewsForm, {
-  CategoryOption,
   AuthorOption,
-  NewsFormValues,
 } from "@/components/news/NewsForm";
 import { ROUTES } from "@/config/routes";
+import { useCategoryQuery } from "@/hooks/category/useCategoryQuery";
 import { newsService } from "@/services/news/newsService";
+import { News } from "@/types/news";
 import { useNavigate } from "react-router";
 
-const mockCategories: CategoryOption[] = [
-  { id: 1, name: "PTE Tips" },
-  { id: 2, name: "PTE Exam News" },
-  { id: 3, name: "Study & Migration" },
-];
+
 
 const mockAuthors: AuthorOption[] = [
   { id: 1, name: "Admin" },
@@ -24,13 +20,17 @@ const mockAuthors: AuthorOption[] = [
 
 const CreateNewsPage: React.FC = () => {
   const navigate = useNavigate();
+  const { data} = useCategoryQuery({categoryType: "NEWS"});
+    const categories = data?.[0]?.children ?? [];
+  
+    console.log("categories data:", categories);
 
   const submitForm = () => {
     const form = document.getElementById("news-form") as HTMLFormElement | null;
     form?.requestSubmit();
   };
 
-  const handleCreateNews = async (values: NewsFormValues) => {
+  const handleCreateNews = async (values: News) => {
     try {
       console.log("Creating news with values:", values);
       await newsService.createNews(values);
@@ -64,12 +64,9 @@ const CreateNewsPage: React.FC = () => {
           }
         >
           <NewsForm
-            mode="create"
-            categories={mockCategories}
+            categories={categories}
             authors={mockAuthors}
             onSubmit={handleCreateNews}
-            onCancel={handleCancel}
-            showHeader={false}
           />
         </ComponentCard>
       </div>

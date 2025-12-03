@@ -3,13 +3,16 @@ import { Course } from "@/types/courses"
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
 import Switch from "../form/switch/Switch";
+import { CoursesCategorySection } from "./CoursesCategorySection";
+import { CategoryItem } from "@/types/category";
 
 interface PreviewSidebarProps {
   courseData: Course;
   updateCourseData: (updates: Partial<Course>) => void;
+  categories?: CategoryItem[];
 }
 
-export default function PreviewSidebar({ courseData, updateCourseData }: PreviewSidebarProps) {
+export default function PreviewSidebar({categories = [], courseData, updateCourseData }: PreviewSidebarProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(courseData.image);
    const fileInputRef = useRef<HTMLInputElement | null>(null);
    useEffect(() => {
@@ -45,6 +48,11 @@ export default function PreviewSidebar({ courseData, updateCourseData }: Preview
 
   return (
     <div className="space-y-4">
+      <CoursesCategorySection
+        categories={categories}
+        value={courseData.categoryId}
+        onChange={(CateId)=> updateCourseData({ categoryId: CateId as number}) }
+      />
       {/* Course Image */}
       <div className="border rounded-lg bg-white shadow-sm">
         <div className="px-4 py-3 border-b">
@@ -187,6 +195,7 @@ export default function PreviewSidebar({ courseData, updateCourseData }: Preview
           </p>
         </div>
       </div>
+
     </div>
   )
 }

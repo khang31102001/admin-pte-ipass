@@ -6,33 +6,11 @@ import { CourseDetail } from "@/types/courses";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { courseService } from "@/services/course/courseService";
+import ActionButtons from "@/components/common/ActionButtons";
 
 
-interface DetailActionButtonsProps {
-  onBack: () => void;
-  onEdit: () => void;
-}
 
-const DetailActionButtons: React.FC<DetailActionButtonsProps> = ({ onBack, onEdit }) => {
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      <button
-        onClick={onBack}
-        className="px-3 py-2 text-sm rounded-full border border-slate-300 bg-white hover:bg-slate-50 transition"
-      >
-        Hủy / Quay lại
-      </button>
 
-      <button
-        onClick={onEdit}
-        className="px-4 py-2 text-sm font-semibold rounded-full text-[#04016C] shadow-sm"
-        style={{ background: "color-mix(in oklab, #F6E10E 90%, transparent 10%)" }}
-      >
-        Chỉnh sửa
-      </button>
-    </div>
-  );
-};
 
 const CourseDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -86,10 +64,13 @@ const CourseDetailPage: React.FC = () => {
           title={data.title}
           desc="Xem đầy đủ thông tin khóa học, nội dung chi tiết, lịch học, học phí và các thiết lập liên quan."
           actionsSlot={
-          <DetailActionButtons
-            onBack={handleBack}
-            onEdit={handleEdit}
-          />}
+            <ActionButtons
+              updateLabel="Chỉnh sửa"
+              onUpdate={handleEdit}
+             cancelLabel="Hủy / Quay lại"
+              onCancel={handleBack}
+            />
+          }
         >
           <DetailCourse data={data} />
         </ComponentCard>

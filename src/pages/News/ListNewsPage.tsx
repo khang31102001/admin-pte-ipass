@@ -56,8 +56,8 @@ function createNewsColumns({
       render: (row) => (
         <input
           type="checkbox"
-          checked={selectedIds.includes(row.id)}
-          onChange={() => onToggleSelectOne(row.id)}
+          checked={selectedIds.includes(row.newsId)}
+          onChange={() => onToggleSelectOne(row.newsId)}
         />
       ),
     },
@@ -75,16 +75,17 @@ function createNewsColumns({
       key: "actions",
       header: "Actions",
       render: (row) => {
-        const isOpen = openMenuId === row.id;
+        if (!row.newsId) return null;
+        const isOpen = openMenuId === row.newsId;
         const closeDropdown = () => {
-          onToggleDropdown?.(row.id);
+          onToggleDropdown?.(row.newsId);
         };
 
         return (
           <div className="relative flex justify-end pr-4">
             <button
               type="button"
-              onClick={() => onToggleDropdown?.(row.id)}
+              onClick={() => onToggleDropdown?.(row.newsId)}
               className="inline-flex items-center justify-center h-9 w-9 rounded-full border border-gray-200 bg-white text-gray-500 shadow-sm hover:bg-gray-50 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800"
             >
               <MoreVertical className="h-4 w-4" />
@@ -178,8 +179,9 @@ export default function ListNewsPage() {
   });
   const news = data?.items ?? [];
   const total = data?.total ?? 0;
+  console.log("new:", news);
 
-  const allIds = news.map((item) => item.id);
+  const allIds = news.map((item) => item.newsId);
   const allSelected =
     allIds.length > 0 && allIds.every((id) => selectedIds.includes(id));
 
@@ -193,13 +195,13 @@ export default function ListNewsPage() {
   };
 
   const handleDeleteNews = async (item: News) => {
-    if (!item.id) {
+    if (!item.newsId) {
       setIsDeleteOpen(false);
       return;
     }
 
     setIsDeleteOpen(true);
-    setNewsId(item.id);
+    setNewsId(item.newsId);
   };
 
   const handleDeleteConfirmed = async () => {
@@ -277,18 +279,26 @@ export default function ListNewsPage() {
             </div>
           ) : (
             <>
-              <TableComponent<News> columns={columns} data={news} />
-              <DataTablePagination
-                page={page}
-                pageSize={pageSize}
-                total={total}
-                pageSizeOptions={[15, 30, 50, 100]}
-                onPageChange={setPage}
-                onPageSizeChange={(size) => {
-                  setPageSize(size);
-                  setPage(1);
-                }}
-              />
+              {news.length === 0 ? (
+                <div className="py-10 text-center text-sm text-gray-500">
+                  Hiện chưa có tin tức nào.
+                </div>
+              ) : (
+                <>
+                  <TableComponent<News> columns={columns} data={news} />
+                  <DataTablePagination
+                    page={page}
+                    pageSize={pageSize}
+                    total={total}
+                    pageSizeOptions={[15, 30, 50, 100]}
+                    onPageChange={setPage}
+                    onPageSizeChange={(size) => {
+                      setPageSize(size);
+                      setPage(1);
+                    }}
+                  />
+                </>
+              )}
               <RenderConfirmDelete
                 isOpen={isDeleteOpen}
                 onClose={() => setIsDeleteOpen(false)}

@@ -58,6 +58,7 @@ interface CoursesFormProps{
 
 }
 export default function CoursesForm({
+  categories = [],
   courseData,
   updateCourseData,
   errors
@@ -98,6 +99,7 @@ export default function CoursesForm({
             <PreviewSidebar 
               courseData={courseData} 
               updateCourseData={updateCourseData} 
+              categories={categories}
             />
           </aside>
         </div>

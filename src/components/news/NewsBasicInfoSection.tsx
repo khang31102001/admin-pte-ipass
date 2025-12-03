@@ -1,14 +1,14 @@
 // NewsBasicInfoSection.tsx
 import React, { ChangeEvent } from "react";
+import RichTextEditor from "../ui/textEditor/RichTextEditor";
+import { News } from "@/types/news";
 
 interface NewsBasicInfoSectionProps {
   title: string;
   slug: string;
   description: string;
   content: string;
-  onFieldChange: (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement| HTMLSelectElement>
-  ) => void;
+  onChangeNewsData: (update: Partial<News>) => void;
   onSlugChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -17,28 +17,29 @@ export const NewsBasicInfoSection: React.FC<NewsBasicInfoSectionProps> = ({
   slug,
   description,
   content,
-  onFieldChange,
+  onChangeNewsData,
   onSlugChange,
 }) => {
   return (
     <section className="border border-[#E5E7EB] rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] p-5 lg:p-6">
       <h2 className="text-lg font-semibold mb-4 border-b border-[#F0F1F4] pb-3">
-        News Basic Information
+        Thông Tin Cơ Bản của Tin Tức
       </h2>
 
       <div className="space-y-4">
+
         {/* Title */}
         <div>
           <label className="block text-sm font-medium mb-1.5">
-            Title <span className="text-red-500">*</span>
+            Tiêu đề <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             name="title"
             value={title}
-            onChange={onFieldChange}
+            onChange={(e)=> onChangeNewsData({title: e.target.value})}
             className="w-full border border-[#E5E7EB] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#3E3AA7] focus:border-transparent"
-            placeholder="Enter news title"
+            placeholder="Nhập tiêu đề tin tức"
           />
         </div>
 
@@ -51,44 +52,45 @@ export const NewsBasicInfoSection: React.FC<NewsBasicInfoSectionProps> = ({
             value={slug}
             onChange={onSlugChange}
             className="w-full border border-[#E5E7EB] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#3E3AA7] focus:border-transparent"
-            placeholder="auto-generated-from-title"
+            placeholder="tu-dong-tao-tu-tieu-de"
           />
           <p className="text-xs text-gray-400 mt-1">
-            Auto-generated from title. You can override manually.
+            Slug sẽ được tạo tự động từ tiêu đề. Bạn có thể thay đổi thủ công nếu muốn.
           </p>
         </div>
 
         {/* Description */}
         <div>
           <label className="block text-sm font-medium mb-1.5">
-            Short Description
+            Mô tả ngắn
           </label>
           <textarea
             name="description"
             value={description}
-            onChange={onFieldChange}
+            onChange={(e)=>onChangeNewsData({description: e.target.value})}
             rows={3}
             className="w-full border border-[#E5E7EB] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#3E3AA7] focus:border-transparent resize-none"
-            placeholder="Short summary shown on listing pages."
+            placeholder="Nhập mô tả ngắn hiển thị ở danh sách tin tức..."
           />
         </div>
 
         {/* Content */}
         <div>
-          <label className="block text-sm font-medium mb-1.5">Content</label>
-          <textarea
-            name="content"
+          <label className="block text-sm font-medium mb-1.5">Nội dung chi tiết</label>
+          <RichTextEditor
+
             value={content}
-            onChange={onFieldChange}
-            rows={10}
-            className="w-full border border-[#E5E7EB] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#3E3AA7] focus:border-transparent"
-            placeholder="Rich text / HTML content editor placeholder..."
+            onChange={(value) => onChangeNewsData({content: value})}
+            variant="full"
           />
+
           <p className="text-xs text-gray-400 mt-1">
-            Tích hợp sau: rich text editor (Quill, TipTap, TinyMCE, v.v.)
+            Lưu ý: sẽ tích hợp trình soạn thảo văn bản (Quill, TipTap, TinyMCE…) trong phiên bản sau.
           </p>
         </div>
+
       </div>
     </section>
+
   );
 };

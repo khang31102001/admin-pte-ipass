@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 
-interface Option {
+export interface Option {
   value: string;
   label: string;
 }

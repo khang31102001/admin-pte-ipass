@@ -1,5 +1,6 @@
 // src/config/sidebar.tsx
-import { UserCircleIcon, GridIcon, PageIcon, PieChartIcon, BoxCubeIcon, PlugInIcon } from "../icons";
+import { BookOpen, Newspaper, UserCog } from "lucide-react";
+import { UserCircleIcon, PageIcon, PieChartIcon, BoxCubeIcon, PlugInIcon } from "../icons";
 import { ROUTES } from "./routes";
 // hoặc import từ chỗ bạn đang dùng hiện tại
 
@@ -21,12 +22,12 @@ export const mainNavItems: NavItem[] = [
   
   {
     name: "Quản lý khóa học",
-    icon: <GridIcon />,
+    icon: <BookOpen  />,
     path: ROUTES.COURSES.LIST,
   },
   {
     name: "Quản lý tin tức",
-    icon: <GridIcon />,
+    icon: <Newspaper  />,
     path: ROUTES.NEWS.LIST,
   },
   {
@@ -35,7 +36,7 @@ export const mainNavItems: NavItem[] = [
     path: "/students",
   },
   {
-    icon: <UserCircleIcon />,
+    icon: <UserCog  />,
     name: "Quản lý giáo viên",
     path: "/teachers",
   },

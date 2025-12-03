@@ -1,5 +1,6 @@
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { categoryService } from "@/services/category/categoryService";
+import { CategoryItem } from "@/types/category";
 
 
 export interface CategoryQueryParams {
@@ -7,9 +8,10 @@ export interface CategoryQueryParams {
   pageSize?: number;
   search?: string;
   sort?: string;
+  categoryType?: string;
 }
 export function useCategoryQuery(params?: CategoryQueryParams) {
-  return useQuery<unknown, Error>({
+  return useQuery<CategoryItem, Error>({
     queryKey: ["categories", params],
     queryFn: () => categoryService.getCateByType(params),
     placeholderData: keepPreviousData,

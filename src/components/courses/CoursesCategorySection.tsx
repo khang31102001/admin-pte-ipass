@@ -3,12 +3,13 @@ import React, { useMemo, useState, useEffect } from "react";
 import SearchSelect, { Option } from "../form/SearchSelect";
 import Label from "../form/Label";
 import { CategoryItem } from "@/types/category";
-import { News } from "@/types/news";
 
-interface NewsCategorySectionProps {
+
+
+interface CoursesCategorySectionProps {
   categories: CategoryItem[];
   value?: number | null; 
-  onChangeNewsData: (update: Partial<News>) => void;
+  onChange: (categoryId: number | string) => void;
 }
 
 // Helper lấy id & parentId cho chắc (tùy backend đặt tên)
@@ -18,10 +19,10 @@ const getId = (cate: CategoryItem) =>
 const getParentId = (cate: CategoryItem) =>
   (cate as any).parentId ?? (cate as any).parent_id ?? null;
 
-export const NewsCategorySection: React.FC<NewsCategorySectionProps> = ({
+export const CoursesCategorySection: React.FC<CoursesCategorySectionProps> = ({
   categories,
   value,
-  onChangeNewsData,
+  onChange,
 }) => {
   const [selectedParentId, setSelectedParentId] = useState<number | null>(null);
   const [selectedChildId, setSelectedChildId] = useState<number | null>(null);
@@ -120,7 +121,7 @@ export const NewsCategorySection: React.FC<NewsCategorySectionProps> = ({
 
     const hasChildren = categories.some((c) => getParentId(c) === id);
     // Nếu không có con -> chọn luôn parent
-    onChangeNewsData({categoryId: hasChildren ?  null: id });
+    onChange(hasChildren ?  null: id );
   };
 
   // Khi chọn child
@@ -131,14 +132,14 @@ export const NewsCategorySection: React.FC<NewsCategorySectionProps> = ({
 
     const hasGrandChildren = categories.some((c) => getParentId(c) === id);
     // Nếu không có cháu -> chọn child làm category cuối
-    onChangeNewsData({categoryId: hasGrandChildren ? null : id});
+    onChange(hasGrandChildren ? null : id);
   };
 
   // Khi chọn grand child
   const handleChangeGrandChild = (valueStr: string) => {
     const id = Number(valueStr) || null;
     setSelectedGrandChildId(id);
-    onChangeNewsData({categoryId: id});
+    onChange(id);
   };
 
   return (
@@ -149,7 +150,7 @@ export const NewsCategorySection: React.FC<NewsCategorySectionProps> = ({
 
       {categories.length === 0 ? (
         <p className="text-xs text-gray-500">
-          Hiện chưa có danh mục tin tức. Vui lòng tạo danh mục trước.
+          Hiện chưa có danh mục khóa hoc. Vui lòng tạo danh mục trước.
         </p>
       ) : (
         <div className="space-y-4">

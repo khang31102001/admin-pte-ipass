@@ -1,4 +1,5 @@
 import { get } from "@/api/http";
+import { CategoryItem } from "@/types/category";
 
 export interface CateQueryParams {
   page?: number;
@@ -9,13 +10,13 @@ export interface CateQueryParams {
   category_type? : string;
 }
 export class CategoryService {
-    async getCateByType(params: CateQueryParams): Promise<unknown> {
+    async getCateByType(params: CateQueryParams): Promise<CategoryItem> {
          const qs = params ? '?' + new URLSearchParams(
             Object.entries(params).map(([k, v]) => [k, String(v)])
             ).toString() : '';
         const url = `/categories/category-tree${qs}`;
       const response = await get(url);
-      return response ;
+      return response as CategoryItem ;
     }
   
 }

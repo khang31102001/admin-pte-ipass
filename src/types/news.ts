@@ -1,6 +1,7 @@
+import { CategoryItem } from "./category";
 
 export interface News {
-    id: number,
+    newsId: number,
     authorId?: number;
     image?: string | null
     title?: string | null,
@@ -8,12 +9,12 @@ export interface News {
     description?: string | null; // Tóm tắt ngắn
     content?: string | null; // Nội dung chi tiết render bằng html
     categoryId?: number | null,
-    category?: string | null;
+    category?: CategoryItem;
     createdAt?: string;
     updatedAt?: string;
     authorName?: string | null;
     authorAvatar?: string | null;
-    status?: "DRAFT" | "PUBLISHED" | "ARCHIVED";
+    status?: string;
     isFeatured?: boolean;
     startDate?: string; 
     endDate?: string;   

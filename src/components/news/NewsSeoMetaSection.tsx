@@ -1,12 +1,13 @@
 // NewsSeoMetaSection.tsx
-import React, { ChangeEvent, KeyboardEvent } from "react";
+import { News } from "@/types/news";
+import React, { KeyboardEvent } from "react";
 
 interface NewsSeoMetaSectionProps {
   metaTitle: string;
   metaDescription: string;
   keywords: string[];
-  onMetaChange: (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  onChangeNewsData: (
+    update: Partial<News>
   ) => void;
   onAddKeyword: (e: KeyboardEvent<HTMLInputElement>) => void;
   onRemoveKeyword: (keyword: string) => void;
@@ -16,7 +17,7 @@ export const NewsSeoMetaSection: React.FC<NewsSeoMetaSectionProps> = ({
   metaTitle,
   metaDescription,
   keywords,
-  onMetaChange,
+  onChangeNewsData,
   onAddKeyword,
   onRemoveKeyword,
 }) => {
@@ -34,7 +35,7 @@ export const NewsSeoMetaSection: React.FC<NewsSeoMetaSectionProps> = ({
             type="text"
             name="metaTitle"
             value={metaTitle}
-            onChange={onMetaChange}
+            onChange={(e)=> onChangeNewsData({metaTitle: e.target.value})}
             className="w-full border border-[#E5E7EB] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#3E3AA7] focus:border-transparent"
             placeholder="SEO meta title"
           />
@@ -47,7 +48,7 @@ export const NewsSeoMetaSection: React.FC<NewsSeoMetaSectionProps> = ({
           <textarea
             name="metaDescription"
             value={metaDescription}
-            onChange={onMetaChange}
+            onChange={(e)=> onChangeNewsData({metaDescription: e.target.value })}
             rows={3}
             className="w-full border border-[#E5E7EB] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#3E3AA7] focus:border-transparent resize-none"
             placeholder="SEO meta description"

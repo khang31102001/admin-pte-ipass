@@ -3,12 +3,12 @@ import AuthLayout from "./AuthPageLayout";
 import SignInForm from "../../components/auth/SignInForm";
 
 export default function SignIn() {
- 
+
   return (
     <>
       <PageMeta
-        title="React.js SignIn Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-        description="This is React.js SignIn Tables Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
+        title="Đăng nhập hệ thống | PTE iPass - Trung tâm luyện thi PTE"
+        description="Trang đăng nhập dành cho hệ thống quản lý khóa học, giảng viên và học viên của PTE iPass."
       />
       <AuthLayout>
         <SignInForm />

@@ -4,21 +4,20 @@ import React, {
   ChangeEvent,
   KeyboardEvent,
 } from "react";
-import { NewsHeader } from "./NewsHeader";
+
 import { NewsBasicInfoSection } from "./NewsBasicInfoSection";
 import { NewsMediaSection } from "./NewsMediaSection";
 import { NewsSeoMetaSection } from "./NewsSeoMetaSection";
 import { NewsTagsFeaturedSection } from "./NewsTagsFeaturedSection";
-import { NewsAuthorSection } from "./NewsAuthorSection";
+// import { NewsAuthorSection } from "./NewsAuthorSection";
 import { NewsCategorySection } from "./NewsCategorySection";
 import { NewsSchedulingSection } from "./NewsSchedulingSection";
+import { CategoryItem } from "@/types/category";
+import { generateSlug } from "@/lib/helper";
+import { News } from "@/types/news";
 
 export type Mode = "create" | "update";
 
-export interface CategoryOption {
-  id: number | string;
-  name: string;
-}
 
 export interface AuthorOption {
   id: number | string;
@@ -26,36 +25,18 @@ export interface AuthorOption {
   avatarUrl?: string;
 }
 
-export interface NewsFormValues {
-  title: string;
-  slug: string;
-  description: string;
-  content: string;
-  image?: string;
-  status: "draft" | "published" | "scheduled";
-  startDate?: string;
-  endDate?: string;
-  categoryId?: string | number;
-  authorId?: string | number;
-  metaTitle: string;
-  metaDescription: string;
-  keywords: string[];
-  tags: string[];
-  isFeatured: boolean;
-}
+
 
 interface NewsFormProps {
-  mode: Mode;
-  initialValues?: Partial<NewsFormValues>;
-  categories?: CategoryOption[];
+  initialValues?: Partial<News>;
+  categories?: CategoryItem[];
   authors?: AuthorOption[];
-  onSubmit: (values: NewsFormValues) => void;
-  onCancel?: () => void;
-  onPreview?: (values: NewsFormValues) => void; // dùng cho update
-  showHeader?: boolean;
+  onSubmit: (values: News) => void;
+
 }
 
-const defaultValues: NewsFormValues = {
+const defaultValues: News = {
+  newsId: null,
   title: "",
   slug: "",
   description: "",
@@ -65,6 +46,7 @@ const defaultValues: NewsFormValues = {
   startDate: "",
   endDate: "",
   categoryId: undefined,
+  category:  null,
   authorId: undefined,
   metaTitle: "",
   metaDescription: "",
@@ -73,15 +55,6 @@ const defaultValues: NewsFormValues = {
   isFeatured: false,
 };
 
-// helper generate slug từ title
-const slugify = (value: string) =>
-  value
-    .toLowerCase()
-    .trim()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
 
 // Convert file to base64 string for sending as payload
 const fileToBase64 = (file: File) =>
@@ -93,16 +66,12 @@ const fileToBase64 = (file: File) =>
   });
 
 const NewsForm: React.FC<NewsFormProps> = ({
-  mode,
   initialValues,
   categories = [],
-  authors = [],
+
   onSubmit,
-  onCancel,
-  onPreview,
-  showHeader = true,
 }) => {
-  const [values, setValues] = useState<NewsFormValues>({
+  const [values, setValues] = useState<News>({
     ...defaultValues,
     ...initialValues,
     keywords: initialValues?.keywords ?? [],
@@ -120,25 +89,14 @@ const NewsForm: React.FC<NewsFormProps> = ({
     if (!slugManuallyEdited) {
       setValues((prev) => ({
         ...prev,
-        slug: slugify(prev.title),
+        slug: generateSlug(prev.title),
       }));
     }
   }, [values.title, slugManuallyEdited]);
 
-  const handleChange = (
-    e:
-      | ChangeEvent<HTMLInputElement>
-      | ChangeEvent<HTMLTextAreaElement>
-      | ChangeEvent<HTMLSelectElement>
-  ) => {
-    const target = e.target as HTMLInputElement;
-    const { name, value, type, checked } = target;
-    setValues((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
+  const handleChangenNewsData = (updates: Partial<News>) => {
+      setValues((prev) => ({ ...prev, ...updates }));
+    };
   const handleSlugChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSlugManuallyEdited(true);
     setValues((prev) => ({
@@ -224,26 +182,12 @@ const NewsForm: React.FC<NewsFormProps> = ({
     onSubmit(values);
   };
 
-  const handlePreviewClick = () => {
-    if (onPreview) onPreview(values);
-  };
-
-  const pageTitle = mode === "create" ? "Create News" : "Edit News";
-  const primaryButtonLabel = mode === "create" ? "Create" : "Save Changes";
+  
 
   return (
     <div className="min-h-screen bg-white text-[#1A1A1A]">
       <div className="max-w-6xl mx-auto px-4 py-8 lg:py-10">
-        {/* HEADER */}
-        {showHeader && (
-          <NewsHeader
-            pageTitle={pageTitle}
-            mode={mode}
-            primaryButtonLabel={primaryButtonLabel}
-            onPreviewClick={mode === "update" ? handlePreviewClick : undefined}
-            onCancel={onCancel}
-          />
-        )}
+
 
         {/* MAIN FORM */}
         <form id="news-form" onSubmit={handleSubmit}>
@@ -256,11 +200,11 @@ const NewsForm: React.FC<NewsFormProps> = ({
                 slug={values.slug}
                 description={values.description}
                 content={values.content}
-                onFieldChange={handleChange}
+                onChangeNewsData={handleChangenNewsData}
                 onSlugChange={handleSlugChange}
               />
 
-              <NewsMediaSection
+             <NewsMediaSection
                 coverPreview={coverPreview}
                 onCoverChange={handleCoverChange}
                 onRemoveCover={handleRemoveCover}
@@ -270,29 +214,30 @@ const NewsForm: React.FC<NewsFormProps> = ({
                 status={values.status}
                 startDate={values.startDate}
                 endDate={values.endDate}
-                onFieldChange={handleChange}
+                onChangeNewsData={handleChangenNewsData}
               />
             </div>
 
             {/* RIGHT SIDEBAR */}
             <aside className="lg:sticky lg:top-20 h-fit space-y-6 lg:space-y-7">
               <NewsCategorySection
-                categories={categories}
-                categoryId={values.categoryId}
-                onChange={handleChange}
+                categories={categories ?? []}
+                value={values.categoryId as number}
+                onChangeNewsData={()=>handleChangenNewsData}
               />
+               
 
-              <NewsAuthorSection
+              {/* <NewsAuthorSection
                 authors={authors}
                 authorId={values.authorId}
                 onChange={handleChange}
-              />
+              /> */}
 
               <NewsSeoMetaSection
                 metaTitle={values.metaTitle}
                 metaDescription={values.metaDescription}
                 keywords={values.keywords}
-                onMetaChange={handleChange}
+                onChangeNewsData={handleChangenNewsData}
                 onAddKeyword={handleAddKeyword}
                 onRemoveKeyword={handleRemoveKeyword}
               />
@@ -302,7 +247,7 @@ const NewsForm: React.FC<NewsFormProps> = ({
                 isFeatured={values.isFeatured}
                 onAddTag={handleAddTag}
                 onRemoveTag={handleRemoveTag}
-                onFeaturedChange={handleChange}
+                onChangeNewsData={handleChangenNewsData}
               />
             </aside>
           </div>

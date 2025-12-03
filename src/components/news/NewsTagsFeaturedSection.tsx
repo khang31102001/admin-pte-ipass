@@ -1,12 +1,14 @@
 // NewsTagsFeaturedSection.tsx
-import React, { ChangeEvent, KeyboardEvent } from "react";
+import React, { KeyboardEvent } from "react";
+import Switch from "../form/switch/Switch";
+import { News } from "@/types/news";
 
 interface NewsTagsFeaturedSectionProps {
   tags: string[];
   isFeatured: boolean;
   onAddTag: (e: KeyboardEvent<HTMLInputElement>) => void;
   onRemoveTag: (tag: string) => void;
-  onFeaturedChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChangeNewsData: (update: Partial<News>) => void;
 }
 
 export const NewsTagsFeaturedSection: React.FC<NewsTagsFeaturedSectionProps> = ({
@@ -14,7 +16,7 @@ export const NewsTagsFeaturedSection: React.FC<NewsTagsFeaturedSectionProps> = (
   isFeatured,
   onAddTag,
   onRemoveTag,
-  onFeaturedChange,
+  onChangeNewsData,
 }) => {
   return (
     <section className="border border-[#E5E7EB] rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] p-4 lg:p-5">
@@ -58,18 +60,11 @@ export const NewsTagsFeaturedSection: React.FC<NewsTagsFeaturedSectionProps> = (
               Display this news in featured section.
             </p>
           </div>
-          <label className="inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              name="isFeatured"
-              checked={isFeatured}
-              onChange={onFeaturedChange}
-              className="peer sr-only"
+           <Switch
+              label="Nổi bật"
+              defaultChecked={isFeatured}
+              onChange={(checked) => onChangeNewsData({ isFeatured: checked })}
             />
-            <div className="w-10 h-5 bg-gray-300 rounded-full peer-checked:bg-[#04016C] relative transition">
-              <div className="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm peer-checked:translate-x-5 transition-transform" />
-            </div>
-          </label>
         </div>
       </div>
     </section>

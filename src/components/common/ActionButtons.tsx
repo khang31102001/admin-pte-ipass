@@ -34,13 +34,13 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       {onCancel && (
-        <Button size="sm" variant="outline" onClick={onCancel}>
+        <Button size="sm" variant="outline" className="font-semibold" onClick={onCancel}>
           {cancelLabel}
         </Button>
       )}
 
       {onChange && (
-        <Button size="sm" variant="primary" onClick={onChange}>
+        <Button size="sm" variant="primary" className="font-semibold" onClick={onChange}>
           {changeLabel}
         </Button>
       )}
@@ -52,7 +52,7 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
       )}
 
       {onSave && (
-        <Button size="sm" variant="primary" onClick={onSave}>
+        <Button size="sm" variant="primary" className="font-semibold" onClick={onSave}>
           {saveLabel}
         </Button>
       )}
