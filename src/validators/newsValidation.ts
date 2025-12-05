@@ -23,9 +23,9 @@ export function validateNews(news: News): NewsValidationErrors {
   }
 
   // Category
-  if (!news.categoryId && !news.category) {
-    errors.categoryId = "Vui lòng chọn danh mục cho bài viết";
-  }
+  // if (!news.categoryId && !news.category) {
+  //   errors.categoryId = "Vui lòng chọn danh mục cho bài viết";
+  // }
 
   // Mô tả ngắn
   if (news.description && news.description.length > 250) {

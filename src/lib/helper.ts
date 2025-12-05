@@ -24,6 +24,32 @@ export const formatDate = (value?: string) => {
   });
 };
 
+export const formatDateTimeLocal = (value?: string | null): string => {
+  if (!value) return "";
+
+  // Nếu đã đúng format 'YYYY-MM-DDTHH:mm' thì trả luôn
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value)) {
+    return value;
+  }
+
+  // Còn lại coi như ISO → convert về local dạng datetime-local
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "";
+
+  const offset = d.getTimezoneOffset();
+  const local = new Date(d.getTime() - offset * 60000);
+
+  return local.toISOString().slice(0, 16); // 'YYYY-MM-DDTHH:mm'
+};
+
+export const toIsoString = (value?: string | null): string | null => {
+  if (!value) return null;
+  const d = new Date(value); // value đang là 'YYYY-MM-DDTHH:mm'
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toISOString(); // '2025-12-05T10:30:00.000Z'
+};
+
+
 export const countWords = (text: string): number => {
   return text
     .trim()

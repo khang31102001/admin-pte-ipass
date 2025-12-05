@@ -2,9 +2,7 @@ import ActionButtons from "@/components/common/ActionButtons";
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import PageMeta from "@/components/common/PageMeta";
-import NewsForm, {
-  AuthorOption,
-} from "@/components/news/NewsForm";
+import NewsForm from "@/components/news/NewsForm";
 import { ROUTES } from "@/config/routes";
 import { useCategoryQuery } from "@/hooks/category/useCategoryQuery";
 import { useLoading } from "@/hooks/loading/useLoading";
@@ -13,13 +11,10 @@ import { News } from "@/types/news";
 import { isNewsValid, NewsValidationErrors, validateNews } from "@/validators/newsValidation";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 
 
 
-const mockAuthors: AuthorOption[] = [
-  { id: 1, name: "Admin" },
-  { id: 2, name: "Hanna" },
-];
 
 const initialValues: News = {
   newsId: null,
@@ -74,23 +69,33 @@ const CreateNewsPage: React.FC = () => {
   const { data} = useCategoryQuery({categoryType: "NEWS"});
   const categories = data?.[0]?.children ?? [];
   
-    console.log("newsData:", newsData);
+    // console.log("newsData:", newsData);
 
-  const handleCreateNews = async () =>{
+  const handleCreateNews = async () => {
+  // 1. Validate trước
+  const validation = validateNews(newsData);
+  setErrors(validation);
 
-     const errors = validateNews(newsData);
-    setErrors(errors);
-    if(!isNewsValid(errors)){
-      return
-    };
-     withLoading(await newsService.createNews(newsData));
-     navigate(ROUTES.NEWS.LIST);
-
+  if (!isNewsValid(validation)) {
+    // Có thể bắn error nhỏ luôn
+    // toast.error("Vui lòng kiểm tra lại các trường bắt buộc.");
+    return;
   }
 
+  try {
+    withLoading( await newsService.createNews(newsData));
+
+    // 3. Thành công -> toast success
+    toast.success("Tạo tin tức thành công!");
+    navigate(ROUTES.NEWS.LIST);
+  } catch (error) {
+    console.error(error);
+  
+    toast.error("Có lỗi xảy ra khi tạo tin tức, vui lòng thử lại.");
+  }
+};
   const handleUpdateNewsData =  (updates:  Partial<News>) => {
      setNewsData((prev) => ({ ...prev, ...updates }));
-   
   };
 
   const handleCancel = () => {
@@ -110,18 +115,19 @@ const CreateNewsPage: React.FC = () => {
           desc="Điền thông tin để tạo tin tức mới."
           actionsSlot={
             <ActionButtons
+              cancelLabel="Hủy/Quay lại"
               onCancel={handleCancel}
-              onSave={()=>handleCreateNews}
+              onSave={handleCreateNews}
               saveLabel="Lưu"
               isSaving={isLoading}
+            
             />
           }
         >
           <NewsForm
             newsData={newsData}
             categories={categories}
-            authors={mockAuthors}
-            onSubmit={handleUpdateNewsData}
+            updateNewsData={handleUpdateNewsData}
             errors={errors}
           />
         </ComponentCard>

@@ -1,6 +1,5 @@
-// NewsSeoMetaSection.tsx
 import { News } from "@/types/news";
-import React, { KeyboardEvent } from "react";
+import React, {KeyboardEvent} from "react";
 import Switch from "../form/switch/Switch";
 
 interface NewsSeoMetaSectionProps {
@@ -12,19 +11,33 @@ interface NewsSeoMetaSectionProps {
   onChangeNewsData: (
     update: Partial<News>
   ) => void;
-  onAddKeyword: (e: KeyboardEvent<HTMLInputElement>) => void;
-  onRemoveKeyword: (keyword: string) => void;
 }
 
-export const NewsSeoMetaSection: React.FC<NewsSeoMetaSectionProps> = ({
+export const NewsSeoMetaSection = ({
   noindex = false,
   metaTitle,
   metaDescription,
   keywords,
   onChangeNewsData,
-  onAddKeyword,
-  onRemoveKeyword,
-}) => {
+}: NewsSeoMetaSectionProps) => {
+
+  const handleoAddKeyword =(e:KeyboardEvent<HTMLInputElement>)=>{
+      if(e.key === "Enter"){
+          e.preventDefault();
+          const input = e.currentTarget;
+          const value = input.value;
+          if(value && (!keywords.includes(value))){
+            onChangeNewsData({keywords: [...keywords, value]});
+          }
+
+          input.value = "";
+      }
+  }
+
+  const handleRemoveKeyword =(keyword: string)=>{
+    const removeKeywords = keywords.filter((k)=> k  !== keyword);
+    onChangeNewsData({keywords: removeKeywords})
+  }
   return (
     <section className="border border-[#E5E7EB] rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] p-4 lg:p-5">
       <h3 className="text-sm font-semibold mb-3 border-b border-[#F0F1F4] pb-2.5">
@@ -65,7 +78,7 @@ export const NewsSeoMetaSection: React.FC<NewsSeoMetaSectionProps> = ({
           </label>
           <input
             type="text"
-            onKeyDown={onAddKeyword}
+            onKeyDown={handleoAddKeyword}
             className="w-full border border-[#E5E7EB] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#3E3AA7] focus:border-transparent"
             placeholder="Press Enter to add keyword"
           />
@@ -79,7 +92,7 @@ export const NewsSeoMetaSection: React.FC<NewsSeoMetaSectionProps> = ({
                   {k}
                   <button
                     type="button"
-                    onClick={() => onRemoveKeyword(k)}
+                    onClick={() => handleRemoveKeyword(k)}
                     className="text-[10px] hover:text-red-500"
                   >
                     ✕

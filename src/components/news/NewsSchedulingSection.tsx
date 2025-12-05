@@ -47,7 +47,7 @@ export const NewsSchedulingSection: React.FC<NewsSchedulingSectionProps> = ({
       <input
         type="datetime-local"
         name="startDate"
-        value={startDate || ""}
+        value={startDate}
         onChange={(e)=> onChangeNewsData({startDate: e.target.value})}
         className="w-full border border-[#E5E7EB] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#3E3AA7] focus:border-transparent"
       />

@@ -1,7 +1,7 @@
 import React, {
   useState,
   ChangeEvent,
-  KeyboardEvent,
+  useEffect,
 } from "react";
 
 import { NewsBasicInfoSection } from "./NewsBasicInfoSection";
@@ -12,7 +12,7 @@ import { NewsTagsFeaturedSection } from "./NewsTagsFeaturedSection";
 import { NewsCategorySection } from "./NewsCategorySection";
 import { NewsSchedulingSection } from "./NewsSchedulingSection";
 import { CategoryItem } from "@/types/category";
-import { fileToBase64 } from "@/lib/helper";
+import { fileToBase64, generateSlug } from "@/lib/helper";
 import { News } from "@/types/news";
 import { NewsValidationErrors } from "@/validators/newsValidation";
 import FormErrorSummary from "../common/FormErrorSummary";
@@ -31,7 +31,7 @@ interface NewsFormProps {
   newsData?: Partial<News>;
   categories?: CategoryItem[];
   authors?: AuthorOption[];
-  onSubmit: (values: Partial<News>) => void;
+  onUpdateNewsData: (values: Partial<News>) => void;
   errors? : NewsValidationErrors;
 
 }
@@ -40,32 +40,33 @@ const NewsForm: React.FC<NewsFormProps> = ({
   newsData = null,
   categories = [],
   errors,
-  onSubmit,
+  onUpdateNewsData,
 }) => {
 
   const [coverPreview, setCoverPreview] = useState<string | undefined>(
     newsData?.image
   );
-  // const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
-
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
+  useEffect(()=>{
+    if(!slugManuallyEdited){
+      onUpdateNewsData({
+        slug: generateSlug(newsData.title)
+      })
+    }
+  }, [newsData?.title])
   
 
  
-  // const handleSlugChange = () => {
-  //   setSlugManuallyEdited(true);
-  //   // onsubmit({slug: newsData.slug});
-  // };
+   const handleSlugManualEdit = () => {
+    setSlugManuallyEdited(true);
+  };
 
   const handleCoverChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       try {
         const base64 = await fileToBase64(file);
-        onSubmit({
-          // coverImageFile: file,
-          // coverImageUrl: base64,
-          image: base64, 
-        })
+        onUpdateNewsData({ image: base64})
         setCoverPreview(base64);
       } catch (error) {
         console.error("Failed to convert file to base64", error);
@@ -74,53 +75,10 @@ const NewsForm: React.FC<NewsFormProps> = ({
   };
 
   const handleRemoveCover = () => {
-    // setValues((prev) => ({
-    //   ...prev,
-    //   coverImageFile: null,
-    //   coverImageUrl: "",
-    //   image: "",
-    // }));
+    onUpdateNewsData({image: ""});
     setCoverPreview(undefined);
   };
 
-  const handleAddKeyword = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      const target = e.target as HTMLInputElement;
-      const val = target.value.trim();
-      if (val && !newsData.keywords.includes(val)) {
-        // onsubmit({keywords: [...prev.keywords, val]})
-      }
-      target.value = "";
-    }
-  };
-
-  // const handleRemoveKeyword = (keyword: string) => {
-  //   const removeKey = newsData.keywords.filter((k) => k !== keyword);
-  //   // onsubmit.()
-  // };
-
-  // const handleAddTag = (e: KeyboardEvent<HTMLInputElement>) => {
-  //   if (e.key === "Enter") {
-  //     e.preventDefault();
-  //     const target = e.target as HTMLInputElement;
-  //     const val = target.value.trim();
-  //     if (val && !newsData.tags.includes(val)) {
-  //       setValues((prev) => ({
-  //         ...prev,
-  //         tags: [...prev.tags, val],
-  //       }));
-  //     }
-  //     target.value = "";
-  //   }
-  // };
-
-  // const handleRemoveTag = (tag: string) => {
-  //   setValues((prev) => ({
-  //     ...prev,
-  //     tags: prev.tags.filter((t) => t !== tag),
-  //   }));
-  // };
 
 
 
@@ -136,8 +94,9 @@ const NewsForm: React.FC<NewsFormProps> = ({
                 slug={newsData.slug}
                 description={newsData.description}
                 content={newsData.content}
-                onChangeNewsData={onSubmit}
-                // onSlugChange={()=>console.log("sử lý lại")}
+                onChangeNewsData={onUpdateNewsData}
+                onSlugManualEdit={handleSlugManualEdit}
+            
               />
 
              <NewsMediaSection
@@ -150,7 +109,7 @@ const NewsForm: React.FC<NewsFormProps> = ({
                 status={newsData.status}
                 startDate={newsData.startDate}
                 endDate={newsData.endDate}
-                onChangeNewsData={onSubmit}
+                onChangeNewsData={onUpdateNewsData}
               />
             </div>
 
@@ -159,7 +118,7 @@ const NewsForm: React.FC<NewsFormProps> = ({
               <NewsCategorySection
                 categories={categories ?? []}
                 value={newsData.categoryId as number}
-                onChange={(cateId)=>onSubmit({categoryId: Number(cateId) })}
+                onChange={(cateId)=>onUpdateNewsData({categoryId: Number(cateId) })}
               />
                 
 
@@ -173,17 +132,13 @@ const NewsForm: React.FC<NewsFormProps> = ({
                 metaTitle={newsData.metaTitle}
                 metaDescription={newsData.metaDescription}
                 keywords={newsData.keywords}
-                onChangeNewsData={onSubmit}
-                onAddKeyword={handleAddKeyword}
-                onRemoveKeyword={()=>console.log("chưa sử lý")}
+                onChangeNewsData={onUpdateNewsData}
               />
 
               <NewsTagsFeaturedSection
                 tags={newsData.tags}
                 isFeatured={newsData.isFeatured}
-                onAddTag={()=>console.log("chưa sử lý")}
-                onRemoveTag={()=>console.log("chưa sử lý")}
-                onChangeNewsData={onSubmit}
+                onChangeNewsData={onUpdateNewsData}
               />
             </aside>
           </div>

@@ -6,8 +6,7 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import PageMeta from "@/components/common/PageMeta";
 import NewsForm, {
   AuthorOption,
-  CategoryOption,
-  NewsFormValues,
+
 } from "@/components/news/NewsForm";
 import { ROUTES } from "@/config/routes";
 import { newsService } from "@/services/news/newsService";
@@ -25,7 +24,7 @@ const mockAuthors: AuthorOption[] = [
 
 const normalizeStatus = (
   status?: News["status"]
-): NewsFormValues["status"] => {
+): News["status"] => {
   if (!status) return "draft";
   const normalized = status.toString().toLowerCase();
   if (normalized === "published") return "published";
@@ -33,7 +32,7 @@ const normalizeStatus = (
   return "draft";
 };
 
-const mapNewsToFormValues = (news: News): NewsFormValues => ({
+const mapNewsToFormValues = (news: News): News => ({
   title: news.title ?? "",
   slug: news.slug ?? "",
   description: news.description ?? "",
@@ -54,7 +53,7 @@ const mapNewsToFormValues = (news: News): NewsFormValues => ({
 const EditNewsPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const [initialValues, setInitialValues] = useState<NewsFormValues | null>(
+  const [initialValues, setInitialValues] = useState<News | null>(
     null
   );
   const [newsId, setNewsId] = useState<number | null>(null);
@@ -66,7 +65,7 @@ const EditNewsPage: React.FC = () => {
       setLoading(true);
       try {
         const detail: News = await newsService.getNewsDetail({ slug });
-        setNewsId(detail?.id ?? null);
+        setNewsId(detail?.newsId ?? null);
         setInitialValues(mapNewsToFormValues(detail));
       } catch (error) {
         console.error("Failed to fetch news detail:", error);
@@ -78,12 +77,8 @@ const EditNewsPage: React.FC = () => {
     fetchNewsDetail();
   }, [slug]);
 
-  const submitForm = () => {
-    const form = document.getElementById("news-form") as HTMLFormElement | null;
-    form?.requestSubmit();
-  };
 
-  const handleUpdateNews = async (values: NewsFormValues) => {
+  const handleUpdateNews = async (values: Partial<News>) => {
     if (!newsId) return;
     try {
       await newsService.updateNews(newsId, values);
@@ -113,7 +108,7 @@ const EditNewsPage: React.FC = () => {
           actionsSlot={
             <ActionButtons
               saveLabel="Lưu thay đổi"
-              onSave={submitForm}
+              onSave={()=>console.log("sử lý lại")}
               onCancel={handleCancel}
             />
           }
@@ -124,13 +119,10 @@ const EditNewsPage: React.FC = () => {
             </div>
           ) : initialValues ? (
             <NewsForm
-              mode="update"
-              initialValues={initialValues}
+              newsData={initialValues}
               categories={mockCategories}
               authors={mockAuthors}
-              onSubmit={handleUpdateNews}
-              onCancel={handleCancel}
-              showHeader={false}
+              onUpdateNewsData={handleUpdateNews}
             />
           ) : (
             <div className="py-10 text-center text-sm text-red-500">

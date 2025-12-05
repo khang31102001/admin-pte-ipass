@@ -9,6 +9,7 @@ interface NewsBasicInfoSectionProps {
   description: string;
   content: string;
   onChangeNewsData: (update: Partial<News>) => void;
+  onSlugManualEdit?: () => void;
 
 }
 
@@ -18,6 +19,7 @@ export const NewsBasicInfoSection: React.FC<NewsBasicInfoSectionProps> = ({
   description,
   content,
   onChangeNewsData,
+  onSlugManualEdit
 
 }) => {
   return (
@@ -50,7 +52,10 @@ export const NewsBasicInfoSection: React.FC<NewsBasicInfoSectionProps> = ({
             type="text"
             name="slug"
             value={slug}
-            onChange={(e)=> onChangeNewsData({slug: e.target.value })}
+            onChange={(e)=> {
+              onSlugManualEdit();
+              onChangeNewsData({slug: e.target.value})
+            }}
             className="w-full border border-[#E5E7EB] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#3E3AA7] focus:border-transparent"
             placeholder="tu-dong-tao-tu-tieu-de"
           />
