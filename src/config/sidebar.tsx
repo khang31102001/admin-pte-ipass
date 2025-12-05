@@ -1,6 +1,6 @@
 // src/config/sidebar.tsx
-import { BookOpen, Newspaper, UserCog } from "lucide-react";
-import { UserCircleIcon, PageIcon, PieChartIcon, BoxCubeIcon, PlugInIcon } from "../icons";
+import { BookOpen, InfoIcon, Newspaper, UserCog } from "lucide-react";
+import {  PageIcon, PieChartIcon, BoxCubeIcon, PlugInIcon } from "../icons";
 import { ROUTES } from "./routes";
 // hoặc import từ chỗ bạn đang dùng hiện tại
 
@@ -19,24 +19,25 @@ export type NavItem = {
 };
 
 export const mainNavItems: NavItem[] = [
-  
+
   {
     name: "Quản lý khóa học",
-    icon: <BookOpen  />,
+    icon: <BookOpen />,
     path: ROUTES.COURSES.LIST,
   },
   {
     name: "Quản lý tin tức",
-    icon: <Newspaper  />,
+    icon: <Newspaper />,
     path: ROUTES.NEWS.LIST,
   },
   {
-    icon: <UserCircleIcon />,
-    name: "Quản lý học sinh",
-    path: "/students",
+    icon: <InfoIcon />,
+    name: "Về chúng tôi",
+    path: ROUTES.ABOUT.ROOT,
   },
+
   {
-    icon: <UserCog  />,
+    icon: <UserCog />,
     name: "Quản lý giáo viên",
     path: "/teachers",
   },

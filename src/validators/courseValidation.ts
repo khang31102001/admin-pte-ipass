@@ -1,16 +1,8 @@
+import { countWords, isEmpty } from "@/lib/helper";
 import { Course } from "@/types/courses";
 
-export type CourseValidationErrors = Partial<Record<keyof Course, string>>;
 
-export const countWords = (text: string): number => {
-  return text
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .length;
-};
-const isEmpty = (value: unknown) =>
-  value === null || value === undefined || String(value).trim() === "";
+export type CourseValidationErrors = Partial<Record<keyof Course, string>>;
 
 // Tùy luật của bạn, mình đưa ví dụ cơ bản:
 export function validateCourse(course: Course): CourseValidationErrors {
@@ -33,10 +25,10 @@ export function validateCourse(course: Course): CourseValidationErrors {
     errors.level = "Vui lòng chọn level";
   }
 
-  // // Category
-  // if (!course.categoryId && !course.category) {
-  //   errors.categoryId = "Vui lòng chọn danh mục cho khóa học";
-  // }
+  // Category
+  if (!course.categoryId && !course.category) {
+    errors.categoryId = "Vui lòng chọn danh mục cho khóa học";
+  }
 
   // Mô tả ngắn
   if (course.description && course.description.length > 250) {

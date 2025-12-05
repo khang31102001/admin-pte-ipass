@@ -23,3 +23,20 @@ export const formatDate = (value?: string) => {
     day: "numeric",
   });
 };
+
+export const countWords = (text: string): number => {
+  return text
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean).length;
+};
+
+export const isEmpty = (value: unknown) => value === null || value === undefined || String(value).trim() === "";
+
+export const fileToBase64 = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(new Error("Failed to read file"));
+    reader.readAsDataURL(file);
+  });

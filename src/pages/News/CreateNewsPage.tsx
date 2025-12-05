@@ -7,8 +7,11 @@ import NewsForm, {
 } from "@/components/news/NewsForm";
 import { ROUTES } from "@/config/routes";
 import { useCategoryQuery } from "@/hooks/category/useCategoryQuery";
+import { useLoading } from "@/hooks/loading/useLoading";
 import { newsService } from "@/services/news/newsService";
 import { News } from "@/types/news";
+import { isNewsValid, NewsValidationErrors, validateNews } from "@/validators/newsValidation";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 
 
@@ -18,26 +21,76 @@ const mockAuthors: AuthorOption[] = [
   { id: 2, name: "Hanna" },
 ];
 
+const initialValues: News = {
+  newsId: null,
+  title: "",
+  slug: "",
+  description: "",
+  content: "",
+  image: "",
+  status: "draft",
+  startDate: "",
+  endDate: "",
+  categoryId: undefined,
+  category:  null,
+  authorId: undefined,
+  metaTitle: "",
+  metaDescription: "",
+  keywords: [],
+  tags: [],
+  isFeatured: false,
+};
+const defaultValues: News = {
+  newsId: null,
+  title: "abc",
+  slug: "",
+  description: "",
+  content: "",
+  image: "",
+  status: "draft",
+  startDate: "",
+  endDate: "",
+  categoryId: undefined,
+  category:  null,
+  authorId: undefined,
+  metaTitle: "",
+  metaDescription: "",
+  keywords: [],
+  tags: [],
+  isFeatured: false,
+};
+
 const CreateNewsPage: React.FC = () => {
+  const [newsData, setNewsData] = useState<News>({
+       ...defaultValues,
+    ...initialValues,
+    keywords: initialValues?.keywords ?? [],
+    tags: initialValues?.tags ?? [],
+    image: initialValues?.image ?? "",
+  });
+  const [errors, setErrors] = useState<NewsValidationErrors>({});
   const navigate = useNavigate();
+  const {withLoading, isLoading} =useLoading();
   const { data} = useCategoryQuery({categoryType: "NEWS"});
-    const categories = data?.[0]?.children ?? [];
+  const categories = data?.[0]?.children ?? [];
   
-    console.log("categories data:", categories);
+    console.log("newsData:", newsData);
 
-  const submitForm = () => {
-    const form = document.getElementById("news-form") as HTMLFormElement | null;
-    form?.requestSubmit();
-  };
+  const handleCreateNews = async () =>{
 
-  const handleCreateNews = async (values: News) => {
-    try {
-      console.log("Creating news with values:", values);
-      await newsService.createNews(values);
-      navigate(ROUTES.NEWS.LIST);
-    } catch (error) {
-      console.error("Failed to create news:", error);
-    }
+     const errors = validateNews(newsData);
+    setErrors(errors);
+    if(!isNewsValid(errors)){
+      return
+    };
+     withLoading(await newsService.createNews(newsData));
+     navigate(ROUTES.NEWS.LIST);
+
+  }
+
+  const handleUpdateNewsData =  (updates:  Partial<News>) => {
+     setNewsData((prev) => ({ ...prev, ...updates }));
+   
   };
 
   const handleCancel = () => {
@@ -58,15 +111,18 @@ const CreateNewsPage: React.FC = () => {
           actionsSlot={
             <ActionButtons
               onCancel={handleCancel}
-              onSave={submitForm}
+              onSave={()=>handleCreateNews}
               saveLabel="Lưu"
+              isSaving={isLoading}
             />
           }
         >
           <NewsForm
+            newsData={newsData}
             categories={categories}
             authors={mockAuthors}
-            onSubmit={handleCreateNews}
+            onSubmit={handleUpdateNewsData}
+            errors={errors}
           />
         </ComponentCard>
       </div>

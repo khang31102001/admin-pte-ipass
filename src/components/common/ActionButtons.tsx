@@ -1,7 +1,10 @@
 import type React from "react";
 import Button from "@/components/ui/button/Button";
+import { Loader } from "lucide-react";
 
 export interface ActionButtonsProps {
+
+  isSaving?: boolean;
   // callback đều optional – có thì mới hiện nút
   onSave?: () => void;
   onCancel?: () => void;
@@ -18,6 +21,7 @@ export interface ActionButtonsProps {
 }
 
 export const ActionButtons: React.FC<ActionButtonsProps> = ({
+  isSaving = false,
   onSave,
   onCancel,
   onUpdate,
@@ -34,25 +38,26 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       {onCancel && (
-        <Button size="sm" variant="outline" className="font-semibold" onClick={onCancel}>
+        <Button  size="sm" variant="outline" className="font-semibold" onClick={onCancel}>
           {cancelLabel}
         </Button>
       )}
 
       {onChange && (
-        <Button size="sm" variant="primary" className="font-semibold" onClick={onChange}>
+        <Button disabled={isSaving} size="sm" variant="primary" className="font-semibold" onClick={onChange}>
           {changeLabel}
         </Button>
       )}
 
       {onUpdate && (
-        <Button size="sm" onClick={onUpdate}>
+        <Button disabled={isSaving} size="sm" onClick={onUpdate}>
           {updateLabel}
         </Button>
       )}
 
       {onSave && (
-        <Button size="sm" variant="primary" className="font-semibold" onClick={onSave}>
+        <Button disabled={isSaving} size="sm" variant="primary" className="font-semibold" onClick={onSave}>
+          {isSaving && <Loader />}
           {saveLabel}
         </Button>
       )}

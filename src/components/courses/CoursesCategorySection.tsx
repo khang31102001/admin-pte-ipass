@@ -1,23 +1,36 @@
-
 import React, { useMemo, useState, useEffect } from "react";
 import SearchSelect, { Option } from "../form/SearchSelect";
 import Label from "../form/Label";
 import { CategoryItem } from "@/types/category";
 
-
-
 interface CoursesCategorySectionProps {
   categories: CategoryItem[];
-  value?: number | null; 
-  onChange: (categoryId: number | string) => void;
+  value?: number | null;
+  onChange: (categoryId: number | string | null) => void;
 }
 
 // Helper lấy id & parentId cho chắc (tùy backend đặt tên)
 const getId = (cate: CategoryItem) =>
-  (cate as any).categoryId ?? (cate as any).category_id;
+  (cate as any).categoryId ?? (cate as any).id;
 
 const getParentId = (cate: CategoryItem) =>
   (cate as any).parentId ?? (cate as any).parent_id ?? null;
+
+// Đệ quy tìm category trong tree theo id
+const findCategoryById = (
+  items: CategoryItem[],
+  id: number
+): CategoryItem | null => {
+  for (const item of items) {
+    if (getId(item) === id) return item;
+
+    if (item.children?.length) {
+      const found = findCategoryById(item.children, id);
+      if (found) return found;
+    }
+  }
+  return null;
+};
 
 export const CoursesCategorySection: React.FC<CoursesCategorySectionProps> = ({
   categories,
@@ -26,68 +39,53 @@ export const CoursesCategorySection: React.FC<CoursesCategorySectionProps> = ({
 }) => {
   const [selectedParentId, setSelectedParentId] = useState<number | null>(null);
   const [selectedChildId, setSelectedChildId] = useState<number | null>(null);
-  const [selectedGrandChildId, setSelectedGrandChildId] = useState<number | null>(null);
+  const [selectedGrandChildId, setSelectedGrandChildId] =
+    useState<number | null>(null);
 
-  // Đồng bộ state khi edit (có value từ ngoài truyền vào)
-  useEffect(() => {
-    if (!value) {
-      setSelectedParentId(null);
-      setSelectedChildId(null);
-      setSelectedGrandChildId(null);
-      return;
-    }
+ useEffect(() => {
+  // Không reset state khi value = null, chỉ sync khi có id
+  if (value == null) return;
 
-    const selected = categories.find((c) => getId(c) === value);
-    if (!selected) return;
+  const selectedId = Number(value);
+  const selected = findCategoryById(categories, selectedId);
+  if (!selected) return;
 
-    const child = selected;
-    const parent = categories.find((c) => getId(c) === getParentId(child));
-    const grandParent =
-      parent && getParentId(parent)
-        ? categories.find((c) => getId(c) === getParentId(parent))
-        : null;
+  const parentId = getParentId(selected);
+  const parent = parentId ? findCategoryById(categories, parentId) : null;
 
-    if (grandParent && parent) {
-      // 3 cấp: grandParent -> parent -> child
-      setSelectedParentId(getId(grandParent));
-      setSelectedChildId(getId(parent));
-      setSelectedGrandChildId(getId(child));
-    } else if (parent) {
-      // 2 cấp: parent -> child
-      setSelectedParentId(getId(parent));
-      setSelectedChildId(getId(child));
-      setSelectedGrandChildId(null);
-    } else {
-      // 1 cấp: chỉ có chính nó
-      setSelectedParentId(getId(child));
-      setSelectedChildId(null);
-      setSelectedGrandChildId(null);
-    }
-  }, [value, categories]);
+  const grandParentId = parent ? getParentId(parent) : null;
+  const grandParent = grandParentId
+    ? findCategoryById(categories, grandParentId)
+    : null;
 
-  // Cấp 1: các category không có parent
-  const parentCategories = useMemo(
-    () => categories.filter((c) => !getParentId(c)),
-    [categories]
-  );
+  if (grandParent && parent) {
+    setSelectedParentId(getId(grandParent));
+    setSelectedChildId(getId(parent));
+    setSelectedGrandChildId(getId(selected));
+  } else if (parent) {
+    setSelectedParentId(getId(parent));
+    setSelectedChildId(getId(selected));
+    setSelectedGrandChildId(null);
+  } else {
+    setSelectedParentId(getId(selected));
+    setSelectedChildId(null);
+    setSelectedGrandChildId(null);
+  }
+}, [value, categories]);
 
-  // Cấp 2: con của parent
-  const childCategories = useMemo(
-    () =>
-      selectedParentId
-        ? categories.filter((c) => getParentId(c) === selectedParentId)
-        : [],
-    [categories, selectedParentId]
-  );
+  // Cấp 2: children của parent đã chọn
+  const childCategories = useMemo(() => {
+    if (!selectedParentId) return [];
+    const parent = findCategoryById(categories, selectedParentId);
+    return parent?.children ?? [];
+  }, [categories, selectedParentId]);
 
-  // Cấp 3: con của child
-  const grandChildCategories = useMemo(
-    () =>
-      selectedChildId
-        ? categories.filter((c) => getParentId(c) === selectedChildId)
-        : [],
-    [categories, selectedChildId]
-  );
+  // Cấp 3: children của child đã chọn
+  const grandChildCategories = useMemo(() => {
+    if (!selectedChildId) return [];
+    const child = findCategoryById(categories, selectedChildId);
+    return child?.children ?? [];
+  }, [categories, selectedChildId]);
 
   const toOptions = (list: CategoryItem[]): Option[] =>
     list.map((cate) => ({
@@ -95,8 +93,12 @@ export const CoursesCategorySection: React.FC<CoursesCategorySectionProps> = ({
       value: String(getId(cate)),
     }));
 
-  const parentOptions = useMemo(() => toOptions(parentCategories), [parentCategories]);
-  const childOptions = useMemo(() => toOptions(childCategories), [childCategories]);
+  // Cấp 1: root categories (mảng categories bạn truyền vào đã là root)
+  const parentOptions = useMemo(() => toOptions(categories), [categories]);
+  const childOptions = useMemo(
+    () => toOptions(childCategories),
+    [childCategories]
+  );
   const grandChildOptions = useMemo(
     () => toOptions(grandChildCategories),
     [grandChildCategories]
@@ -112,30 +114,44 @@ export const CoursesCategorySection: React.FC<CoursesCategorySectionProps> = ({
     grandChildOptions.find((opt) => opt.value === String(selectedGrandChildId)) ??
     null;
 
-  // Khi chọn parent
+  // Khi chọn parent (cấp 1)
   const handleChangeParent = (valueStr: string) => {
     const id = Number(valueStr) || null;
     setSelectedParentId(id);
     setSelectedChildId(null);
     setSelectedGrandChildId(null);
 
-    const hasChildren = categories.some((c) => getParentId(c) === id);
-    // Nếu không có con -> chọn luôn parent
-    onChange(hasChildren ?  null: id );
+    if (id === null) {
+      onChange(null);
+      return;
+    }
+
+    const parent = findCategoryById(categories, id);
+    const hasChildren = !!parent?.children?.length;
+
+    // Nếu không có con -> chọn luôn parent là category cuối
+    onChange(hasChildren ? null : id);
   };
 
-  // Khi chọn child
+  // Khi chọn child (cấp 2)
   const handleChangeChild = (valueStr: string) => {
     const id = Number(valueStr) || null;
     setSelectedChildId(id);
     setSelectedGrandChildId(null);
 
-    const hasGrandChildren = categories.some((c) => getParentId(c) === id);
+    if (id === null) {
+      onChange(null);
+      return;
+    }
+
+    const child = findCategoryById(categories, id);
+    const hasChildren = !!child?.children?.length;
+
     // Nếu không có cháu -> chọn child làm category cuối
-    onChange(hasGrandChildren ? null : id);
+    onChange(hasChildren ? null : id);
   };
 
-  // Khi chọn grand child
+  // Khi chọn grand child (cấp 3)
   const handleChangeGrandChild = (valueStr: string) => {
     const id = Number(valueStr) || null;
     setSelectedGrandChildId(id);
@@ -150,7 +166,7 @@ export const CoursesCategorySection: React.FC<CoursesCategorySectionProps> = ({
 
       {categories.length === 0 ? (
         <p className="text-xs text-gray-500">
-          Hiện chưa có danh mục khóa hoc. Vui lòng tạo danh mục trước.
+          Hiện chưa có danh mục. Vui lòng tạo danh mục trước.
         </p>
       ) : (
         <div className="space-y-4">
@@ -161,6 +177,7 @@ export const CoursesCategorySection: React.FC<CoursesCategorySectionProps> = ({
             </Label>
             <div className="w-full mt-2">
               <SearchSelect
+              key={`parentOptions`}
                 options={parentOptions}
                 value={selectedParentOption}
                 onChange={(opt) => handleChangeParent(opt.value)}
@@ -177,6 +194,7 @@ export const CoursesCategorySection: React.FC<CoursesCategorySectionProps> = ({
               </Label>
               <div className="w-full mt-2">
                 <SearchSelect
+                  key={`childOptions${selectedParentId}`}
                   options={childOptions}
                   value={selectedChildOption}
                   onChange={(opt) => handleChangeChild(opt.value)}
@@ -189,11 +207,15 @@ export const CoursesCategorySection: React.FC<CoursesCategorySectionProps> = ({
           {/* Grand child */}
           {grandChildOptions.length > 0 && (
             <div>
-              <Label htmlFor="category-grandchild" className="text-sm font-medium">
+              <Label
+                htmlFor="category-grandchild"
+                className="text-sm font-medium"
+              >
                 Danh mục cấp 3
               </Label>
               <div className="w-full mt-2">
                 <SearchSelect
+                  key={`grand-${selectedChildId}`} 
                   options={grandChildOptions}
                   value={selectedGrandChildOption}
                   onChange={(opt) => handleChangeGrandChild(opt.value)}

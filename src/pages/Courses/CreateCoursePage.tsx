@@ -7,13 +7,14 @@ import {
   CourseValidationErrors,
   isCourseValid,
   validateCourse,
-} from "@/components/validators/courseValidation";
+} from "@/validators/courseValidation";
 import { ROUTES } from "@/config/routes";
 import { Course } from "@/types/courses";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { courseService } from "@/services/course/courseService";
 import { useCategoryQuery } from "@/hooks/category/useCategoryQuery";
+import { useLoading } from "@/hooks/loading/useLoading";
 
 export default function CreateCoursePage() {
   const [courseData, setCourseData] = useState<Course>({
@@ -40,10 +41,11 @@ export default function CreateCoursePage() {
   });
   const [errors, setErrors] = useState<CourseValidationErrors>({});
   const navigate = useNavigate();
+  const {withLoading, isLoading} = useLoading();
   const { data} = useCategoryQuery({categoryType: "COURSE_MENU"});
   const categories = data?.[0]?.children ?? [];
 
-  console.log("categories data:", categories);
+  // console.log("categories data:", categories);
 
   const updateCourseData = (updates: Partial<Course>) => {
     setCourseData((prev) => ({ ...prev, ...updates }));
@@ -58,12 +60,8 @@ export default function CreateCoursePage() {
       // toast.error("Vui lòng kiểm tra lại thông tin khóa học");
       return;
     }
-    try {
-      await courseService.createCourse(courseData);
-      navigate(ROUTES.COURSES.LIST);
-    } catch (error) {
-      console.error("Failed to create course:", error);
-    }
+    withLoading(await courseService.createCourse(courseData));
+    navigate(ROUTES.NEWS.LIST);
   };
 
   return (
@@ -81,6 +79,7 @@ export default function CreateCoursePage() {
             <ActionButtons
               onCancel={() => navigate(ROUTES.COURSES.LIST)}
               onSave={handleSave}
+              isSaving={isLoading}
             />
           }
         >

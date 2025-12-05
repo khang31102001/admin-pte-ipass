@@ -25,6 +25,8 @@ import NewsDetailPage from "@/pages/News/NewsDetailPage";
 import UpdateCoursePage from "@/pages/Courses/UpdateCoursesPage";
 import CourseDetailPage from "@/pages/Courses/CourseDetailPage";
 
+import CreateAboutPage from "@/pages/about/CreateAboutPage";
+
 export const protectedRoutes: RouteObject[] = [
   {
     path: "/",
@@ -114,6 +116,22 @@ export const protectedRoutes: RouteObject[] = [
           },
         ],
       },
+
+       {
+        path: "abouts",
+        children: [
+          {
+            index: true,
+            element: <CreateAboutPage />,
+          },
+          {
+            path: "create",
+            element: <CreateAboutPage />,
+          },
+ 
+        ],
+      },
+
 
       // //knowledges
       {

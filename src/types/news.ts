@@ -22,6 +22,8 @@ export interface News {
     metaDescription?: string;
     tags?: string[];
     keywords?: string[];
+    noindex?: boolean; 
+    canonical?: string | null;
 }
 
 export interface NewsItemsRes {

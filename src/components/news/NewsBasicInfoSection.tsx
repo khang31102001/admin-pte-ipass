@@ -1,5 +1,5 @@
 // NewsBasicInfoSection.tsx
-import React, { ChangeEvent } from "react";
+import React from "react";
 import RichTextEditor from "../ui/textEditor/RichTextEditor";
 import { News } from "@/types/news";
 
@@ -9,7 +9,7 @@ interface NewsBasicInfoSectionProps {
   description: string;
   content: string;
   onChangeNewsData: (update: Partial<News>) => void;
-  onSlugChange: (e: ChangeEvent<HTMLInputElement>) => void;
+
 }
 
 export const NewsBasicInfoSection: React.FC<NewsBasicInfoSectionProps> = ({
@@ -18,7 +18,7 @@ export const NewsBasicInfoSection: React.FC<NewsBasicInfoSectionProps> = ({
   description,
   content,
   onChangeNewsData,
-  onSlugChange,
+
 }) => {
   return (
     <section className="border border-[#E5E7EB] rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] p-5 lg:p-6">
@@ -50,7 +50,7 @@ export const NewsBasicInfoSection: React.FC<NewsBasicInfoSectionProps> = ({
             type="text"
             name="slug"
             value={slug}
-            onChange={onSlugChange}
+            onChange={(e)=> onChangeNewsData({slug: e.target.value })}
             className="w-full border border-[#E5E7EB] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#3E3AA7] focus:border-transparent"
             placeholder="tu-dong-tao-tu-tieu-de"
           />

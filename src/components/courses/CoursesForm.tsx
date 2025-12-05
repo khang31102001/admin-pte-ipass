@@ -9,7 +9,7 @@ import { Course } from "@/types/courses";
 import { ContentTab } from "@/components/courses";
 import Tabs from "../common/Tabs";
 import { CategoryItem } from "@/types/category";
-import { CourseValidationErrors } from "../validators/courseValidation";
+import { CourseValidationErrors } from "../../validators/courseValidation";
 import FormErrorSummary from "../common/FormErrorSummary";
 
 export type TabValue = "basic" | "content" | "time-tuition" | "seo";

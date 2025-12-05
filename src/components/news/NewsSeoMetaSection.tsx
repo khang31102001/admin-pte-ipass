@@ -1,11 +1,14 @@
 // NewsSeoMetaSection.tsx
 import { News } from "@/types/news";
 import React, { KeyboardEvent } from "react";
+import Switch from "../form/switch/Switch";
 
 interface NewsSeoMetaSectionProps {
   metaTitle: string;
   metaDescription: string;
   keywords: string[];
+  canonical?: string | null;
+  noindex?: boolean; 
   onChangeNewsData: (
     update: Partial<News>
   ) => void;
@@ -14,6 +17,7 @@ interface NewsSeoMetaSectionProps {
 }
 
 export const NewsSeoMetaSection: React.FC<NewsSeoMetaSectionProps> = ({
+  noindex = false,
   metaTitle,
   metaDescription,
   keywords,
@@ -84,6 +88,20 @@ export const NewsSeoMetaSection: React.FC<NewsSeoMetaSectionProps> = ({
               ))}
             </div>
           )}
+        </div>
+
+        <div>
+          <Switch
+              label="Allow indexing"
+              defaultChecked={!noindex}
+              onChange={(val) => 
+                onChangeNewsData({ noindex: !val })
+              }
+              color="blue"
+            />
+            <p className="mt-2 text-sm text-gray-500">
+              Nếu tắt, bài viết sẽ không được index bởi Google.
+            </p>
         </div>
       </div>
     </section>

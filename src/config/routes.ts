@@ -29,6 +29,12 @@ export const ROUTES = {
     DETAIL: (slug: string) => `/news/detail/${slug}`,
   },
 
+    ABOUT: {
+    ROOT: "/abouts",
+    LIST: "/abouts",
+    CREATE: "/abouts/create",
+  },
+
   KNOWLEDGES: "/knowledges",
   ALERTS: "/alerts",
   AVATARS: "/avatars",

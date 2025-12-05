@@ -7,7 +7,7 @@ import {
   CourseValidationErrors,
   isCourseValid,
   validateCourse,
-} from "@/components/validators/courseValidation";
+} from "@/validators/courseValidation";
 import { ROUTES } from "@/config/routes";
 import { Course } from "@/types/courses";
 import { useState } from "react";
