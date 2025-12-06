@@ -29,6 +29,12 @@ export class NewsService {
   }
 
   async updateNews(id: number, data: any): Promise<any> {
+    if (data instanceof FormData) {
+      const response = await api.put(`/news/${id}`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return response.data;
+    }
     const response = await put(`/news/${id}`, data);
     return response;
   }

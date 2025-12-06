@@ -1,3 +1,4 @@
+import api from "@/api/axiosClient";
 import { About } from "@/types/about";
 import { get, post, put, httpDelete } from "@/api/http";
 
@@ -13,11 +14,23 @@ export class AboutService {
   }
 
   async createAbout(data: Partial<About>): Promise<About> {
+    if (data instanceof FormData) {
+      const response = await api.post("/abouts", data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return response.data as About;
+    }
     const response = await post("/abouts", data);
     return response as About;
   }
 
   async updateAbout(id: number, data: Partial<About>): Promise<About> {
+    if (data instanceof FormData) {
+      const response = await api.put(`/abouts/${id}`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return response.data as About;
+    }
     const response = await put(`/abouts/${id}`, data);
     return response as About;
   }
