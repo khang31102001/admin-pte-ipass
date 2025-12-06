@@ -2,7 +2,7 @@ import { CategoryItem } from "./category";
 
 export interface News {
     newsId: number,
-    authorId?: number;
+    author?: number;
     image?: string | null
     title?: string | null,
     slug?: string,

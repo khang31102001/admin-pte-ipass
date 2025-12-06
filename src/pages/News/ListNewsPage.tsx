@@ -63,8 +63,8 @@ function createNewsColumns({
     },
     { key: "newsId", header: "ID" },
     { key: "title", header: "Title" },
-    { key: "category", header: "Category" },
-    { key: "authorName", header: "Author" },
+    { key: "categoryType", header: "Category type" },
+    { key: "author", header: "Author" },
     { key: "status", header: "Status" },
     {
       key: "createdAt",

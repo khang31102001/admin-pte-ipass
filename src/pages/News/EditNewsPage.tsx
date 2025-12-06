@@ -12,7 +12,7 @@ import { ROUTES } from "@/config/routes";
 import { newsService } from "@/services/news/newsService";
 import { News } from "@/types/news";
 
-const mockCategories: CategoryOption[] = [
+const mockCategories: any[] = [
   { id: 1, name: "PTE Tips" },
   { id: 2, name: "PTE Exam News" },
 ];
@@ -33,6 +33,7 @@ const normalizeStatus = (
 };
 
 const mapNewsToFormValues = (news: News): News => ({
+  newsId: news.newsId,
   title: news.title ?? "",
   slug: news.slug ?? "",
   description: news.description ?? "",
@@ -42,7 +43,7 @@ const mapNewsToFormValues = (news: News): News => ({
   startDate: news.startDate ?? "",
   endDate: news.endDate ?? "",
   categoryId: news.categoryId ?? undefined,
-  authorId: news.authorId ?? undefined,
+  author: news.author ?? undefined,
   metaTitle: news.metaTitle ?? "",
   metaDescription: news.metaDescription ?? "",
   keywords: news.keywords ?? [],

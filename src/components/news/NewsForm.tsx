@@ -124,7 +124,7 @@ const NewsForm: React.FC<NewsFormProps> = ({
 
               {/* <NewsAuthorSection
                 authors={authors}
-                authorId={values.authorId}
+                author={values.author}
                 onChange={handleChange}
               /> */}
 

@@ -9,17 +9,17 @@ interface AuthorOption {
 
 interface NewsAuthorSectionProps {
   authors: AuthorOption[];
-  authorId?: string | number;
+  author?: string | number;
   onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
 }
 
 export const NewsAuthorSection: React.FC<NewsAuthorSectionProps> = ({
   authors,
-  authorId,
+  author,
   onChange,
 }) => {
-  const currentAuthor = authorId
-    ? authors.find((a) => a.id.toString() === authorId.toString())
+  const currentAuthor = author
+    ? authors.find((a) => a.id.toString() === author.toString())
     : undefined;
 
   return (
@@ -31,8 +31,8 @@ export const NewsAuthorSection: React.FC<NewsAuthorSectionProps> = ({
         <div>
           <label className="block text-xs font-medium mb-1.5">Author</label>
           <select
-            name="authorId"
-            value={authorId?.toString() || ""}
+            name="author"
+            value={author?.toString() || ""}
             onChange={onChange}
             className="w-full border border-[#E5E7EB] rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#3E3AA7] focus:border-transparent"
           >
