@@ -83,6 +83,7 @@ const CreateNewsPage: React.FC = () => {
   }
 
   try {
+    newsData.image = null;
     withLoading( await newsService.createNews(newsData));
 
     // 3. Thành công -> toast success
