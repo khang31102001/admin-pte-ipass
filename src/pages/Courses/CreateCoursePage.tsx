@@ -60,6 +60,7 @@ export default function CreateCoursePage() {
       // toast.error("Vui lòng kiểm tra lại thông tin khóa học");
       return;
     }
+    courseData.image = null;
     withLoading(await courseService.createCourse(courseData));
     navigate(ROUTES.NEWS.LIST);
   };
