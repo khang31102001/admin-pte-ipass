@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@/components/ui/button/Button";
 import { About } from "@/types/about";
 import { FormSection } from "./FormSection";
@@ -35,6 +35,11 @@ const defaultValues: About = {
 
 const AboutForm: React.FC<AboutFormProps> = ({ aboutData, onSubmit }) => {
   const [formData, setFormData] = useState<About>(aboutData || defaultValues);
+  useEffect(() => {
+    if (aboutData) {
+      setFormData(aboutData);
+    }
+  }, [aboutData]);
   const [isSubmitting, setIsSubmitting] = useState(false);
  
   const handleChange = (

@@ -127,7 +127,7 @@ const CreateNewsPage: React.FC = () => {
           <NewsForm
             newsData={newsData}
             categories={categories}
-            updateNewsData={handleUpdateNewsData}
+            onUpdateNewsData={handleUpdateNewsData}
             errors={errors}
           />
         </ComponentCard>

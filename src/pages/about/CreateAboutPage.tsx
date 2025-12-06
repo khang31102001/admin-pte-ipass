@@ -1,5 +1,5 @@
 // src/pages/admin/AboutSettingsPage.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import PageMeta from "@/components/common/PageMeta";
@@ -10,38 +10,21 @@ import ActionButtons from "@/components/common/ActionButtons";
 import AboutForm from "@/components/about/AboutForm";
 
 import { About } from "@/types/about";
-// import { aboutService } from "@/services/aboutService"; // nếu có API
+import { aboutService } from "@/services/about/aboutService";
+import { useAboutInfoQuery } from "@/hooks/about/useAbout";
 
-// Mock data mẫu – bạn có thể load từ API
-const initialAboutData: About = {
-  aboutId: 1,
-  image: "https://via.placeholder.com/800x400?text=PTE+iPASS+About",
-  title: "About PTE iPASS",
-  description:
-    "PTE iPASS is a dedicated training centre focusing on PTE Academic, helping students achieve their target scores faster with clear strategies and real-exam simulations.",
-  mission:
-    "To empower students with practical PTE strategies, high-quality materials, and 1:1 support so that they can achieve their migration and study goals.",
-  vision:
-    "To become the most trusted and effective PTE preparation brand for Vietnamese and international students across Australia and Asia.",
-  email: "support@pteipass.com",
-  phone: "+61 4xx xxx xxx",
-  hotline: "1800 PTE IPASS",
-  website: "https://pteipass.com",
-  address: "Level 3, PTE iPASS Building, Darwin City, NT, Australia",
-  facebookUrl: "https://www.facebook.com/pteipass",
-  zaloUrl: "",
-  tiktokUrl: "https://www.tiktok.com/@pteipass",
-  youtubeUrl: "https://www.youtube.com/@pteipass",
-  category: "PTE English Center",
-  mapUrl: "https://www.google.com/maps/embed?...",
-};
-
-// type AboutErrors = Partial<Record<keyof About, string>>;
 
 export default function CreateAboutPage() {
   const navigate = useNavigate();
 
+  const { data: initialAboutData } = useAboutInfoQuery({ category: "ABOUT_ME" });
   const [aboutData, setAboutData] = useState<About>(initialAboutData);
+
+  useEffect(() => {
+    if (initialAboutData) {
+      setAboutData(initialAboutData);
+    }
+  }, [initialAboutData]);
   // const [errors, setErrors] = useState<AboutErrors>({});
   
   
@@ -59,12 +42,10 @@ export default function CreateAboutPage() {
 
     try {
 
-      // TODO: Gọi API lưu dữ liệu
-      // await aboutService.updateAbout(aboutData);
-      console.log("SAVE ABOUT DATA:", aboutData);
-
-      // Option: toast success ở đây nếu bạn có hệ thống toast
-      // toast.success("Thông tin About đã được lưu thành công!");
+      if (aboutData.aboutId) {
+        await aboutService.updateAbout(aboutData.aboutId, aboutData);
+      }
+      console.log("About saved successfully");
     } catch (error) {
       console.error("Failed to save About:", error);
       // toast.error("Có lỗi xảy ra khi lưu dữ liệu.");
