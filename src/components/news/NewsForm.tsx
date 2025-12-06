@@ -12,7 +12,7 @@ import { NewsTagsFeaturedSection } from "./NewsTagsFeaturedSection";
 import { NewsCategorySection } from "./NewsCategorySection";
 import { NewsSchedulingSection } from "./NewsSchedulingSection";
 import { CategoryItem } from "@/types/category";
-import { fileToBase64, generateSlug } from "@/lib/helper";
+import { generateSlug } from "@/lib/helper";
 import { News } from "@/types/news";
 import { NewsValidationErrors } from "@/validators/newsValidation";
 import FormErrorSummary from "../common/FormErrorSummary";
@@ -33,6 +33,7 @@ interface NewsFormProps {
   authors?: AuthorOption[];
   onUpdateNewsData: (values: Partial<News>) => void;
   errors? : NewsValidationErrors;
+  onCoverFileChange?: (file: File | null) => void;
 
 }
 
@@ -41,6 +42,7 @@ const NewsForm: React.FC<NewsFormProps> = ({
   categories = [],
   errors,
   onUpdateNewsData,
+  onCoverFileChange,
 }) => {
 
   const [coverPreview, setCoverPreview] = useState<string | undefined>(
@@ -54,6 +56,10 @@ const NewsForm: React.FC<NewsFormProps> = ({
       })
     }
   }, [newsData?.title])
+
+  useEffect(() => {
+    setCoverPreview(newsData?.image);
+  }, [newsData?.image]);
   
 
  
@@ -64,17 +70,21 @@ const NewsForm: React.FC<NewsFormProps> = ({
   const handleCoverChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      try {
-        const base64 = await fileToBase64(file);
-        onUpdateNewsData({ image: base64})
-        setCoverPreview(base64);
-      } catch (error) {
-        console.error("Failed to convert file to base64", error);
+      if (coverPreview?.startsWith("blob:")) {
+        URL.revokeObjectURL(coverPreview);
       }
+      const previewUrl = URL.createObjectURL(file);
+      onCoverFileChange?.(file);
+      onUpdateNewsData({ image: previewUrl});
+      setCoverPreview(previewUrl);
     }
   };
 
   const handleRemoveCover = () => {
+    if (coverPreview?.startsWith("blob:")) {
+      URL.revokeObjectURL(coverPreview);
+    }
+    onCoverFileChange?.(null);
     onUpdateNewsData({image: ""});
     setCoverPreview(undefined);
   };

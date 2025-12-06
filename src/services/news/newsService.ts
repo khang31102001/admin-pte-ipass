@@ -1,3 +1,4 @@
+import api from "@/api/axiosClient";
 import { NewsItemsRes } from "../../types/news";
 import { get, post, put, httpDelete } from "@/api/http";
 
@@ -17,6 +18,12 @@ export class NewsService {
   }
 
   async createNews(data: any): Promise<any> {
+    if (data instanceof FormData) {
+      const response = await api.post("/news", data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return response.data;
+    }
     const response = await post("/news", data);
     return response;
   }

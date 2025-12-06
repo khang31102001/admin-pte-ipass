@@ -8,13 +8,14 @@ import { useCategoryQuery } from "@/hooks/category/useCategoryQuery";
 import { useLoading } from "@/hooks/loading/useLoading";
 import { newsService } from "@/services/news/newsService";
 import { News } from "@/types/news";
-import { isNewsValid, NewsValidationErrors, validateNews } from "@/validators/newsValidation";
+import {
+  isNewsValid,
+  NewsValidationErrors,
+  validateNews,
+} from "@/validators/newsValidation";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
-
-
-
 
 const initialValues: News = {
   newsId: null,
@@ -27,7 +28,7 @@ const initialValues: News = {
   startDate: "",
   endDate: "",
   categoryId: undefined,
-  category:  null,
+  category: null,
   author: undefined,
   metaTitle: "",
   metaDescription: "",
@@ -35,6 +36,7 @@ const initialValues: News = {
   tags: [],
   isFeatured: false,
 };
+
 const defaultValues: News = {
   newsId: null,
   title: "abc",
@@ -46,7 +48,7 @@ const defaultValues: News = {
   startDate: "",
   endDate: "",
   categoryId: undefined,
-  category:  null,
+  category: null,
   author: undefined,
   metaTitle: "",
   metaDescription: "",
@@ -57,46 +59,50 @@ const defaultValues: News = {
 
 const CreateNewsPage: React.FC = () => {
   const [newsData, setNewsData] = useState<News>({
-       ...defaultValues,
+    ...defaultValues,
     ...initialValues,
     keywords: initialValues?.keywords ?? [],
     tags: initialValues?.tags ?? [],
     image: initialValues?.image ?? "",
   });
+  const [coverFile, setCoverFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<NewsValidationErrors>({});
   const navigate = useNavigate();
-  const {withLoading, isLoading} =useLoading();
-  const { data} = useCategoryQuery({categoryType: "NEWS"});
+  const { withLoading, isLoading } = useLoading();
+  const { data } = useCategoryQuery({ categoryType: "NEWS" });
   const categories = data?.[0]?.children ?? [];
-  
-    // console.log("newsData:", newsData);
 
   const handleCreateNews = async () => {
-  // 1. Validate trước
-  const validation = validateNews(newsData);
-  setErrors(validation);
+    const validation = validateNews(newsData);
+    setErrors(validation);
 
-  if (!isNewsValid(validation)) {
-    // Có thể bắn error nhỏ luôn
-    // toast.error("Vui lòng kiểm tra lại các trường bắt buộc.");
-    return;
-  }
+    if (!isNewsValid(validation)) {
+      return;
+    }
 
-  try {
-    newsData.image = null;
-    withLoading( await newsService.createNews(newsData));
+    try {
+      const formData = new FormData();
+      if (coverFile) {
+        formData.append("file", coverFile);
+      }
+      if (newsData) {
+        const request = { ...newsData };
+        delete request.image;
+        formData.append("request", request ? JSON.stringify(request) : "");
+      }
 
-    // 3. Thành công -> toast success
-    toast.success("Tạo tin tức thành công!");
-    navigate(ROUTES.NEWS.LIST);
-  } catch (error) {
-    console.error(error);
-  
-    toast.error("Có lỗi xảy ra khi tạo tin tức, vui lòng thử lại.");
-  }
-};
-  const handleUpdateNewsData =  (updates:  Partial<News>) => {
-     setNewsData((prev) => ({ ...prev, ...updates }));
+      await withLoading(newsService.createNews(formData));
+
+      toast.success("Tạo tin tức thành công!");
+      navigate(ROUTES.NEWS.LIST);
+    } catch (error) {
+      console.error(error);
+      toast.error("Có lỗi xảy ra khi tạo tin tức, vui lòng thử lại.");
+    }
+  };
+
+  const handleUpdateNewsData = (updates: Partial<News>) => {
+    setNewsData((prev) => ({ ...prev, ...updates }));
   };
 
   const handleCancel = () => {
@@ -121,7 +127,6 @@ const CreateNewsPage: React.FC = () => {
               onSave={handleCreateNews}
               saveLabel="Lưu"
               isSaving={isLoading}
-            
             />
           }
         >
@@ -130,6 +135,7 @@ const CreateNewsPage: React.FC = () => {
             categories={categories}
             onUpdateNewsData={handleUpdateNewsData}
             errors={errors}
+            onCoverFileChange={setCoverFile}
           />
         </ComponentCard>
       </div>

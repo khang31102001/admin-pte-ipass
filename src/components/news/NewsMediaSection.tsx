@@ -10,14 +10,12 @@ interface NewsMediaSectionProps {
 export const NewsMediaSection: React.FC<NewsMediaSectionProps> = ({
   coverPreview,
   onCoverChange,
-
 }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleChangeImageClick = () => {
     fileInputRef.current?.click();
   };
-
 
   return (
     <section className="border border-[#E5E7EB] rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] p-5 lg:p-6">
@@ -58,7 +56,6 @@ export const NewsMediaSection: React.FC<NewsMediaSectionProps> = ({
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {/* Icon upload */}
                   <svg
                     className="h-8 w-8 mx-auto text-slate-400"
                     xmlns="http://www.w3.org/2000/svg"
@@ -95,7 +92,6 @@ export const NewsMediaSection: React.FC<NewsMediaSectionProps> = ({
           </div>
         </div>
       </div>
-
     </section>
   );
 };
