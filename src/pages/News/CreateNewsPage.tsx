@@ -7,7 +7,7 @@ import { ROUTES } from "@/config/routes";
 import { useCategoryQuery } from "@/hooks/category/useCategoryQuery";
 import { useLoading } from "@/hooks/loading/useLoading";
 import { newsService } from "@/services/news/newsService";
-import { News } from "@/types/news";
+import { IUpdateNewsRq, News } from "@/types/news";
 import {
   isNewsValid,
   NewsValidationErrors,
@@ -17,63 +17,27 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 
-const initialValues: News = {
-  newsId: null,
-  title: "",
-  slug: "",
-  description: "",
-  content: "",
-  image: "",
-  status: "draft",
-  startDate: "",
-  endDate: "",
-  categoryId: undefined,
-  category: null,
-  author: undefined,
-  metaTitle: "",
-  metaDescription: "",
-  keywords: [],
-  tags: [],
-  isFeatured: false,
-};
 
-const defaultValues: News = {
-  newsId: null,
-  title: "abc",
-  slug: "",
-  description: "",
-  content: "",
-  image: "",
-  status: "draft",
-  startDate: "",
-  endDate: "",
-  categoryId: undefined,
-  category: null,
-  author: undefined,
-  metaTitle: "",
-  metaDescription: "",
-  keywords: [],
-  tags: [],
-  isFeatured: false,
-};
 
 const CreateNewsPage: React.FC = () => {
-  const [newsData, setNewsData] = useState<News>({
-    ...defaultValues,
-    ...initialValues,
-    keywords: initialValues?.keywords ?? [],
-    tags: initialValues?.tags ?? [],
-    image: initialValues?.image ?? "",
-  });
-  const [coverFile, setCoverFile] = useState<File | null>(null);
+
   const [errors, setErrors] = useState<NewsValidationErrors>({});
   const navigate = useNavigate();
   const { withLoading, isLoading } = useLoading();
   const { data } = useCategoryQuery({ categoryType: "NEWS" });
   const categories = data?.[0]?.children ?? [];
 
-  const handleCreateNews = async () => {
-    const validation = validateNews(newsData);
+
+
+  
+  const handleOnSubmit = () => {
+    const form = document.getElementById("news-form") as HTMLFormElement | null;
+    form.requestSubmit();
+
+  };
+
+  const handleCreateNews = async (newsData: IUpdateNewsRq) => {
+    const validation = validateNews(newsData as News);
     setErrors(validation);
 
     if (!isNewsValid(validation)) {
@@ -82,28 +46,27 @@ const CreateNewsPage: React.FC = () => {
 
     try {
       const formData = new FormData();
-      if (coverFile) {
-        formData.append("file", coverFile);
+      if (newsData.imgFile) {
+        formData.append("file", newsData.imgFile);
       }
+      console.log("check audit create newsData:", newsData)
       if (newsData) {
         const request = { ...newsData };
+        // console.log("audit request: ",request )
         delete request.image;
         formData.append("request", request ? JSON.stringify(request) : "");
       }
-
+      
       await withLoading(newsService.createNews(formData));
 
       toast.success("Tạo tin tức thành công!");
-      navigate(ROUTES.NEWS.LIST);
+      // navigate(ROUTES.NEWS.LIST);
     } catch (error) {
       console.error(error);
       toast.error("Có lỗi xảy ra khi tạo tin tức, vui lòng thử lại.");
     }
   };
 
-  const handleUpdateNewsData = (updates: Partial<News>) => {
-    setNewsData((prev) => ({ ...prev, ...updates }));
-  };
 
   const handleCancel = () => {
     navigate(ROUTES.NEWS.LIST);
@@ -124,18 +87,17 @@ const CreateNewsPage: React.FC = () => {
             <ActionButtons
               cancelLabel="Hủy/Quay lại"
               onCancel={handleCancel}
-              onSave={handleCreateNews}
+              onSave={handleOnSubmit}
               saveLabel="Lưu"
               isSaving={isLoading}
             />
           }
         >
           <NewsForm
-            newsData={newsData}
+            mode="create"
             categories={categories}
-            onUpdateNewsData={handleUpdateNewsData}
+            onSubmit={handleCreateNews}
             errors={errors}
-            onCoverFileChange={setCoverFile}
           />
         </ComponentCard>
       </div>

@@ -42,8 +42,8 @@ export function validateNews(news: News): NewsValidationErrors {
     }
   }
 
-  // Status (nếu bạn có quy ước trạng thái)
-  const allowedStatus = ["draft", "published", "scheduled"];
+ 
+  const allowedStatus = ["DRAFT", "PUBLISHED", "SCHEDULED"];
   if (news.status && !allowedStatus.includes(news.status)) {
     errors.status = "Trạng thái bài viết không hợp lệ";
   }

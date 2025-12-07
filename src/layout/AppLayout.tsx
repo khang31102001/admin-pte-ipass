@@ -17,6 +17,7 @@ const LayoutContent: React.FC = () => {
         closeOnClick
         draggable
         theme="light"
+        toastStyle={{zIndex: 99999, top: "90px"}}
       />
 
       <div>

@@ -2,6 +2,8 @@
 import React from "react";
 import RichTextEditor from "../ui/textEditor/RichTextEditor";
 import { News } from "@/types/news";
+import Label from "../form/Label";
+import Input from "../form/input/InputField";
 
 interface NewsBasicInfoSectionProps {
   title: string;
@@ -10,6 +12,7 @@ interface NewsBasicInfoSectionProps {
   content: string;
   onChangeNewsData: (update: Partial<News>) => void;
   onSlugManualEdit?: () => void;
+  readOnluSlug?: boolean;
 
 }
 
@@ -19,7 +22,8 @@ export const NewsBasicInfoSection: React.FC<NewsBasicInfoSectionProps> = ({
   description,
   content,
   onChangeNewsData,
-  onSlugManualEdit
+  onSlugManualEdit,
+  readOnluSlug
 
 }) => {
   return (
@@ -47,8 +51,9 @@ export const NewsBasicInfoSection: React.FC<NewsBasicInfoSectionProps> = ({
 
         {/* Slug */}
         <div>
-          <label className="block text-sm font-medium mb-1.5">Slug</label>
-          <input
+          <Label className="block text-sm font-medium mb-1.5">Slug</Label>
+          <Input
+            disabled={readOnluSlug ??  false}
             type="text"
             name="slug"
             value={slug}

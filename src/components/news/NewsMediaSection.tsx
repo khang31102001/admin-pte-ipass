@@ -1,21 +1,56 @@
-// NewsMediaSection.tsx
+import { processImageForWeb } from "@/lib/image";
+import { News } from "@/types/news";
 import React, { ChangeEvent, useRef } from "react";
 
+export interface MediaState {
+  file?: File | null;
+  preview?: string;
+  deleteImageUrl?: string;
+  isImageChanged?: boolean;
+
+}
 interface NewsMediaSectionProps {
   coverPreview?: string;
-  onCoverChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  onRemoveCover: () => void;
+  onChangeNewsData?: (updates: Partial<News>) => void;
+  onChangeImge?: (imgPreview: Partial<MediaState>) => void;
 }
 
 export const NewsMediaSection: React.FC<NewsMediaSectionProps> = ({
   coverPreview,
-  onCoverChange,
+  onChangeImge
+
 }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleChangeImageClick = () => {
     fileInputRef.current?.click();
   };
+
+  const handleCoverChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const imgFile = e.target.files?.[0];
+    if (imgFile) {
+      const { file, previewUrl } = await processImageForWeb(imgFile);
+      onChangeImge({
+        file: file,
+        preview: previewUrl,
+      });
+    }
+  };
+
+
+  const handleRemoveImage = () => {
+
+    onChangeImge?.({
+      file: null,
+      preview: "",
+    });
+
+    // cũng có thể clear input file
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
 
   return (
     <section className="border border-[#E5E7EB] rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] p-5 lg:p-6">
@@ -32,11 +67,22 @@ export const NewsMediaSection: React.FC<NewsMediaSectionProps> = ({
             <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center bg-slate-50">
               {coverPreview ? (
                 <div className="space-y-2">
-                  <img
-                    src={coverPreview || "/placeholder.svg"}
-                    alt="Preview"
-                    className="w-full h-40 object-cover rounded"
-                  />
+                  <div className="relative">
+                    <img
+                      src={coverPreview || "/placeholder.svg"}
+                      alt="Preview"
+                      className="w-full h-40 object-cover rounded"
+                    />
+
+
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className="absolute right-2 top-2 inline-flex items-center rounded-full bg-white/90 px-2 py-1 text-xs font-medium text-red-600 shadow hover:bg-red-50"
+                    >
+                      Xoá ảnh
+                    </button>
+                  </div>
 
                   <button
                     type="button"
@@ -51,7 +97,7 @@ export const NewsMediaSection: React.FC<NewsMediaSectionProps> = ({
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    onChange={onCoverChange}
+                    onChange={handleCoverChange}
                   />
                 </div>
               ) : (
@@ -78,7 +124,7 @@ export const NewsMediaSection: React.FC<NewsMediaSectionProps> = ({
                     <input
                       type="file"
                       accept="image/*"
-                      onChange={onCoverChange}
+                      onChange={handleCoverChange}
                       className="hidden"
                     />
                   </label>

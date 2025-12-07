@@ -1,6 +1,5 @@
 import React, {
   useState,
-  ChangeEvent,
   useEffect,
 } from "react";
 
@@ -13,9 +12,11 @@ import { NewsCategorySection } from "./NewsCategorySection";
 import { NewsSchedulingSection } from "./NewsSchedulingSection";
 import { CategoryItem } from "@/types/category";
 import { generateSlug } from "@/lib/helper";
-import { News } from "@/types/news";
+import { News, NewsStatus } from "@/types/news";
 import { NewsValidationErrors } from "@/validators/newsValidation";
 import FormErrorSummary from "../common/FormErrorSummary";
+import { IMedia } from "@/types/media";
+import { mapToFormSubmit } from "@/mapper/news-mapper";
 
 export type Mode = "create" | "update";
 
@@ -26,100 +27,140 @@ export interface AuthorOption {
   avatarUrl?: string;
 }
 
-
 interface NewsFormProps {
-  newsData?: Partial<News>;
+  mode?: Mode;
+  initnewsData?: News | null;
   categories?: CategoryItem[];
   authors?: AuthorOption[];
-  onUpdateNewsData: (values: Partial<News>) => void;
-  errors? : NewsValidationErrors;
-  onCoverFileChange?: (file: File | null) => void;
+  onSubmit: (IUpdateNewsRq) => void;
+  errors?: NewsValidationErrors;
+
 
 }
 
+const defaultValues: News = {
+  newsId: null,
+  title: "",
+  slug: "",
+  description: "",
+  content: "",
+  image: "",
+  status: NewsStatus.DRAFT,
+  startDate: "",
+  endDate: "",
+  categoryId: undefined,
+  category: null,
+  author: undefined,
+  metaTitle: "",
+  metaDescription: "",
+  keywords: [],
+  tags: [],
+  isFeatured: false,
+};
+
+
+
 const NewsForm: React.FC<NewsFormProps> = ({
-  newsData = null,
+  mode,
+  initnewsData = null,
   categories = [],
   errors,
-  onUpdateNewsData,
-  onCoverFileChange,
+  onSubmit
 }) => {
 
-  const [coverPreview, setCoverPreview] = useState<string | undefined>(
-    newsData?.image
-  );
+  const [newsData, setNewsData] = useState<News>({
+     ...defaultValues,
+    ...initnewsData,
+    keywords: initnewsData?.keywords ?? [],
+    tags: initnewsData?.tags ?? [],
+  });
+
+  const [coverPreview, setCoverPreview] = useState<IMedia | null>({
+    file: null,
+    preview: initnewsData?.image ?? "",
+    isImageChanged: false,
+    deleteImageUrl: initnewsData?.image ??  undefined,
+  });
+
+  const isEdit = mode === "update";
+
+  // console.log("ccheck audit newsdata:", newsData)
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
-  useEffect(()=>{
-    if(!slugManuallyEdited){
-      onUpdateNewsData({
-        slug: generateSlug(newsData.title)
-      })
-    }
-  }, [newsData?.title])
 
   useEffect(() => {
-    setCoverPreview(newsData?.image);
-  }, [newsData?.image]);
-  
+    if (!isEdit && !slugManuallyEdited) {
+      setNewsData((prev) => ({
+        ...prev,
+        slug: generateSlug(newsData?.title)
+        
+      }))
+    }
+  }, [newsData?.title, slugManuallyEdited, isEdit])
 
- 
-   const handleSlugManualEdit = () => {
+
+
+  const handleChangeImageState =(update: Partial<IMedia>)=>{
+      setCoverPreview((prev)=>({
+          ...prev,
+        ...update,
+        isImageChanged: isEdit ? true : false,
+        deleteImageUrl: isEdit ? initnewsData?.image : ""
+      }));
+
+     
+      setNewsData((prev)=>({
+        ...prev,
+        image: update.preview, 
+      }))
+  }
+  console.log("check audit coverPreview:", coverPreview)
+  const handleSlugManualEdit =  () => {
     setSlugManuallyEdited(true);
   };
 
-  const handleCoverChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (coverPreview?.startsWith("blob:")) {
-        URL.revokeObjectURL(coverPreview);
-      }
-      const previewUrl = URL.createObjectURL(file);
-      onCoverFileChange?.(file);
-      onUpdateNewsData({ image: previewUrl});
-      setCoverPreview(previewUrl);
-    }
-  };
+  const handleUpdateNewsData = (updates: Partial<News>) => {
+    setNewsData((prev) => ({ ...prev, ...updates }))
+  }
 
-  const handleRemoveCover = () => {
-    if (coverPreview?.startsWith("blob:")) {
-      URL.revokeObjectURL(coverPreview);
-    }
-    onCoverFileChange?.(null);
-    onUpdateNewsData({image: ""});
-    setCoverPreview(undefined);
-  };
-
-
+  console.log("check audit coverPreview.file:", coverPreview.file);
+  const handleSumit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    const form = mapToFormSubmit(newsData, coverPreview);
+    console.log("form audit:",form )
+    onSubmit?.(form);
+  }
 
 
   return (
     <div className="min-h-screen bg-white text-[#1A1A1A]">
-         <FormErrorSummary errors={errors} />
-      <div className="max-w-6xl mx-auto px-4 py-8 lg:py-10">
+      <FormErrorSummary errors={errors} />
+      <form id="news-form" onSubmit={handleSumit}>
+        <div className="max-w-6xl mx-auto px-4 py-8 lg:py-10">
           <div className="grid gap-6 lg:gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
             {/* LEFT */}
             <div className="space-y-6 lg:space-y-8">
               <NewsBasicInfoSection
-                title={newsData.title}
-                slug={newsData.slug}
-                description={newsData.description}
-                content={newsData.content}
-                onChangeNewsData={onUpdateNewsData}
+                title={newsData?.title}
+                slug={newsData?.slug}
+                description={newsData?.description}
+                content={newsData?.content}
+                onChangeNewsData={handleUpdateNewsData}
                 onSlugManualEdit={handleSlugManualEdit}
-            
+                readOnluSlug={isEdit}
+
               />
 
-             <NewsMediaSection
-                coverPreview={coverPreview}
-                onCoverChange={handleCoverChange}
-                onRemoveCover={handleRemoveCover}
+              <NewsMediaSection
+                coverPreview={coverPreview?.preview}
+                onChangeImge={handleChangeImageState}
               />
 
               <NewsSchedulingSection
-                status={newsData.status}
-                startDate={newsData.startDate}
-                endDate={newsData.endDate}
-                onChangeNewsData={onUpdateNewsData}
+                status={newsData?.status}
+                startDate={newsData?.startDate}
+                endDate={newsData?.endDate}
+                onChangeNewsData={handleUpdateNewsData}
               />
             </div>
 
@@ -127,10 +168,10 @@ const NewsForm: React.FC<NewsFormProps> = ({
             <aside className="lg:sticky lg:top-20 h-fit space-y-6 lg:space-y-7">
               <NewsCategorySection
                 categories={categories ?? []}
-                value={newsData.categoryId as number}
-                onChange={(cateId)=>onUpdateNewsData({categoryId: Number(cateId) })}
+                value={newsData?.categoryId as number}
+                onChange={(cateId) => handleUpdateNewsData({ categoryId: Number(cateId) })}
               />
-                
+
 
               {/* <NewsAuthorSection
                 authors={authors}
@@ -139,20 +180,21 @@ const NewsForm: React.FC<NewsFormProps> = ({
               /> */}
 
               <NewsSeoMetaSection
-                metaTitle={newsData.metaTitle}
-                metaDescription={newsData.metaDescription}
-                keywords={newsData.keywords}
-                onChangeNewsData={onUpdateNewsData}
+                metaTitle={newsData?.metaTitle}
+                metaDescription={newsData?.metaDescription}
+                keywords={newsData?.keywords}
+                onChangeNewsData={handleUpdateNewsData}
               />
 
               <NewsTagsFeaturedSection
                 tags={newsData.tags}
                 isFeatured={newsData.isFeatured}
-                onChangeNewsData={onUpdateNewsData}
+                onChangeNewsData={handleUpdateNewsData}
               />
             </aside>
           </div>
-      </div>
+        </div>
+      </form>
     </div>
   );
 };

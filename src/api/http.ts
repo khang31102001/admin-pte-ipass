@@ -15,6 +15,7 @@ function toQuery(params?: QueryParams) {
 
 /** GET */
 export async function get<T>(path: string, params?: QueryParams): Promise<T> {
+
   const { data } = await api.get<T>(`${path}${toQuery(params)}`);
   return data;
 }

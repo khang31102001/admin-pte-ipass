@@ -61,8 +61,8 @@ function createNewsColumns({
         />
       ),
     },
-    { key: "newsId", header: "ID" },
-    { key: "title", header: "Title" },
+    { key: "newsId", header: "ID", cellClassName: "whitespace-nowrap w-[60px]"  },
+    { key: "title", header: "Title", cellClassName: "max-w-[320px] whitespace-nowrap truncate" },
     { key: "categoryType", header: "Category type" },
     { key: "author", header: "Author" },
     { key: "status", header: "Status" },

@@ -13,6 +13,7 @@ export class NewsService {
   }
 
   async getNewsDetail(params: any): Promise<any> {
+    // console.log("audit cal api:", params)
     const response = await get('/news/detail', params);
     return response;
   }
