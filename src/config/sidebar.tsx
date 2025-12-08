@@ -1,5 +1,5 @@
 // src/config/sidebar.tsx
-import { BookOpen, InfoIcon, Newspaper, UserCog } from "lucide-react";
+import { BookOpen, InfoIcon, Layers, Newspaper, UserCog } from "lucide-react";
 import {  PageIcon, PieChartIcon, BoxCubeIcon, PlugInIcon } from "../icons";
 import { ROUTES } from "./routes";
 // hoặc import từ chỗ bạn đang dùng hiện tại
@@ -19,6 +19,12 @@ export type NavItem = {
 };
 
 export const mainNavItems: NavItem[] = [
+
+  {
+    name: "Quản lý danh mục",
+    icon: <Layers />,
+    path: ROUTES.CATEGORIES.LIST,
+  },
 
   {
     name: "Quản lý khóa học",

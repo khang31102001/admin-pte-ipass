@@ -39,7 +39,6 @@ export const NewsMediaSection: React.FC<NewsMediaSectionProps> = ({
 
 
   const handleRemoveImage = () => {
-
     onChangeImge?.({
       file: null,
       preview: "",

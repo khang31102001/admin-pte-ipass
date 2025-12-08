@@ -17,3 +17,19 @@ export function useCoursesQuery(params?: CoursesQueryParams) {
     staleTime: 1000 * 30,
   });
 }
+
+export function useDetailCoursesQuery(slug?: string) {
+  return useQuery<any, Error>({
+    enabled: !!slug,
+    queryKey: ["courses", "detail", slug],
+    queryFn: () => {
+      if (!slug) {
+        console.warn(" missing slug ???");
+      };
+      return courseService.getCourseDetail({ slug: slug });
+    },
+    placeholderData: keepPreviousData,
+    staleTime: 1000 * 30,
+  });
+}
+

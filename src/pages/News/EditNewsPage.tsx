@@ -6,13 +6,11 @@ import PageMeta from "@/components/common/PageMeta";
 import NewsForm from "@/components/news/NewsForm";
 import { ROUTES } from "@/config/routes";
 import { newsService } from "@/services/news/newsService";
-
-
 import { toast } from "react-toastify";
-import { useNewsDetailQuery } from "@/hooks/news/useNewsDetailQuery";
 import { IUpdateNewsRq } from "@/types/news";
 import { mapToUpdateRq } from "@/mapper/news-mapper";
 import { useLoading } from "@/hooks/loading/useLoading";
+import { useNewsDetailQuery } from "@/hooks/news/useNewsQuery";
 
 
 

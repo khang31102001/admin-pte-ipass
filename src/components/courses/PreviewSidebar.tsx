@@ -1,53 +1,63 @@
 
 import { Course } from "@/types/courses"
 import type React from "react"
-import { useEffect, useRef, useState } from "react"
+import { useRef } from "react"
 import Switch from "../form/switch/Switch";
 import { CoursesCategorySection } from "./CoursesCategorySection";
 import { CategoryItem } from "@/types/category";
+import { IMedia } from "@/types/media";
+import { processImageForWeb } from "@/lib/image";
 
 interface PreviewSidebarProps {
+  onChangeMedia?: (media: IMedia | null) => void
   courseData: Course;
   updateCourseData: (updates: Partial<Course>) => void;
   categories?: CategoryItem[];
 }
 
-export default function PreviewSidebar({categories = [], courseData, updateCourseData }: PreviewSidebarProps) {
-  const [imagePreview, setImagePreview] = useState<string | null>(courseData.image);
-   const fileInputRef = useRef<HTMLInputElement | null>(null);
-   useEffect(() => {
-    if (courseData.image) {
-      setImagePreview(courseData.image);
-    }
-  }, [courseData.image]);
+export default function PreviewSidebar({
+  categories = [], 
+  onChangeMedia ,
+  courseData, 
+  updateCourseData 
+}: PreviewSidebarProps) {
 
- const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-
-    reader.onloadend = () => {
-      const base64 = reader.result as string;
-
-      // 1) Cập nhật preview
-      setImagePreview(base64);
-
-      // 2) Đẩy dữ liệu vào courseData (tùy backend: base64 / url / file)
-      updateCourseData({
-        image: base64, // hoặc imageFile: file nếu bạn upload file riêng
-      });
-    };
-
-    reader.readAsDataURL(file);
+  
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  
+ const handleImageUpload = async(e: React.ChangeEvent<HTMLInputElement>) => {
+    const imgFile = e.target.files?.[0];
+    if (!imgFile) return;
+    const {file, previewUrl} = await processImageForWeb(imgFile);
+    onChangeMedia?.({
+      file: file,
+      preview: previewUrl,
+    })
+    
   };
 
    const handleChangeImageClick = () => {
     fileInputRef.current?.click();
   };
 
+
+   const handleRemoveImage = () => {
+    onChangeMedia?.({
+      file: null,
+      preview: "",
+    });
+
+    // cũng có thể clear input file
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  
+
   return (
     <div className="space-y-4">
+
       <CoursesCategorySection
         categories={categories}
         value={courseData.categoryId}
@@ -60,13 +70,22 @@ export default function PreviewSidebar({categories = [], courseData, updateCours
         </div>
         <div className="p-4 space-y-4">
           <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center bg-slate-50">
-            {imagePreview ? (
+            {courseData.image ? (
               <div className="space-y-2">
-                <img
-                  src={imagePreview || "/placeholder.svg"}
+               <div className="relative">
+                 <img
+                  src={courseData.image || "/placeholder.svg"}
                   alt="Preview"
                   className="w-full h-40 object-cover rounded"
                 />
+                 <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className="absolute right-2 top-2 inline-flex items-center rounded-full bg-white/90 px-2 py-1 text-xs font-medium text-red-600 shadow hover:bg-red-50"
+                    >
+                      Xoá ảnh
+                    </button>
+               </div>
                 <button
                   type="button"
                   className="w-full inline-flex items-center justify-center rounded-md border border-slate-300 px-3 py-2 text-sm font-medium bg-white hover:bg-slate-50 transition"

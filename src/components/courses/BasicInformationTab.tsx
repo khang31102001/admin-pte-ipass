@@ -27,7 +27,6 @@ export const LEVEL = [
 
 
 export default function BasicInformationTab({
- 
   courseData,
   updateCourseData,
 }: BasicInformationTabProps) {

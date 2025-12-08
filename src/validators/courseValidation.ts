@@ -26,9 +26,9 @@ export function validateCourse(course: Course): CourseValidationErrors {
   }
 
   // Category
-  if (!course.categoryId && !course.category) {
-    errors.categoryId = "Vui lòng chọn danh mục cho khóa học";
-  }
+  // if (!course.categoryId && !course.category) {
+  //   errors.categoryId = "Vui lòng chọn danh mục cho khóa học";
+  // }
 
   // Mô tả ngắn
   if (course.description && course.description.length > 250) {

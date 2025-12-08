@@ -35,7 +35,7 @@ export default function TableComponent<T>({
                   key={String(col.key)}
                   isHeader
                   className={[
-                    "px-6 py-3 whitespace-nowrap font-bold text-gray-700 text-start text-theme-xs dark:text-gray-400 whitespace-nowrap",
+                    "px-6 py-3  font-bold text-gray-700 text-start text-theme-xs dark:text-gray-400 whitespace-nowrap",
                     col.headerClassName || "",
                   ].join(" ")}
                 >

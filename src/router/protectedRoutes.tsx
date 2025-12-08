@@ -26,6 +26,8 @@ import UpdateCoursePage from "@/pages/Courses/UpdateCoursesPage";
 import CourseDetailPage from "@/pages/Courses/CourseDetailPage";
 
 import CreateAboutPage from "@/pages/about/CreateAboutPage";
+import CreateCategoriesPage from "@/pages/categories/CreateCategoriesPages";
+import ListCategoriesPages from "@/pages/categories/ListCategoriesPages";
 
 export const protectedRoutes: RouteObject[] = [
   {
@@ -65,6 +67,22 @@ export const protectedRoutes: RouteObject[] = [
         path: "users",
         element: <UsersTable />,
       },
+
+      {
+        path: "categories",
+        children: [
+          {
+            index: true,
+            element: <CreateCategoriesPage />,
+          },
+          {
+            path: "create",
+            element: <CreateCategoriesPage />,
+          },
+          
+        ],
+      },
+
 
     
       {

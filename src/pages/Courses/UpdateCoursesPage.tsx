@@ -1,59 +1,22 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 
+import { useParams } from "react-router-dom";
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import PageMeta from "@/components/common/PageMeta";
 import CoursesForm from "@/components/courses/CoursesForm";
-import { Course } from "@/types/courses";
 import SearchBoxInput from "@/components/form/input/SearchBoxInput";
 import ActionButtons from "@/components/common/ActionButtons";
 import { courseService } from "@/services/course/courseService";
+import { toast } from "react-toastify";
+import { useLoading } from "@/hooks/loading/useLoading";
+import { useDetailCoursesQuery } from "@/hooks/courses/useCoursesQuery";
 
 
 export default function UpdateCoursePage() {
     const { slug } = useParams<{ slug: string }>();
-    const [courseData, setCourseData] = useState<Course>({
-        courseId: undefined,
-        title: "",
-        slug: "",
-        level: "BEGINNER",
-        category: null,
-        description: "",
-        image: null,
-        content: "",
-        duration: "",
-        startDate: "",
-        endDate: "",
-        metaTitle: "",
-        metaDescription: "",
-        audience: [],
-        keywords: [],
-        isFeatured: false,
-        isDisabled: true,
-        schemaEnabled: true,
-        schemaMode: "auto",
-        schemaData: "",
-    });
+     const { withLoading, isLoading } = useLoading();
+    const{data} = useDetailCoursesQuery(slug);
 
-    useEffect(() => {
-        const fetchCourseDetail = async () => {
-        //   setLoading(true);
-          try {
-            const detail = await courseService.getCourseDetail({ slug });
-            setCourseData(detail);
-            
-          } finally {
-            // setLoading(false);
-          }
-        };
-    
-        fetchCourseDetail();
-      }, [slug]);
-
-    const updateCourseData = (updates: Partial<Course>) => {
-        setCourseData((prev) => ({ ...prev, ...updates }));
-    };
 
     const RenderSearchBox = () => {
         return (
@@ -64,13 +27,28 @@ export default function UpdateCoursePage() {
         )
     }
 
-    const handleUpdate = async () =>{
-        try {
-            await courseService.updateCourse(courseData.courseId!, courseData);
-        } catch (error) {
-            console.error("Failed to update course:", error);
+    const handleOnSubmit = () => {
+       const form = document.getElementById("courses-form") as HTMLFormElement | null;
+       form.requestSubmit();
+   
+     };
+     const handleUpdateCourse = async (courseData: FormData, courseId?: number) => {
+    //    console.log("update courseData:", courseData);
+
+        if (!courseId) {
+            console.warn("Course ID is missing. Cannot update the course.");
+            return;
         }
-    }
+
+       try {
+         await withLoading(courseService.updateCourse(courseId, courseData));
+         toast.success("Tạo khóa học thành công");
+         // navigate(ROUTES.COURSES.LIST);
+       } catch (error) {
+         console.error("Lỗi khi tạo khóa học:", error);
+         toast.error("Có lỗi xảy ra khi tạo khóa học. Vui lòng thử lại.");
+       };
+     };
     return (
         <>
             <PageMeta
@@ -87,14 +65,16 @@ export default function UpdateCoursePage() {
                     actionsSlot={
                         <ActionButtons
                             saveLabel= "Lưu thay đổi"
-                            onSave={handleUpdate}
+                            onSave={handleOnSubmit}
+                            isSaving={isLoading}
                         />
                     }
                     filtersSlot={RenderSearchBox()}
                 >
                     <CoursesForm
-                        courseData={courseData}
-                        updateCourseData={updateCourseData}
+                        mode="update"
+                        initCourseData={data ?? null}
+                        onSubmit={handleUpdateCourse}
                         categories={[]}
                     />
                 </ComponentCard>

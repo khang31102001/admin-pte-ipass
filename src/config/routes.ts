@@ -9,6 +9,13 @@ export const ROUTES = {
   BLANK: "/blank",
   FORM_ELEMENTS: "/form-elements",
   USERS: "/users",
+  // ─────────────── CATEGORIES ───────────────
+    CATEGORIES: {
+    ROOT: "/categories",
+    LIST: "/categories",
+    CREATE: "/create",
+ 
+  },
 
   // ─────────────── COURSES ───────────────
   COURSES: {
