@@ -1,5 +1,5 @@
 import { News } from "@/types/news";
-import React, {KeyboardEvent} from "react";
+import {KeyboardEvent} from "react";
 import Switch from "../form/switch/Switch";
 
 interface NewsSeoMetaSectionProps {

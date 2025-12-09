@@ -14,6 +14,7 @@ export const ROUTES = {
     ROOT: "/categories",
     LIST: "/categories",
     CREATE: "/create",
+    EDIT: (slug: string) => `/categories/update/${slug}`,
  
   },
 

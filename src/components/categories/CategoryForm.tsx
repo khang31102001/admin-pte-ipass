@@ -2,11 +2,12 @@
 import React, { useEffect, useState } from "react";
 import type { CategoryItem } from "@/types/category";
 import { generateSlug } from "@/lib/helper";
+import { toast } from "react-toastify";
 
-export type CategoryFormMode = "create" | "update";
+export type Mode = "create" | "update";
 
 interface CategoryFormProps {
-  mode: CategoryFormMode;
+  mode: Mode;
   initialData?: Partial<CategoryItem>;
   allCategories?: CategoryItem[]; // dùng để chọn parentId
   onSubmit: (data: Partial<CategoryItem>) => void;
@@ -23,6 +24,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
  
 }) => {
   const [form, setForm] = useState<Partial<CategoryItem>>({
+    id: undefined,
     name: "",
     slug: "",
     description: "",
@@ -42,7 +44,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
     ...initialData,
   });
 
-  // Sync khi initialData thay đổi (mode update)
+ 
   useEffect(() => {
     if (initialData) {
       setForm((prev) => ({
@@ -83,13 +85,12 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
 
     // validation đơn giản
     if (!form.name || form.name.trim() === "") {
-      alert("Tên danh mục không được để trống.");
+      toast.error("Tên danh mục không được để trống.");
       return;
     }
 
     const payload: Partial<CategoryItem> = {
       ...form,
-      // đảm bảo parentId null hoặc number
       parentId:
         form.parentId === undefined || form.parentId === null
           ? null
@@ -113,9 +114,9 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
     >
      
      
-      {/* Layout 2 cột: trái nội dung chính, phải hierarchy + status */}
+
       <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-        {/* LEFT: Thông tin cơ bản + SEO Content */}
+
         <div className="space-y-6">
           {/* Card: Thông tin cơ bản */}
           <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
@@ -298,7 +299,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
                 <label className="text-sm font-medium text-gray-700">
                   Trạng thái hiển thị
                 </label>
-                <label className="inline-flex items-center gap-2 text-sm text-gray-700">
+                {/* <label className="inline-flex items-center gap-2 text-sm text-gray-700">
                   <input
                     type="checkbox"
                     checked={!!form.isFeatured}
@@ -311,7 +312,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                   />
                   Hiển thị nổi bật (Featured)
-                </label>
+                </label> */}
                 <label className="inline-flex items-center gap-2 text-sm text-gray-700">
                   <input
                     type="checkbox"

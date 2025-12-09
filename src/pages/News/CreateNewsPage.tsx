@@ -4,7 +4,8 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import PageMeta from "@/components/common/PageMeta";
 import NewsForm from "@/components/news/NewsForm";
 import { ROUTES } from "@/config/routes";
-import { useCategoryQuery } from "@/hooks/category/useCategoryQuery";
+import { useCategoryTreeQuery } from "@/hooks/category/useCategoryQuery";
+
 import { useLoading } from "@/hooks/loading/useLoading";
 import { newsService } from "@/services/news/newsService";
 import { IUpdateNewsRq, News } from "@/types/news";
@@ -24,7 +25,7 @@ const CreateNewsPage: React.FC = () => {
   const [errors, setErrors] = useState<NewsValidationErrors>({});
   const navigate = useNavigate();
   const { withLoading, isLoading } = useLoading();
-  const { data } = useCategoryQuery({ categoryType: "NEWS" });
+  const { data } = useCategoryTreeQuery({ categoryType: "NEWS" });
   const categories = data?.[0]?.children ?? [];
 
 

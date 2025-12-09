@@ -1,23 +1,24 @@
 import React, { useState } from "react";
-import type { CategoryNode } from "@/utils/categoryTree";
 import CategoryTreeItem from "./CategoryTreeItem";
+import { CategoryItem } from "@/types/category";
+import { useNavigate } from "react-router";
+import { ROUTES } from "@/config/routes";
 
 interface CategoryTreeViewProps {
-  tree: CategoryNode[];
+  tree: CategoryItem[];
   maxLevel?: number;
-  onEdit: (id: number) => void;
-  onReorder: (dragId: number, dropId: number) => void;
-  onAddSubcategoryInline: (parentId: number, name: string) => void;
+  onReorder?: (dragId: number, dropId: number) => void;
+  onAddSubcategoryInline?: (parentId: number, name: string) => void;
 }
 
- const ListCategoriesPages: React.FC<CategoryTreeViewProps> = ({
-  tree,
+ const CategorySection: React.FC<CategoryTreeViewProps> = ({
+  tree = [],
   maxLevel = 3,
-  onEdit,
   onReorder,
   onAddSubcategoryInline,
 }) => {
   const [draggingId, setDraggingId] = useState<number | null>(null);
+  const navigation = useNavigate();
 
   const handleDragStart = (id: number) => {
     setDraggingId(id);
@@ -28,6 +29,10 @@ interface CategoryTreeViewProps {
       onReorder(draggingId, targetId);
     }
     setDraggingId(null);
+  };
+
+  const handleEdit = (slug: string) => {
+    navigation(ROUTES.CATEGORIES.EDIT(slug));
   };
 
   return (
@@ -42,7 +47,7 @@ interface CategoryTreeViewProps {
             node={node}
             level={1}
             maxLevel={maxLevel}
-            onEdit={onEdit}
+            onEdit={handleEdit}
             onReorderDrop={handleDrop}
             onDragStart={handleDragStart}
             draggingId={draggingId}
@@ -54,4 +59,4 @@ interface CategoryTreeViewProps {
   );
 };
 
-export default ListCategoriesPages;
+export default CategorySection;

@@ -3,42 +3,54 @@ import ActionButtons from "@/components/common/ActionButtons";
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import PageMeta from "@/components/common/PageMeta";
-import { ROUTES } from "@/config/routes";
-import { useCategoryQuery } from "@/hooks/category/useCategoryQuery";
+import { useCategoryDetailQuery, useCategoryTreeQuery } from "@/hooks/category/useCategoryQuery";
 import { useLoading } from "@/hooks/loading/useLoading";
-
-import {
-  NewsValidationErrors,
-
-} from "@/validators/newsValidation";
-import { useState } from "react";
-import { useNavigate } from "react-router";
+import { CategoryItem } from "@/types/category";
+import { useNavigate, useParams } from "react-router";
 
 
 
 
-const CreateCategoriesPage: React.FC = () => {
+const EditCategoriesPages: React.FC = () => {
 
-  const [errors, setErrors] = useState<NewsValidationErrors>({});
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { isLoading } = useLoading();
-  const { data } = useCategoryQuery({});
+  const { data } = useCategoryTreeQuery();
   const categories = data?.[0]?.children ?? [];
+  const {data: categoryDetail} = useCategoryDetailQuery({slug});
 
+  const initCate = categoryDetail ? categoryDetail.items.at(0) : null;
+
+  // console.log("categoryDetail", categoryDetail);
   const handleOnSubmit = () => {
     const form = document.getElementById("category-form") as HTMLFormElement | null;
     form.requestSubmit();
 
   };
 
-  const handleCreateNews = async () => {
-    console.log("Create category");
+  const handleUpdateCate = async (Cate:Partial<CategoryItem>) => {
+    if(!Cate.id) {
+      console.error("Category ID is required for update.");
+      return;
+    }
+      try{
+        const formData = new FormData();
+        const request = {...Cate};
+        if(request){
+          formData.append("request", JSON.stringify(request));
+        }
+         console.log("Create category", Cate);
+
+      }catch(err){
+        console.error("Failed to update category:", err);
+      }
+   
+   
   };
 
 
-  const handleCancel = () => {
-    navigate(ROUTES.NEWS.LIST);
-  };
+  
 
   return (
     <>
@@ -56,7 +68,7 @@ const CreateCategoriesPage: React.FC = () => {
           actionsSlot={
             <ActionButtons
               cancelLabel="Hủy / Quay lại"
-              onCancel={handleCancel}
+              onCancel={()=> navigate(-1)}
               onSave={handleOnSubmit}
               saveLabel="Lưu danh mục"
               isSaving={isLoading}
@@ -64,9 +76,10 @@ const CreateCategoriesPage: React.FC = () => {
           }
         >
           <CategoryForm
-            mode="create"
+            mode="update"
+            initialData={initCate}
             allCategories={categories}
-            onSubmit={handleCreateNews} 
+            onSubmit={handleUpdateCate} 
           />
         </ComponentCard>
       </div>
@@ -74,4 +87,4 @@ const CreateCategoriesPage: React.FC = () => {
   )
 }
 
-export default CreateCategoriesPage;
+export default EditCategoriesPages;

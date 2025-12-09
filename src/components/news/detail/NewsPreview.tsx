@@ -1,6 +1,6 @@
 // src/components/news/NewsPreview.tsx
 import React from "react";
-import { NewsFormValues } from "../NewsForm";
+
 
 
 interface NewsPreviewProps {

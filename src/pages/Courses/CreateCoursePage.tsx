@@ -6,9 +6,10 @@ import CoursesForm from "@/components/courses/CoursesForm";
 import { ROUTES } from "@/config/routes";
 import { useNavigate } from "react-router";
 import { courseService } from "@/services/course/courseService";
-import { useCategoryQuery } from "@/hooks/category/useCategoryQuery";
+
 import { useLoading } from "@/hooks/loading/useLoading";
 import { toast } from "react-toastify";
+import { useCategoryTreeQuery } from "@/hooks/category/useCategoryQuery";
 
 export default function CreateCoursePage() {
 
@@ -16,7 +17,7 @@ export default function CreateCoursePage() {
 
   const navigate = useNavigate();
   const { withLoading, isLoading } = useLoading();
-  const { data } = useCategoryQuery({ categoryType: "COURSE_MENU" });
+  const { data } = useCategoryTreeQuery({ categoryType: "COURSE_MENU" });
   const categories = data?.[0]?.children ?? [];
 
   // console.log("categories data:", categories);
@@ -27,7 +28,7 @@ export default function CreateCoursePage() {
 
   };
   const handleCreateCourse = async (courseData: FormData) => {
-    console.log("create courseData:", courseData);
+    // console.log("create courseData:", courseData);
     try {
       await withLoading(courseService.createCourse(courseData));
       toast.success("Tạo khóa học thành công");

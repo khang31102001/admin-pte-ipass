@@ -17,17 +17,15 @@ import BarChart from "@/pages/Charts/BarChart";
 import CreateCoursePage from "@/pages/Courses/CreateCoursePage";
 import { RequireAuth } from "./RequireAuth";
 import ListCoursesPage from "@/pages/Courses/ListCoursesPage";
-
 import CreateNewsPage from "@/pages/News/CreateNewsPage";
 import EditNewsPage from "@/pages/News/EditNewsPage";
 import ListNewsPage from "@/pages/News/ListNewsPage";
 import NewsDetailPage from "@/pages/News/NewsDetailPage";
 import UpdateCoursePage from "@/pages/Courses/UpdateCoursesPage";
 import CourseDetailPage from "@/pages/Courses/CourseDetailPage";
-
 import CreateAboutPage from "@/pages/about/CreateAboutPage";
-import CreateCategoriesPage from "@/pages/categories/CreateCategoriesPages";
-import ListCategoriesPages from "@/pages/categories/ListCategoriesPages";
+import ListCategoryPage from "@/pages/categories/ListCategoryPage";
+import EditCategoriesPages from "@/pages/categories/EditCategoriesPages";
 
 export const protectedRoutes: RouteObject[] = [
   {
@@ -73,11 +71,11 @@ export const protectedRoutes: RouteObject[] = [
         children: [
           {
             index: true,
-            element: <CreateCategoriesPage />,
+            element: <ListCategoryPage />,
           },
           {
-            path: "create",
-            element: <CreateCategoriesPage />,
+            path: "update/:slug",
+            element: <EditCategoriesPages />,
           },
           
         ],

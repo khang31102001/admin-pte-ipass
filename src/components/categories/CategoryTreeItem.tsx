@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import type { CategoryNode } from "@/utils/categoryTree";
+import { CategoryItem } from "@/types/category";
+
 
 
 interface CategoryTreeItemProps {
-  node: CategoryNode;
+  node: CategoryItem;
   level: number;
   maxLevel: number;
   draggingId: number | null;
   onDragStart: (id: number) => void;
   onReorderDrop: (id: number) => void;
-  onEdit: (id: number) => void;
+  onEdit: (id: string) => void;
   onAddSubcategoryInline: (parentId: number, name: string) => void;
 }
 
@@ -31,8 +32,11 @@ const CategoryTreeItem: React.FC<CategoryTreeItemProps> = ({
 }) => {
   const [showAddChild, setShowAddChild] = useState(false);
   const [childName, setChildName] = useState("");
+   const [isExpanded, setIsExpanded] = useState(false); 
+  
 
   const hasChildren = node.children && node.children.length > 0;
+  // console.log("ccheck hasChildren", hasChildren);
   const indentClass = levelIndentClass[level] ?? "pl-0";
 
   const handleAddChild = () => {
@@ -43,65 +47,73 @@ const CategoryTreeItem: React.FC<CategoryTreeItemProps> = ({
   };
 
   const isDragging = draggingId === node.id;
+  const handleRowClick = () => {
+  if(hasChildren){
+    setIsExpanded((prev) => !prev);
+  }
+  }
 
   return (
     <>
-      <li
-        draggable
-        onDragStart={() => onDragStart(node.id)}
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={() => onReorderDrop(node.id)}
-        className={`flex items-center justify-between rounded-lg px-2 py-1.5 hover:bg-gray-50 ${indentClass} ${
-          isDragging ? "opacity-50" : ""
-        }`}
-      >
-        <div className="flex items-center gap-2">
-          {/* Drag handle icon đơn giản */}
-          <span className="cursor-grab text-gray-300">⋮⋮</span>
-
-          <span
-            className={`h-1.5 w-1.5 rounded-full ${
-              level === 1
-                ? "bg-indigo-600"
-                : level === 2
-                ? "bg-emerald-500"
-                : "bg-amber-500"
+         <li
+          onClick={handleRowClick }
+          draggable
+          onDragStart={() => onDragStart(node.id)}
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={() => onReorderDrop(node.id)}
+          className={`flex items-center justify-between rounded-lg px-2 py-1.5 hover:bg-gray-50 ${indentClass} ${isDragging ? "opacity-50" : ""
             }`}
-          />
+        >
+          <div className="flex items-center gap-2">
+            {/* Drag handle icon đơn giản */}
+            <span className="cursor-grab text-gray-300">⋮⋮</span>
 
-          <div className="flex flex-col">
-            <span className="font-medium text-gray-800">
-              {node.name}
-            </span>
-            {node.slug && (
-              <span className="text-[11px] text-gray-400">
-                slug: {node.slug}
+
+
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${level === 1
+                  ? "bg-indigo-600"
+                  : level === 2
+                    ? "bg-emerald-500"
+                    : "bg-amber-500"
+                }`}
+            />
+
+            <div className="flex flex-col">
+              <span className="font-medium text-gray-800">
+                {node.name}
               </span>
+              {node.slug && (
+                <span className="text-[11px] text-gray-400">
+                  slug: {node.slug}
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1.5 text-xs">
+            {level !== 1 && (
+              <button
+                type="button"
+                onClick={() => onEdit(node.slug)}
+                className="rounded border border-gray-200 px-2 py-1 text-gray-700 hover:bg-gray-100"
+              >
+                Sửa
+              </button>
+            )}
+
+            {/* Thêm subcategory inline nếu chưa vượt maxLevel */}
+            {level < maxLevel && (
+              <button
+                type="button"
+                onClick={() => setShowAddChild((v) => !v)}
+                className="rounded border border-indigo-200 bg-indigo-50 px-2 py-1 text-indigo-600 hover:bg-indigo-100"
+              >
+                + Con
+              </button>
             )}
           </div>
-        </div>
-
-        <div className="flex items-center gap-1.5 text-xs">
-          <button
-            type="button"
-            onClick={() => onEdit(node.id)}
-            className="rounded border border-gray-200 px-2 py-1 text-gray-700 hover:bg-gray-100"
-          >
-            Sửa
-          </button>
-
-          {/* Thêm subcategory inline nếu chưa vượt maxLevel */}
-          {level < maxLevel && (
-            <button
-              type="button"
-              onClick={() => setShowAddChild((v) => !v)}
-              className="rounded border border-indigo-200 bg-indigo-50 px-2 py-1 text-indigo-600 hover:bg-indigo-100"
-            >
-              + Con
-            </button>
-          )}
-        </div>
-      </li>
+        </li>
 
       {/* Form add child inline */}
       {showAddChild && level < maxLevel && (
@@ -137,7 +149,10 @@ const CategoryTreeItem: React.FC<CategoryTreeItemProps> = ({
 
       {/* render con */}
       {hasChildren &&
-        node.children.map((child) => (
+        <ul className={`transition-all duration-300 overflow-hidden
+             ${isExpanded ? "max-h-[1000px] opacity-100 translate-y-0" : " max-h-0 opacity-0 -translate-y-4"}
+        `}>
+          { node.children.map((child) => (
           <CategoryTreeItem
             key={child.id}
             node={child}
@@ -149,7 +164,12 @@ const CategoryTreeItem: React.FC<CategoryTreeItemProps> = ({
             onEdit={onEdit}
             onAddSubcategoryInline={onAddSubcategoryInline}
           />
-        ))}
+        ))
+        
+          }
+        </ul>
+      
+        }
     </>
   );
 };
