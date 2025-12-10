@@ -1,15 +1,15 @@
-// components/categories/CategoryForm.tsx
 import React, { useEffect, useState } from "react";
 import type { CategoryItem } from "@/types/category";
 import { generateSlug } from "@/lib/helper";
 import { toast } from "react-toastify";
+import { CategoryTypeSection } from "./CategoryTypeSection";
 
 export type Mode = "create" | "update";
 
 interface CategoryFormProps {
   mode: Mode;
   initialData?: Partial<CategoryItem>;
-  allCategories?: CategoryItem[]; // dùng để chọn parentId
+  allCategories?: CategoryItem[]; 
   onSubmit: (data: Partial<CategoryItem>) => void;
 }
 
@@ -49,29 +49,16 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
     }
   }, [initialData]);
 
-  const handleChange =
-    (field: string) =>
-    (
-      e: React.ChangeEvent<
-        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-      >
-    ) => {
+  const handleChange =(values: Partial<CategoryItem>)  => {
       setForm((prev) => ({
         ...prev,
-        [field]: e.target.value === "" ? null : e.target.value,
+        ...values,
+        slug: mode === "create" && !prev.slug ? generateSlug(values.name) : prev.slug,
       }));
-      console.log("form updated", form);
+    
     };
 
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setForm((prev) => ({
-      ...prev,
-      name: value,
-      // chỉ auto slug khi create hoặc slug đang trống
-      slug: mode === "create" && !prev.slug ? generateSlug(value) : prev.slug,
-    }));
-  };
+ 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,10 +79,10 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
     onSubmit(payload);
   };
 
+  console.log("Category Form Data:", form);
+
   // không cho chọn chính nó làm parent
-  const parentOptions = allCategories.filter(
-    (cate) => cate.categoryId !== (initialData?.categoryId ?? 0)
-  );
+
 
   return (
     <form id="category-form" onSubmit={handleSubmit} className="space-y-6">
@@ -115,7 +102,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
                 <input
                   type="text"
                   value={form.name ?? ""}
-                  onChange={handleNameChange}
+                  onChange={(e)=>handleChange({name: e.target.value})}
                   className="block w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="Ví dụ: PTE Nâng cao"
                 />
@@ -129,7 +116,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
                 <input
                   type="text"
                   value={form.slug ?? ""}
-                  onChange={handleChange("slug")}
+                  onChange={(e)=> handleChange({slug: e.target.value})}
                   className="block w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="pte-nang-cao"
                 />
@@ -146,7 +133,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
                 <input
                   type="text"
                   value={form.url ?? ""}
-                  onChange={handleChange("url")}
+                  onChange={(e)=> handleChange({url: e.target.value})}
                   className="block w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="/courses/pte-nang-cao"
                 />
@@ -159,7 +146,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
                 </label>
                 <textarea
                   value={form.description ?? ""}
-                  onChange={handleChange("description")}
+                  onChange={(e)=> handleChange({description: e.target.value})}
                   rows={3}
                   className="block w-full resize-none rounded-xl border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="Mô tả ngắn về danh mục để hiển thị ở trang listing..."
@@ -174,7 +161,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
                 <input
                   type="text"
                   value={form.icon ?? ""}
-                  onChange={handleChange("icon")}
+                  onChange={(e)=> handleChange({icon: e.target.value})}
                   className="block w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="heroicons:academic-cap / /icons/pte.svg"
                 />
@@ -196,7 +183,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
                 <input
                   type="text"
                   value={form.h1Heading ?? ""}
-                  onChange={handleChange("h1Heading")}
+                  onChange={(e)=> handleChange({h1Heading: e.target.value})}
                   className="block w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="Các khóa học PTE nâng cao tại PTE iPASS"
                 />
@@ -209,7 +196,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
                 </label>
                 <textarea
                   value={form.seoContentTop ?? ""}
-                  onChange={handleChange("seoContentTop")}
+                  onChange={(e)=> handleChange({seoContentTop: e.target.value})}
                   rows={3}
                   className="block w-full resize-none rounded-xl border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="Đoạn nội dung xuất hiện phía trên danh sách khóa học..."
@@ -223,7 +210,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
                 </label>
                 <textarea
                   value={form.seoContentBottom ?? ""}
-                  onChange={handleChange("seoContentBottom")}
+                  onChange={(e)=> handleChange({seoContentBottom: e.target.value})}
                   rows={3}
                   className="block w-full resize-none rounded-xl border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="Đoạn nội dung xuất hiện dưới danh sách, thường để tối ưu từ khóa..."
@@ -236,83 +223,12 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
         {/* RIGHT: Hierarchy / Status / SEO Meta */}
         <div className="space-y-6">
           {/* Card: Phân cấp & loại danh mục */}
-          <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-            <h2 className="border-b border-gray-100 pb-3 text-base font-semibold text-gray-900">
-              Phân cấp & loại danh mục
-            </h2>
-            <div className="mt-4 space-y-4">
-              {/* Parent */}
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                  Danh mục cha
-                </label>
-                <select
-                  value={form.parentId ?? ""}
-                  onChange={handleChange("parentId")}
-                  className="block w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                >
-                  <option value="">— Không có (Level 1) —</option>
-                  {parentOptions.map((cate) => (
-                    <option key={cate.categoryId} value={cate.categoryId}>
-                      {cate.name}
-                    </option>
-                  ))}
-                </select>
-                <p className="mt-1 text-xs text-gray-400">
-                  Không chọn = danh mục cấp 1. Chọn danh mục cha để tạo cấp 2/3.
-                </p>
-              </div>
-
-              {/* Category Type */}
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                  Loại danh mục (categoryType)
-                </label>
-                <input
-                  type="text"
-                  value={form.categoryType ?? ""}
-                  onChange={handleChange("categoryType")}
-                  className="block w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="course / news / product..."
-                />
-              </div>
-
-              {/* Flags */}
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Trạng thái hiển thị
-                </label>
-                {/* <label className="inline-flex items-center gap-2 text-sm text-gray-700">
-                  <input
-                    type="checkbox"
-                    checked={!!form.isFeatured}
-                    onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        isFeatured: e.target.checked,
-                      }))
-                    }
-                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                  />
-                  Hiển thị nổi bật (Featured)
-                </label> */}
-                <label className="inline-flex items-center gap-2 text-sm text-gray-700">
-                  <input
-                    type="checkbox"
-                    checked={!!form.isDisable}
-                    onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        isDisable: e.target.checked,
-                      }))
-                    }
-                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                  />
-                  Vô hiệu hóa (Disable)
-                </label>
-              </div>
-            </div>
-          </div>
+         <CategoryTypeSection
+            categories={allCategories}
+            parentId={form.parentId ?? null}
+            cateData={form}
+            onChangeCategory={handleChange}
+         />
 
           {/* Card: SEO Meta */}
           <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
@@ -328,7 +244,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
                 <input
                   type="text"
                   value={form.metaTitle ?? ""}
-                  onChange={handleChange("metaTitle")}
+                  onChange={(e)=> handleChange({metaTitle: e.target.value})}
                   className="block w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="Khóa học PTE nâng cao - PTE iPASS"
                 />
@@ -341,7 +257,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
                 </label>
                 <textarea
                   value={form.metaDescription ?? ""}
-                  onChange={handleChange("metaDescription")}
+                  onChange={(e)=> handleChange({metaDescription: e.target.value})}
                   rows={3}
                   className="block w-full resize-none rounded-xl border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="Mô tả xuất hiện trên kết quả tìm kiếm Google..."
@@ -356,7 +272,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
                 <input
                   type="text"
                   value={form.canonicalUrl ?? ""}
-                  onChange={handleChange("canonicalUrl")}
+                  onChange={(e)=> handleChange({canonicalUrl: e.target.value})}
                   className="block w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="https://pteipass.com/courses/pte-nang-cao"
                 />

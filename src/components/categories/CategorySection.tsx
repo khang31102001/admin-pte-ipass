@@ -8,7 +8,7 @@ interface CategoryTreeViewProps {
   tree: CategoryItem[];
   maxLevel?: number;
   onReorder?: (dragId: number, dropId: number) => void;
-  onAddSubcategoryInline?: (parentId: number, name: string, categoryType: string) => void;
+  onAddSubcategoryInline?: (values: Partial<CategoryItem>) => void;
 }
 
  const CategorySection: React.FC<CategoryTreeViewProps> = ({
@@ -41,9 +41,9 @@ interface CategoryTreeViewProps {
         Cây danh mục (tối đa {maxLevel} cấp)
       </h2>
       <ul className="space-y-1 text-sm">
-        {tree.map((node) => (
+        {tree.map((node, index) => (
           <CategoryTreeItem
-            key={node.id}
+            key={node.categoryId ?? index}
             node={node}
             level={1}
             maxLevel={maxLevel}

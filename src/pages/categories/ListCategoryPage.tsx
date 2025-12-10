@@ -4,6 +4,8 @@ import ComponentCard from "../../components/common/ComponentCard";
 import PageMeta from "../../components/common/PageMeta";
 import CategorySection from "@/components/categories/CategorySection";
 import {  useCategoryTreeQuery } from "@/hooks/category/useCategoryQuery";
+import { CategoryItem } from "@/types/category";
+import { categoryService } from "@/services/category/categoryService";
 
 
 
@@ -16,12 +18,11 @@ export default function ListCategoryPage() {
   const CATEGORIES = data?.at(0).children || [];
 
   // console.log("categories", data);
-
-
   
-  const handleAddSubcategoryInline = (parentId: number, name: string, categoryType: string) => {
+  const handleAddSubcategoryInline = async(cate: Partial<CategoryItem>) => {
+    // if(!cate.parentId) return;
     try{
-      console.log("Add subcategory", { parentId, name, categoryType });
+        await categoryService.createCategory(cate);
     }catch(err){
       console.error("Failed to add subcategory:", err);
     }
@@ -41,8 +42,8 @@ export default function ListCategoryPage() {
 
         >
             <CategorySection
-            tree={CATEGORIES}
-            onAddSubcategoryInline={handleAddSubcategoryInline}
+              tree={CATEGORIES}
+              onAddSubcategoryInline={handleAddSubcategoryInline}
             />
         </ComponentCard>
       </div>

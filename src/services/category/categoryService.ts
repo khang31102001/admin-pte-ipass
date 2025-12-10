@@ -1,4 +1,5 @@
-import { get } from "@/api/http";
+import api from "@/api/axiosClient";
+import { get, post } from "@/api/http";
 
 
 export interface CateQueryParams {
@@ -27,7 +28,29 @@ export class CategoryService {
       const response = await get(url);
       return response ;
     }
-  
+
+   async createCategory(data: any): Promise<any> {
+    if (data instanceof FormData) {
+        const response = await api.post("/categories", data, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        return response.data;
+      }
+      const response = await post("/categories", data);
+      return response;
+  }
+
+     async updateCategory(data: any, id: number): Promise<any> {
+    if (data instanceof FormData) {
+        const response = await api.post(`/categories/${id}`, data, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        return response.data;
+      }
+      const response = await post("/categories", data);
+      return response;
+  }
+    
 }
 
 export const categoryService = new CategoryService();
