@@ -8,7 +8,7 @@ interface CategoryTreeViewProps {
   tree: CategoryItem[];
   maxLevel?: number;
   onReorder?: (dragId: number, dropId: number) => void;
-  onAddSubcategoryInline?: (parentId: number, name: string) => void;
+  onAddSubcategoryInline?: (parentId: number, name: string, categoryType: string) => void;
 }
 
  const CategorySection: React.FC<CategoryTreeViewProps> = ({

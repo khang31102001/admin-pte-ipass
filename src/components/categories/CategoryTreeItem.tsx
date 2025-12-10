@@ -11,7 +11,7 @@ interface CategoryTreeItemProps {
   onDragStart: (id: number) => void;
   onReorderDrop: (id: number) => void;
   onEdit: (id: string) => void;
-  onAddSubcategoryInline: (parentId: number, name: string) => void;
+  onAddSubcategoryInline: (parentId: number, name: string, categoryType: string) => void;
 }
 
 const levelIndentClass: Record<number, string> = {
@@ -32,6 +32,7 @@ const CategoryTreeItem: React.FC<CategoryTreeItemProps> = ({
 }) => {
   const [showAddChild, setShowAddChild] = useState(false);
   const [childName, setChildName] = useState("");
+  const [childCategoryType, setChildCategoryType] = useState("");
    const [isExpanded, setIsExpanded] = useState(false); 
   
 
@@ -40,13 +41,14 @@ const CategoryTreeItem: React.FC<CategoryTreeItemProps> = ({
   const indentClass = levelIndentClass[level] ?? "pl-0";
 
   const handleAddChild = () => {
-    if (!childName.trim()) return;
-    onAddSubcategoryInline(node.id, childName.trim());
+    if (!childName.trim() || !childCategoryType.trim()) return;
+    onAddSubcategoryInline(node.categoryId, childName, childCategoryType);
     setChildName("");
+    setChildCategoryType("");
     setShowAddChild(false);
   };
 
-  const isDragging = draggingId === node.id;
+  const isDragging = draggingId === node.categoryId;
   const handleRowClick = () => {
   if(hasChildren){
     setIsExpanded((prev) => !prev);
@@ -58,9 +60,9 @@ const CategoryTreeItem: React.FC<CategoryTreeItemProps> = ({
          <li
           onClick={handleRowClick }
           draggable
-          onDragStart={() => onDragStart(node.id)}
+          onDragStart={() => onDragStart(node.categoryId)}
           onDragOver={(e) => e.preventDefault()}
-          onDrop={() => onReorderDrop(node.id)}
+          onDrop={() => onReorderDrop(node.categoryId)}
           className={`flex items-center justify-between rounded-lg px-2 py-1.5 hover:bg-gray-50 ${indentClass} ${isDragging ? "opacity-50" : ""
             }`}
         >
@@ -124,7 +126,14 @@ const CategoryTreeItem: React.FC<CategoryTreeItemProps> = ({
               value={childName}
               onChange={(e) => setChildName(e.target.value)}
               className="w-64 rounded-lg border border-gray-300 px-3 py-1.5 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              placeholder="Tên danh mục con..."
+              placeholder="Tên danh mục con (Khóa học)"
+            />
+            <input
+              type="text"
+              value={childCategoryType}
+              onChange={(e) => setChildCategoryType(e.target.value)}
+              className="w-64 rounded-lg border border-gray-300 px-3 py-1.5 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              placeholder="Loại danh mục con (BASIS)"
             />
             <button
               type="button"
@@ -154,7 +163,7 @@ const CategoryTreeItem: React.FC<CategoryTreeItemProps> = ({
         `}>
           { node.children.map((child) => (
           <CategoryTreeItem
-            key={child.id}
+            key={child.categoryId}
             node={child}
             level={Math.min(level + 1, maxLevel)}
             maxLevel={maxLevel}

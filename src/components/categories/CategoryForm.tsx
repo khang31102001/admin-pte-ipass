@@ -11,20 +11,16 @@ interface CategoryFormProps {
   initialData?: Partial<CategoryItem>;
   allCategories?: CategoryItem[]; // dùng để chọn parentId
   onSubmit: (data: Partial<CategoryItem>) => void;
-
 }
-
-
 
 export const CategoryForm: React.FC<CategoryFormProps> = ({
   mode,
   initialData,
   allCategories = [],
   onSubmit,
- 
 }) => {
   const [form, setForm] = useState<Partial<CategoryItem>>({
-    id: undefined,
+    categoryId: undefined,
     name: "",
     slug: "",
     description: "",
@@ -44,7 +40,6 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
     ...initialData,
   });
 
- 
   useEffect(() => {
     if (initialData) {
       setForm((prev) => ({
@@ -55,19 +50,17 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
   }, [initialData]);
 
   const handleChange =
-    <K extends keyof CategoryItem>(key: K) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-      const value =
-        e.target.type === "checkbox"
-          ? (e.target as HTMLInputElement).checked
-          : e.target.value;
-
+    (field: string) =>
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >
+    ) => {
       setForm((prev) => ({
         ...prev,
-        [key]: key === "parentId"
-          ? value === "" ? null : Number(value)
-          : value,
+        [field]: e.target.value === "" ? null : e.target.value,
       }));
+      console.log("form updated", form);
     };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,7 +75,6 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     // validation đơn giản
     if (!form.name || form.name.trim() === "") {
       toast.error("Tên danh mục không được để trống.");
@@ -102,21 +94,12 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
 
   // không cho chọn chính nó làm parent
   const parentOptions = allCategories.filter(
-    (cate) => cate.id !== (initialData?.id ?? 0)
+    (cate) => cate.categoryId !== (initialData?.categoryId ?? 0)
   );
 
-
   return (
-    <form
-      id="category-form"
-      onSubmit={handleSubmit}
-      className="space-y-6"
-    >
-     
-     
-
+    <form id="category-form" onSubmit={handleSubmit} className="space-y-6">
       <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-
         <div className="space-y-6">
           {/* Card: Thông tin cơ bản */}
           <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
@@ -270,7 +253,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
                 >
                   <option value="">— Không có (Level 1) —</option>
                   {parentOptions.map((cate) => (
-                    <option key={cate.id} value={cate.id}>
+                    <option key={cate.categoryId} value={cate.categoryId}>
                       {cate.name}
                     </option>
                   ))}
@@ -400,7 +383,8 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
                     Không cho index (noindex)
                   </label>
                   <p className="text-xs text-gray-400">
-                    Bật nếu bạn không muốn Google index trang danh mục này (noindex).
+                    Bật nếu bạn không muốn Google index trang danh mục này
+                    (noindex).
                   </p>
                 </div>
               </div>
@@ -412,7 +396,10 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
             <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-4 text-xs text-gray-500">
               Version: {form.version}{" "}
               {form.updatedAt && (
-                <>• Cập nhật lần cuối: {new Date(form.updatedAt).toLocaleString()}</>
+                <>
+                  • Cập nhật lần cuối:{" "}
+                  {new Date(form.updatedAt).toLocaleString()}
+                </>
               )}
             </div>
           )}

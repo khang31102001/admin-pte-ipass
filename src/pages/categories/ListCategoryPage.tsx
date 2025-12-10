@@ -19,9 +19,9 @@ export default function ListCategoryPage() {
 
 
   
-  const handleAddSubcategoryInline = (parentId: number, name: string) => {
+  const handleAddSubcategoryInline = (parentId: number, name: string, categoryType: string) => {
     try{
-      console.log("Add subcategory", { parentId, name });
+      console.log("Add subcategory", { parentId, name, categoryType });
     }catch(err){
       console.error("Failed to add subcategory:", err);
     }

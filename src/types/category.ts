@@ -37,7 +37,7 @@ export interface Category {
 }
 
 export interface CategoryItem {
-    id: number;
+    categoryId: number;
     icon?: string;
     name: string;
     slug?: string;

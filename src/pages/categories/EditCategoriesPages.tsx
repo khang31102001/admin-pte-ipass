@@ -29,23 +29,16 @@ const EditCategoriesPages: React.FC = () => {
 
   };
 
-  const handleUpdateCate = async (Cate:Partial<CategoryItem>) => {
-    if(!Cate.id) {
+  const handleUpdateCate = async (cate:Partial<CategoryItem>) => {
+    if(!cate.categoryId) {
       console.error("Category ID is required for update.");
       return;
     }
       try{
-        const formData = new FormData();
-        const request = {...Cate};
-        if(request){
-          formData.append("request", JSON.stringify(request));
-        }
-         console.log("Create category", Cate);
-
+        console.log("Update category", cate);
       }catch(err){
         console.error("Failed to update category:", err);
       }
-   
    
   };
 
