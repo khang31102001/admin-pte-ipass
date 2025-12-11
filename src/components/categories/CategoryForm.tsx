@@ -225,7 +225,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
           {/* Card: Phân cấp & loại danh mục */}
          <CategoryTypeSection
             categories={allCategories}
-            parentId={form.parentId ?? null}
+            parentId={form.categoryId ?? null}
             cateData={form}
             onChangeCategory={handleChange}
          />

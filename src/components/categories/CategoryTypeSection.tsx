@@ -6,31 +6,31 @@ import { CategoryItem } from "@/types/category";
 interface Props {
     cateData: Partial<CategoryItem>;
     categories: CategoryItem[];
-    parentId?: number
+    cateId?: number
     onChangeCategory?: (values: Partial<CategoryItem>) => void;
 }
 
-function getPathToRoot(categories: CategoryItem[], id: number): number[] {
-  const map = new Map<number, CategoryItem>();
-  categories.forEach((c) => map.set(c.categoryId, c));
+function getPathToRoot(categories: CategoryItem[], id: number): CategoryItem[] {
+    const map = new Map<number, CategoryItem>();
+    categories.forEach((c) => map.set(c.categoryId, c));
 
-  const path: number[] = [];
-  let currentId: number | null = id;
+    const path: CategoryItem[] = [];
+    let currentId: number | null = id;
 
-  while (currentId != null) {
-    const node = map.get(currentId);
-    if (!node) break;
-    path.unshift(node.categoryId); // [root, ..., leaf]
-    currentId = node.parentId;
-  }
+    while (currentId != null) {
+        const node = map.get(currentId); // <-- node là CategoryItem object
+        if (!node) break;
+        path.unshift(node);
+        currentId = node.parentId;
+    }
 
-  return path;
+    return path;
 }
 
 export const CategoryTypeSection: React.FC<Props> = ({
     cateData = null,
     categories = [],
-    parentId = undefined,
+    cateId = undefined,
     onChangeCategory,
 }) => {
 
@@ -38,31 +38,31 @@ export const CategoryTypeSection: React.FC<Props> = ({
     const [level2Id, setLevel2Id] = useState<Option | null>(null);
     const [level3Id, setLevel3Id] = useState<Option | null>(null);
 
-    console.log("CategoryTypeSection parentId:", parentId);
+
+    // console.log("CategoryTypeSection parentId:", cateId);
     useEffect(() => {
 
-        if (!parentId) {
+        if (!cateId) {
             setLevel1Id(null);
             setLevel2Id(null);
             setLevel3Id(null);
             return;
         }
 
-        const path = getPathToRoot(categories, parentId);
-        console.log("CategoryTypeSection path to root:", path[0], path[1], path[2], path[3]);
-        const toOptions = (cate: CategoryItem[], id: number | null): Option | null => {
-            if (!id) return null;
-            const item = cate.find((c) => c.categoryId === id);
-            if (!item) return null;
-            return {
-                label: item.name,
-                value: String(item.categoryId),
-            };
-        };
-        setLevel1Id(toOptions(categories, path[0] || null));
-        setLevel2Id(toOptions(categories, path[1] || null));
-        setLevel3Id(toOptions(categories, path[2] || null));
-    }, [parentId, categories]);
+        const path = getPathToRoot(categories, cateId);
+        const [lv1, lv2, lv3,] = path;
+
+        const toOptions = (cate: CategoryItem): Option | null =>
+            cate ? {
+                label: cate.name,
+                value: cate.categoryId ? cate.categoryId.toString() : "",
+            } as Option : null;
+
+
+        setLevel1Id(toOptions(lv1) ?? null);
+        setLevel2Id(toOptions(lv2) ?? null);
+        setLevel3Id(toOptions(lv3) ?? null);
+    }, [cateId, categories]);
 
 
     const level1Options = useMemo(
@@ -136,6 +136,8 @@ export const CategoryTypeSection: React.FC<Props> = ({
 
     // console.log("Selected Level 3:", level3Id);
 
+    const showLevel2 = !!level1Id && level2Options.length > 0;
+    const showLevel3 = !!level2Id && level3Options.length > 0;
 
     if (!categories || categories.length === 0) return null;
     return (
@@ -163,7 +165,7 @@ export const CategoryTypeSection: React.FC<Props> = ({
 
                 <div
                     className={`mt-4 origin-top transition-all duration-300 ease-in-out
-                        ${level2Options.length > 0
+                        ${showLevel2
                             ? "opacity-100 max-h-40 translate-y-0 scale-y-100"
                             : "opacity-0 max-h-0 -translate-y-1 scale-y-95 overflow-hidden pointer-events-none"
                         }
@@ -182,7 +184,7 @@ export const CategoryTypeSection: React.FC<Props> = ({
 
                 <div
                     className={`mt-4 origin-top transition-all duration-300 ease-in-out
-                        ${level3Options.length > 0
+                        ${showLevel3
                             ? "opacity-100 max-h-40 translate-y-0 scale-y-100"
                             : "opacity-0 max-h-0 -translate-y-1 scale-y-95 overflow-hidden pointer-events-none"
                         }
