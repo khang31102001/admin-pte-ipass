@@ -8,6 +8,7 @@ import { useLoading } from "@/hooks/loading/useLoading";
 import { categoryService } from "@/services/category/categoryService";
 import { CategoryItem } from "@/types/category";
 import { useNavigate, useParams } from "react-router";
+import { toast } from "react-toastify";
 
 
 
@@ -23,7 +24,7 @@ const EditCategoriesPages: React.FC = () => {
 
 
   const initCate = categoryDetail ? categoryDetail.items.at(0) : null;
-   console.log("audit check cate", categories);
+  //  console.log("audit check cate", categories);
   // console.log("categoryDetail", categoryDetail);
   const handleOnSubmit = () => {
     const form = document.getElementById("category-form") as HTMLFormElement | null;
@@ -37,10 +38,12 @@ const EditCategoriesPages: React.FC = () => {
       return;
     }
       try{
-        // console.log("Update category", cate);
+        console.log("Update category", cate);
         await withLoading(categoryService.updateCategory(cate, cate.categoryId!))
+        toast.success("Cập nhật danh mục thành công");
       }catch(err){
         console.error("Failed to update category:", err);
+        toast.error("Cập nhật danh mục thất bại");
       }
    
   };

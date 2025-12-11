@@ -17,10 +17,10 @@ export default function CreateCoursePage() {
 
   const navigate = useNavigate();
   const { withLoading, isLoading } = useLoading();
-  const { data } = useCategoryTreeQuery({ categoryType: "COURSE_MENU" });
+  const { data } = useCategoryTreeQuery({ categoryType: "HEADER" });
   const categories = data?.[0]?.children ?? [];
 
-  // console.log("categories data:", categories);
+  // console.log("check data:", data);
 
   const handleOnSubmit = () => {
     const form = document.getElementById("courses-form") as HTMLFormElement | null;
@@ -28,7 +28,8 @@ export default function CreateCoursePage() {
 
   };
   const handleCreateCourse = async (courseData: FormData) => {
-    // console.log("create courseData:", courseData);
+   
+     
     try {
       await withLoading(courseService.createCourse(courseData));
       toast.success("Tạo khóa học thành công");

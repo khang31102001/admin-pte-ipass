@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PreviewSidebar from "@/components/courses/PreviewSidebar";
 import BasicInformationTab from "@/components/courses/BasicInformationTab";
 // import ContentTab from "@/components/courses/create/ContentTab";
@@ -67,10 +67,9 @@ export default function CoursesForm({
 }: CoursesFormProps) {
 
   const [courseData, setCourseData] = useState<Course>({
-    ...initCourseData,
     title: "",
     slug: "",
-    level: "BEGINER",
+    level: "",
     category: null,
     categoryId: null,
     description: "",
@@ -88,6 +87,7 @@ export default function CoursesForm({
     schemaEnabled: true,
     schemaMode: "auto",
     schemaData: "",
+    ...initCourseData,
 
   });
 
@@ -98,6 +98,16 @@ export default function CoursesForm({
     deleteImageUrl: initCourseData?.image ?? undefined,
   });
 
+  useEffect(()=>{
+    if(initCourseData){
+      setCourseData((prev)=>({
+        ...prev,
+        ...initCourseData
+      }))
+    }
+
+  }, [initCourseData])
+
   const [errors, setErrors] = useState<CourseValidationErrors>({});
 
   const [activeTab, setActiveTab] = useState<number>(tabsConfig[0].id ?? 1);
@@ -105,23 +115,27 @@ export default function CoursesForm({
   const ActiveTabComponent = activeTabConfig.content;
   const isEdit = mode === "update";
 
+
+  const allCateggories = useMemo(()=>{
+    if(categories.length === 0) return [];
+    return categories.filter((cate)=> 
+      cate.categoryType === "COURSE_MENU" || cate.categoryType === "TEST"
+    )
+  }, [categories]);
+
   
+
+    // console.log("check categories in form:", allCateggories);
   const hanndleMediaChange = (media: Partial<IMedia | null>) => {
-    if(isEdit){
-      setImgPreview((prev) => ({ 
-         ...prev, 
-        ...media, 
-        deleteImageUrl: initCourseData?.image ,
-        isImageChanged: true,
-    }));
-    }else{
-        setImgPreview((prev) => ({ 
+  
+    setImgPreview((prev) => ({ 
           ...prev, 
           ...media, 
-          deleteImageUrl: undefined ,
-          isImageChanged: false,
+          deleteImageUrl: isEdit ?
+                                  initCourseData?.image 
+                                  :  undefined ,
+          isImageChanged: isEdit ? true : false,
       }));
-    }
       
     setCourseData((prev) => ({
       ...prev,
@@ -132,6 +146,7 @@ export default function CoursesForm({
     setCourseData((prev) => ({ ...prev, ...updates }));
   };
 
+  console.log("check imgPreview in form:", imgPreview);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const validatError = validateCourse(courseData);
@@ -163,7 +178,7 @@ export default function CoursesForm({
     
   }
 
-    
+    console.log("check courseData in form:", courseData);
   return (
     <div className="min-h-screen bg-background">
       {/* Main Content */}
@@ -196,7 +211,7 @@ export default function CoursesForm({
               courseData={courseData}
               onChangeMedia={hanndleMediaChange}
               updateCourseData={handleChangeCourseData}
-              categories={categories}
+              categories={allCateggories}
             />
           </aside>
         </div>

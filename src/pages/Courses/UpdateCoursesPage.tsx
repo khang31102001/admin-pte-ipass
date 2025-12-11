@@ -1,31 +1,25 @@
 
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import PageMeta from "@/components/common/PageMeta";
 import CoursesForm from "@/components/courses/CoursesForm";
-import SearchBoxInput from "@/components/form/input/SearchBoxInput";
 import ActionButtons from "@/components/common/ActionButtons";
 import { courseService } from "@/services/course/courseService";
 import { toast } from "react-toastify";
 import { useLoading } from "@/hooks/loading/useLoading";
 import { useDetailCoursesQuery } from "@/hooks/courses/useCoursesQuery";
+import { useCategoryTreeQuery } from "@/hooks/category/useCategoryQuery";
 
 
 export default function UpdateCoursePage() {
     const { slug } = useParams<{ slug: string }>();
      const { withLoading, isLoading } = useLoading();
+     const navigate = useNavigate();
     const{data} = useDetailCoursesQuery(slug);
+    const { data: cate } = useCategoryTreeQuery({ categoryType: "HEADER" });
+    const categories = cate?.[0]?.children ?? [];
 
-
-    const RenderSearchBox = () => {
-        return (
-            <SearchBoxInput
-                placeholder="Nhập mã / tên / slug khóa học..."
-                onSearch={(value) => console.log("call api từ giá trị search value:", value)}
-            />
-        )
-    }
 
     const handleOnSubmit = () => {
        const form = document.getElementById("courses-form") as HTMLFormElement | null;
@@ -65,17 +59,18 @@ export default function UpdateCoursePage() {
                     actionsSlot={
                         <ActionButtons
                             saveLabel= "Lưu thay đổi"
+                            onCancel={()=>navigate(-1)}
                             onSave={handleOnSubmit}
                             isSaving={isLoading}
                         />
                     }
-                    filtersSlot={RenderSearchBox()}
+                  
                 >
                     <CoursesForm
                         mode="update"
                         initCourseData={data ?? null}
                         onSubmit={handleUpdateCourse}
-                        categories={[]}
+                        categories={categories}
                     />
                 </ComponentCard>
             </div>

@@ -9,6 +9,7 @@ interface CategoryTreeViewProps {
   maxLevel?: number;
   onReorder?: (dragId: number, dropId: number) => void;
   onAddSubcategoryInline?: (values: Partial<CategoryItem>) => void;
+  onDelete?: (categoryId: number) => void;
 }
 
  const CategorySection: React.FC<CategoryTreeViewProps> = ({
@@ -16,6 +17,7 @@ interface CategoryTreeViewProps {
   maxLevel = 3,
   onReorder,
   onAddSubcategoryInline,
+  onDelete,
 }) => {
   const [draggingId, setDraggingId] = useState<number | null>(null);
   const navigation = useNavigate();
@@ -52,6 +54,7 @@ interface CategoryTreeViewProps {
             onDragStart={handleDragStart}
             draggingId={draggingId}
             onAddSubcategoryInline={onAddSubcategoryInline}
+            onDelete={onDelete}
           />
         ))}
       </ul>

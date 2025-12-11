@@ -95,6 +95,7 @@ export const CoursesCategorySection: React.FC<CoursesCategorySectionProps> = ({
 
   // Cấp 1: root categories (mảng categories bạn truyền vào đã là root)
   const parentOptions = useMemo(() => toOptions(categories), [categories]);
+  
   const childOptions = useMemo(
     () => toOptions(childCategories),
     [childCategories]
@@ -126,11 +127,11 @@ export const CoursesCategorySection: React.FC<CoursesCategorySectionProps> = ({
       return;
     }
 
-    const parent = findCategoryById(categories, id);
-    const hasChildren = !!parent?.children?.length;
+    // const parent = findCategoryById(categories, id);
+    // const hasChildren = !!parent?.children?.length;
 
     // Nếu không có con -> chọn luôn parent là category cuối
-    onChange(hasChildren ? null : id);
+    onChange(id);
   };
 
   // Khi chọn child (cấp 2)
@@ -144,11 +145,11 @@ export const CoursesCategorySection: React.FC<CoursesCategorySectionProps> = ({
       return;
     }
 
-    const child = findCategoryById(categories, id);
-    const hasChildren = !!child?.children?.length;
+    // const child = findCategoryById(categories, id);
+    // const hasChildren = !!child?.children?.length;
 
     // Nếu không có cháu -> chọn child làm category cuối
-    onChange(hasChildren ? null : id);
+    onChange(id);
   };
 
   // Khi chọn grand child (cấp 3)

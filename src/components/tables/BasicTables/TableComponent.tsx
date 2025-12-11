@@ -26,7 +26,7 @@ export default function TableComponent<T>({
   return (
     <div className="rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="overflow-x-auto w-full ">
-        <Table className="!min-w-max w-full table-fixed ">
+        <Table className="!min-w-full table-auto">
           {/* Table Header */}
           <TableHeader className=" border-b border-gray-100 dark:border-white/[0.05]">
             <TableRow>
@@ -35,7 +35,7 @@ export default function TableComponent<T>({
                   key={String(col.key)}
                   isHeader
                   className={[
-                    "px-6 py-3  font-bold text-gray-700 text-start text-theme-xs dark:text-gray-400 whitespace-nowrap",
+                    "px-4 py-2  font-bold text-gray-700 text-start text-theme-xs dark:text-gray-400 whitespace-nowrap",
                     col.headerClassName || "",
                   ].join(" ")}
                 >
@@ -53,7 +53,7 @@ export default function TableComponent<T>({
                   <TableCell
                     key={String(col.key)}
                     className={[
-                      "px-6 py-3 whitespace-nowrap font-medium text-gray-500 text-start text-theme-sm dark:text-gray-400 align-top",
+                      "px-4 py-2 whitespace-nowrap font-medium text-gray-500 text-start text-theme-sm dark:text-gray-400 align-top",
                       col.cellClassName || "",
                     ].join(" ")}
                   >

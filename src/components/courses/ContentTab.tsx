@@ -1,12 +1,11 @@
 
-import Input from "@/components/form/input/InputField"
 import Label from "@/components/form/Label"
 import Button from "@/components/ui/button/Button"
 import RichTextEditor from "@/components/ui/textEditor/RichTextEditor"
 import { seoService } from "@/services/seo/seoService"
 import { Course } from "@/types/courses"
 import { SeoAnalysisResponse } from "@/types/seo"
-import { X } from "lucide-react"
+
 import { useState } from "react"
 
 interface ContentTabProps {
@@ -15,19 +14,11 @@ interface ContentTabProps {
 }
 
 export default function ContentTab({ courseData, updateCourseData }: ContentTabProps) {
-  const [newAudience, setNewAudience] = useState("");
+
    const [seoResult, setSeoResult] = useState<SeoAnalysisResponse | null>(null)
   const [seoLoading, setSeoLoading] = useState(false)
   const [seoError, setSeoError] = useState<string | null>(null)
 
-  const addAudience = () => {
-    if (newAudience.trim()) {
-      updateCourseData({
-        audience: [...courseData.audience, newAudience.trim()],
-      })
-      setNewAudience("")
-    }
-  }
 
    const handleCheckSeo = async () => {
     if (!courseData.content || !courseData.content.trim()) {
@@ -50,11 +41,6 @@ export default function ContentTab({ courseData, updateCourseData }: ContentTabP
     }
   }
 
-  const removeAudience = (index: number) => {
-    updateCourseData({
-      audience: courseData.audience.filter((_, i) => i !== index),
-    })
-  }
 
    const scoreColor =
     seoResult && seoResult.data.score >= 70
@@ -110,40 +96,7 @@ export default function ContentTab({ courseData, updateCourseData }: ContentTabP
 
       {/* Suitable Audience */}
       <div>
-        <Label htmlFor="audience" className="text-sm font-medium">
-          Đối tượng phù hợp (Tùy chọn)
-        </Label>
-        <div className="mt-2 flex gap-2">
-          <Input
-            id="audience"
-            placeholder="e.g., Beginners, PTE 50+ target"
-            value={newAudience}
-            onChange={(e) => setNewAudience(e.target.value)}
-          />
-          <Button onClick={addAudience} size="sm" variant="outline">
-            Thêm
-          </Button>
-        </div>
-
-        {courseData.audience?.length ? (
-          <div className="mt-3 flex flex-wrap gap-2">
-            {courseData.audience.map((tag, index) => (
-                  <span
-                      key={index}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#04016C]/5 text-[#04016C] text-xs"
-                    >
-                      {tag}
-                      <button
-                        type="button"
-                        onClick={() => removeAudience(index)}
-                        className="text-[10px] hover:text-red-500"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    </span>
-            ))}
-          </div>
-        ) : null}
+        
 
          {(seoError || seoResult) && (
         <div className="mt-4">

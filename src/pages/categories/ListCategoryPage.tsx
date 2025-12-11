@@ -6,6 +6,7 @@ import CategorySection from "@/components/categories/CategorySection";
 import {  useCategoryTreeQuery } from "@/hooks/category/useCategoryQuery";
 import { CategoryItem } from "@/types/category";
 import { categoryService } from "@/services/category/categoryService";
+import { toast } from "react-toastify";
 
 
 
@@ -13,19 +14,30 @@ import { categoryService } from "@/services/category/categoryService";
 export default function ListCategoryPage() {
 
 
-  const{data} = useCategoryTreeQuery({categoryType: "HEADER"});
+  const{data, refetch} = useCategoryTreeQuery({categoryType: "HEADER"});
+
   
   const CATEGORIES = data?.at(0).children || [];
 
   // console.log("categories", data);
   
   const handleAddSubcategoryInline = async(cate: Partial<CategoryItem>) => {
-    // if(!cate.parentId) return;
+    if(!cate.parentId) {
+      console.error("Parent ID is required to add a subcategory.");
+      return;
+    };
     try{
         await categoryService.createCategory(cate);
+        toast.success("Thêm danh mục con thành công");
+        await refetch();
     }catch(err){
       console.error("Failed to add subcategory:", err);
+      toast.error("Thêm danh mục con thất bại");
     }
+  }
+
+  const handleDelelte = async(categoryId: number) => {
+    console.log("Delete categoryId", categoryId);
   }
 
   return (
@@ -44,6 +56,7 @@ export default function ListCategoryPage() {
             <CategorySection
               tree={CATEGORIES}
               onAddSubcategoryInline={handleAddSubcategoryInline}
+              onDelete={handleDelelte}
             />
         </ComponentCard>
       </div>

@@ -13,6 +13,7 @@ interface CategoryTreeItemProps {
   onReorderDrop: (id: number) => void;
   onEdit: (id: string) => void;
   onAddSubcategoryInline: (values: Partial<CategoryItem>) => void;
+  onDelete?: (categoryId: number) => void;
 }
 
 const levelIndentClass: Record<number, string> = {
@@ -30,6 +31,7 @@ const CategoryTreeItem: React.FC<CategoryTreeItemProps> = ({
   onReorderDrop,
   onEdit,
   onAddSubcategoryInline,
+  onDelete,
 }) => {
   const [showAddChild, setShowAddChild] = useState(false);
   const [cateForm, setCateForm] = useState<CategoryItem>({
@@ -71,12 +73,17 @@ const CategoryTreeItem: React.FC<CategoryTreeItemProps> = ({
     onAddSubcategoryInline(cateForm);
   };
 
+  const handleDelte = (categoryId: number) => {
+    onDelete(categoryId);
+  }
+
   const isDragging = draggingId === node.categoryId;
   const handleRowClick = () => {
     if (hasChildren) {
       setIsExpanded((prev) => !prev);
     }
   }
+
 //  console.log("node.categoryId", node);
   return (
     <>
@@ -114,6 +121,16 @@ const CategoryTreeItem: React.FC<CategoryTreeItemProps> = ({
         </div>
 
         <div className="flex items-center gap-1.5 text-xs">
+           {level !== 1 && (
+            <button
+              type="button"
+              onClick={() => handleDelte(node.categoryId!)}
+              className="rounded border bg-red-400 border-gray-200 px-2 py-1 text-red-900 hover:bg-red-600 hover:text-white"
+            >
+              Delete
+            </button>
+          )}
+
           {level !== 1 && (
             <button
               type="button"

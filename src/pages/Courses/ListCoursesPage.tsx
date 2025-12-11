@@ -9,7 +9,6 @@ import Button from "@/components/ui/button/Button";
 import SearchInput from "@/components/form/input/SearchInput";
 import { MoreVertical, Plus } from "lucide-react";
 import { Course } from "@/types/courses";
-import { Dropdown } from "@/components/ui/dropdown/Dropdown";
 import { DropdownItem } from "@/components/ui/dropdown/DropdownItem";
 import { useNavigate } from "react-router";
 import { ROUTES } from "@/config/routes";
@@ -18,6 +17,7 @@ import { useCoursesQuery } from "@/hooks/courses/useCoursesQuery";
 import { RenderConfirmDelete } from "@/components/common/ConfirmDelete";
 import ActionButtons from "@/components/common/ActionButtons";
 import { courseService } from "@/services/course/courseService";
+import { Dropdown } from "@/components/ui/dropdown/Dropdown";
 
 type CourseColumnHandlers = {
   selectedIds: number[];
@@ -61,8 +61,7 @@ function createCourseColumns({
       ),
     },
     { key: "courseId", header: "ID" },
-    { key: "courseCode", header: "Code" },
-    { key: "courseName", header: "Name" },
+    { key: "courseName", header: "Name",  cellClassName: "max-w-[220px] truncate" },
     { key: "level", header: "Level" },
     { key: "mode", header: "Mode" },
     { key: "language", header: "Language" },
@@ -71,14 +70,16 @@ function createCourseColumns({
       key: "actions",
       header: "Actions",
       render: (row) => {
+           
         if (!row.courseId) return null;
+
         const isOpen = openMenuId === row.courseId;
         const closeDropdown = () => {
           onToggleDropdown(row.courseId!);
         };
 
         return (
-          <div className="relative flex justify-end pr-4">
+          <div className="relative flex pr-4">
             <button
               type="button"
               onClick={() => onToggleDropdown(row.courseId!)}
@@ -91,7 +92,8 @@ function createCourseColumns({
             <Dropdown
               isOpen={isOpen}
               onClose={closeDropdown}
-              className="!absolute !right-0 !top-10 !z-[999] !mt-0 flex w-40 flex-col rounded-2xl border border-gray-200 bg-white p-2 shadow-lg dark:border-gray-700 dark:bg-gray-900"
+              className="w-40 p-2 top-8 z-99999 "
+
             >
               <ul className="flex flex-col gap-1">
                 <li>

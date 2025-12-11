@@ -4,13 +4,14 @@ import Label from "@/components/form/Label"
 import { generateSlug, getBaseUrl } from "@/lib/helper"
 import { CategoryItem } from "@/types/category"
 import { Course } from "@/types/courses"
-import React, {
+import{
   useState,
   useEffect,
-  ChangeEvent,
 
 } from "react"
 import Select from "../form/Select"
+import Button from "../ui/button/Button"
+import { X } from "lucide-react"
 
 interface BasicInformationTabProps {
   categories?: CategoryItem[];
@@ -33,7 +34,7 @@ export default function BasicInformationTab({
   const [charCount, setCharCount] = useState(
     courseData.description?.length ?? 0
   );
-
+  const [newAudience, setNewAudience] = useState("");
 
   const BASE_URL = getBaseUrl();
 
@@ -43,11 +44,28 @@ export default function BasicInformationTab({
 
 
 
-  const handleChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
-    const title = e.target.value ?? "";
-    const slug = generateSlug(title);
-    updateCourseData({ title, slug });
+  const handleChangeTitle = (title: string) => {
+    updateCourseData({ 
+        title: title, 
+        slug: generateSlug(title)
+     });
   };
+
+    const addAudience = () => {
+    if (newAudience.trim()) {
+      updateCourseData({
+        audience: [...courseData.audience, newAudience.trim()],
+      })
+      setNewAudience("")
+    }
+  }
+
+    const removeAudience = (index: number) => {
+    updateCourseData({
+      audience: courseData.audience.filter((_, i) => i !== index),
+    })
+  }
+
 
 
   return (
@@ -61,7 +79,7 @@ export default function BasicInformationTab({
           id="title"
           placeholder="PTE Foundation – Platform from 0 to 50+"
           value={courseData.title ?? ""}
-          onChange={handleChangeTitle}
+          onChange={(e)=> handleChangeTitle(e.target.value)}
           className="mt-2"
         />
       </div>
@@ -88,26 +106,6 @@ export default function BasicInformationTab({
         )}
       </div>
 
-     
-      {/* Level */}
-      <div>
-        <Label htmlFor="level" className="text-sm font-medium">
-          Level
-        </Label>
-        <div className="max-w-md">
-          <Select
-            options={LEVEL}
-            defaultValue={courseData.level}
-            onChange={(newValue) => updateCourseData({ level: newValue })}
-            placeholder="Search course level..."
-          />
-
-          <p className="mt-3 text-sm text-gray-600">
-            Selected: {courseData.level ?? " Chưa chọn"}
-          </p>
-        </div>
-      </div>
-
       {/* Description */}
       <div>
         <Label htmlFor="description" className="text-sm font-medium">
@@ -116,7 +114,7 @@ export default function BasicInformationTab({
         <TextArea
           placeholder="Mô tả ngắn gọn về khóa học..."
           value={courseData.description ?? ""}
-          rows={3}
+          rows={4}
           className="mt-2"
           onChange={(value) =>
             updateCourseData({ description: value })
@@ -125,6 +123,64 @@ export default function BasicInformationTab({
         <p className="mt-2 text-xs text-muted-foreground">
           {charCount}/250
         </p>
+      </div>
+
+      
+      {/* Level */}
+      <div className="space-y-2">
+        <Label htmlFor="level" className="text-sm font-medium">
+          Level
+        </Label>
+        <div className="w-full mt-2">
+          <Select
+            options={LEVEL}
+            defaultValue={courseData.level}
+            onChange={(newValue) => updateCourseData({ level: newValue })}
+            placeholder="Select course level..."
+          />
+
+          <p className="mt-3 text-sm text-gray-800">
+            Selected: {courseData.level ?? " Chưa chọn"}
+          </p>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="audience" className="text-sm font-medium">
+          Đối tượng phù hợp (Tùy chọn)
+        </Label>
+        <div className="mt-2 flex gap-2">
+          <Input
+            id="audience"
+            placeholder="e.g., Beginners, PTE 50+ target"
+            value={newAudience}
+            onChange={(e) => setNewAudience(e.target.value)}
+          />
+          <Button onClick={addAudience} size="sm" variant="outline">
+            Thêm
+          </Button>
+        </div>
+
+           {courseData.audience?.length ? (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {courseData.audience.map((tag, index) => (
+                <span
+                  key={index}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#04016C]/5 text-[#04016C] text-xs"
+                >
+                  {tag}
+                  <button
+                    type="button"
+                    onClick={() => removeAudience(index)}
+                    className="text-[10px] hover:text-red-500"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </span>
+              ))}
+            </div>
+          ) : null}
+
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import type { CategoryItem } from "@/types/category";
 import { generateSlug } from "@/lib/helper";
 import { toast } from "react-toastify";
@@ -79,9 +79,13 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
     onSubmit(payload);
   };
 
-  console.log("Category Form Data:", form);
+  // console.log("Category Form Data:", form);
 
   // không cho chọn chính nó làm parent
+
+  const filteredCategories = useMemo(
+    ()=> allCategories.filter((cate) => cate.parentId !== null), 
+    [allCategories]);
 
 
   return (
@@ -224,8 +228,8 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
         <div className="space-y-6">
           {/* Card: Phân cấp & loại danh mục */}
          <CategoryTypeSection
-            categories={allCategories}
-            parentId={form.categoryId ?? null}
+            categories={filteredCategories}
+            parentId={form.parentId ?? null}
             cateData={form}
             onChangeCategory={handleChange}
          />

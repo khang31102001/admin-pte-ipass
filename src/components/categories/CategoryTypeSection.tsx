@@ -6,7 +6,7 @@ import { CategoryItem } from "@/types/category";
 interface Props {
     cateData: Partial<CategoryItem>;
     categories: CategoryItem[];
-    cateId?: number
+    parentId?: number
     onChangeCategory?: (values: Partial<CategoryItem>) => void;
 }
 
@@ -30,7 +30,7 @@ function getPathToRoot(categories: CategoryItem[], id: number): CategoryItem[] {
 export const CategoryTypeSection: React.FC<Props> = ({
     cateData = null,
     categories = [],
-    cateId = undefined,
+    parentId = undefined,
     onChangeCategory,
 }) => {
 
@@ -42,15 +42,16 @@ export const CategoryTypeSection: React.FC<Props> = ({
     // console.log("CategoryTypeSection parentId:", cateId);
     useEffect(() => {
 
-        if (!cateId) {
+        if (!parentId) {
             setLevel1Id(null);
             setLevel2Id(null);
             setLevel3Id(null);
             return;
         }
 
-        const path = getPathToRoot(categories, cateId);
+        const path = getPathToRoot(categories, parentId);
         const [lv1, lv2, lv3,] = path;
+        // console.log("CategoryTypeSection path:", path);
 
         const toOptions = (cate: CategoryItem): Option | null =>
             cate ? {
@@ -62,7 +63,7 @@ export const CategoryTypeSection: React.FC<Props> = ({
         setLevel1Id(toOptions(lv1) ?? null);
         setLevel2Id(toOptions(lv2) ?? null);
         setLevel3Id(toOptions(lv3) ?? null);
-    }, [cateId, categories]);
+    }, [parentId, categories]);
 
 
     const level1Options = useMemo(
