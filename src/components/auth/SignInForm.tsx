@@ -127,7 +127,7 @@ export default function SignIn() {
                 </div>
 
                 <div>
-                  <Button className="w-full" size="sm" disabled={loading}>
+                  <Button type="submit" className="w-full" size="sm" disabled={loading}>
                     {loading ? "Đang đăng nhập..." : "Đăng nhập"}
                   </Button>
                 </div>
