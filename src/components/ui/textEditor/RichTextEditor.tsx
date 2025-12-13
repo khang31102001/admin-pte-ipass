@@ -52,7 +52,7 @@ export default function RichTextEditor({
 
   return (
     <Editor
-      apiKey="kmkahtxwg0ldi8b8alds8vn1spd7z7u08i6e1pgiakd7j7ma"
+      apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
       onInit={(__, editor) => (editorRef.current = editor)}
       value={value}
       onEditorChange={(newValue) => onChange(newValue)}
