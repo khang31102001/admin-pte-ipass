@@ -12,7 +12,7 @@ export function buildCategoryTree(items: CategoryItem[]): CategoryNode[] {
   const map = new Map<number, CategoryNode>();
 
   items.forEach((item) => {
-    map.set(item.id, {
+    map.set(item.categoryId, {
       ...item,
       children: [],
     });
@@ -46,8 +46,8 @@ export function reorderFlatCategories(
   dragId: number,
   dropId: number
 ): CategoryItem[] {
-  const dragIndex = list.findIndex((c) => c.id === dragId);
-  const dropIndex = list.findIndex((c) => c.id === dropId);
+  const dragIndex = list.findIndex((c) => c.categoryId === dragId);
+  const dropIndex = list.findIndex((c) => c.categoryId === dropId);
 
   if (dragIndex === -1 || dropIndex === -1) return list;
 

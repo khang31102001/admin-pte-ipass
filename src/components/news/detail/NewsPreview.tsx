@@ -1,10 +1,11 @@
 // src/components/news/NewsPreview.tsx
+import { News } from "@/types/news";
 import React from "react";
 
 
 
 interface NewsPreviewProps {
-  values: NewsFormValues;
+  values: News;
   categoryName?: string;
   authorName?: string;
   onClose?: () => void; // nếu dùng trong modal
@@ -27,32 +28,29 @@ export const NewsPreview: React.FC<NewsPreviewProps> = ({
     title,
     description,
     content,
-    coverImageUrl,
-    coverImageFile,
-    status,
     startDate,
     tags,
-    isFeatured,
+
   } = values;
 
   // Ưu tiên preview từ file mới chọn
-  const coverUrl = coverImageFile
-    ? URL.createObjectURL(coverImageFile)
-    : coverImageUrl || "";
+  // const coverUrl = coverImageFile
+    // ? URL.createObjectURL(coverImageFile)
+    // : coverImageUrl || "";
 
-  const statusLabel =
-    status === "draft"
-      ? "Draft"
-      : status === "scheduled"
-      ? "Scheduled"
-      : "Published";
+  // const statusLabel =
+  //   status === "draft"
+  //     ? "Draft"
+  //     : status === "scheduled"
+  //     ? "Scheduled"
+  //     : "Published";
 
-  const statusColor =
-    status === "draft"
-      ? "bg-gray-100 text-gray-700"
-      : status === "scheduled"
-      ? "bg-[#F6E10E]/15 text-[#8A7300]"
-      : "bg-[#04016C]/10 text-[#04016C]";
+  // const statusColor =
+  //   status === "draft"
+  //     ? "bg-gray-100 text-gray-700"
+  //     : status === "scheduled"
+  //     ? "bg-[#F6E10E]/15 text-[#8A7300]"
+  //     : "bg-[#04016C]/10 text-[#04016C]";
 
   return (
     <div className="min-h-screen bg-[#F5F6FA] text-[#1A1A1A]">
@@ -76,7 +74,7 @@ export const NewsPreview: React.FC<NewsPreviewProps> = ({
         {/* Card */}
         <article className="bg-white rounded-3xl shadow-[0_18px_45px_rgba(15,23,42,0.09)] overflow-hidden border border-[#E5E7EB]">
           {/* Cover image */}
-          {coverUrl ? (
+          {/* {coverUrl ? (
             <div className="relative h-52 md:h-72 w-full overflow-hidden">
          
               <img
@@ -94,7 +92,7 @@ export const NewsPreview: React.FC<NewsPreviewProps> = ({
             <div className="h-32 md:h-40 bg-gradient-to-r from-[#04016C] to-[#3E3AA7] flex items-center justify-center text-xs md:text-sm text-[#F9E94A] font-medium tracking-wide">
               No cover image – Preview banner
             </div>
-          )}
+          )} */}
 
           {/* Content */}
           <div className="px-5 md:px-8 py-6 md:py-8">
@@ -107,7 +105,7 @@ export const NewsPreview: React.FC<NewsPreviewProps> = ({
                 </span>
               )}
 
-              <span
+              {/* <span
                 className={[
                   "inline-flex items-center gap-1 px-2.5 py-1 rounded-full font-medium",
                   statusColor,
@@ -115,7 +113,7 @@ export const NewsPreview: React.FC<NewsPreviewProps> = ({
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
                 {statusLabel}
-              </span>
+              </span> */}
 
               {startDate && (
                 <span className="inline-flex items-center gap-1 text-gray-500">

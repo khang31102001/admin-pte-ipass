@@ -8,7 +8,7 @@ interface NewsCategorySectionProps {
   value?: number | null;
   onChange: (categoryId: number | string | null) => void;
 }
-
+const parseId = (v: string) => (v === "" ? null : Number(v));
 // Helper lấy id & parentId cho chắc (tùy backend đặt tên)
 const getId = (cate: CategoryItem) =>
   (cate as any).categoryId ?? (cate as any).id;
@@ -116,7 +116,7 @@ export  const NewsCategorySection= ({
 
   // Khi chọn parent (cấp 1)
   const handleChangeParent = (valueStr: string) => {
-    const id = Number(valueStr) || null;
+    const id = parseId(valueStr)
     setSelectedParentId(id);
     setSelectedChildId(null);
     setSelectedGrandChildId(null);
@@ -126,34 +126,34 @@ export  const NewsCategorySection= ({
       return;
     }
 
-    const parent = findCategoryById(categories, id);
-    const hasChildren = !!parent?.children?.length;
+    // const parent = findCategoryById(categories, id);
+    // const hasChildren = !!parent?.children?.length;
 
     // Nếu không có con -> chọn luôn parent là category cuối
-    onChange(hasChildren ? null : id);
+    onChange( id);
   };
 
   // Khi chọn child (cấp 2)
   const handleChangeChild = (valueStr: string) => {
-    const id = Number(valueStr) || null;
+    const id = parseId(valueStr);
     setSelectedChildId(id);
     setSelectedGrandChildId(null);
 
     if (id === null) {
-      onChange(null);
+      onChange(selectedParentId);
       return;
     }
-
-    const child = findCategoryById(categories, id);
-    const hasChildren = !!child?.children?.length;
+    
+    // const child = findCategoryById(categories, id);
+    // const hasChildren = !!child?.children?.length;
 
     // Nếu không có cháu -> chọn child làm category cuối
-    onChange(hasChildren ? null : id);
+    onChange(id);
   };
 
   // Khi chọn grand child (cấp 3)
   const handleChangeGrandChild = (valueStr: string) => {
-    const id = Number(valueStr) || null;
+    const id = parseId(valueStr) || null;
     setSelectedGrandChildId(id);
     onChange(id);
   };
@@ -180,14 +180,14 @@ export  const NewsCategorySection= ({
               key={`parentOptions`}
                 options={[{label: "---Slelect---", value:""}, ...parentOptions]}
                 value={selectedParentOption}
-                onChange={(opt) => handleChangeParent(opt.value)}
+                onChange={(opt) => handleChangeParent(opt?.value)}
                 placeholder="Tìm kiếm danh mục chính..."
               />
             </div>
           </div>
 
           {/* Child */}
-          {childOptions.length > 0 && (
+          {childOptions.length > 0 && selectedParentOption && (
             <div>
               <Label htmlFor="category-child" className="text-sm font-medium">
                 Danh mục cấp 2
@@ -197,7 +197,7 @@ export  const NewsCategorySection= ({
                   key={`childOptions${selectedParentId}`}
                   options={childOptions}
                   value={selectedChildOption}
-                  onChange={(opt) => handleChangeChild(opt.value)}
+                  onChange={(opt) => handleChangeChild(opt?.value)}
                   placeholder="Chọn danh mục con..."
                 />
               </div>
@@ -205,7 +205,7 @@ export  const NewsCategorySection= ({
           )}
 
           {/* Grand child */}
-          {grandChildOptions.length > 0 && (
+          {grandChildOptions.length > 0 && selectedChildOption && (
             <div>
               <Label
                 htmlFor="category-grandchild"

@@ -45,7 +45,7 @@ export const mainNavItems: NavItem[] = [
   {
     icon: <UserCog />,
     name: "Quản lý giáo viên",
-    path: "/teachers",
+    path: ROUTES.TEACHER.LIST,
   },
   {
     name: "Pages",

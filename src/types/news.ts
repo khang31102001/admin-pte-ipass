@@ -13,10 +13,10 @@ export interface News {
     description?: string | null; // Tóm tắt ngắn
     content?: string | null; // Nội dung chi tiết render bằng html
     categoryId?: number | null,
+    categoryType?: string;
     category?: CategoryItem;
     createdAt?: string;
     updatedAt?: string;
-
     status?: NewsStatus;
     isFeatured?: boolean;
     startDate?: string; 
@@ -71,28 +71,6 @@ export interface NewsItemsRes {
   totalPages: number;
 }
 
-export interface IUpdateNewsRq {
-  newsId?: number; 
-  title?: string;
-  slug?: string;
-  description?: string;
-  content?: string;
-  image?: File | string | null;
-  categoryId?: number | null;
-  status?: NewsStatus;
-  isFeatured?: boolean;
-  startDate?: string | null;
-  endDate?: string | null;
-  metaTitle?: string;
-  metaDescription?: string;
-  keywords?: string[];
-  tags?: string[];
-  noindex?: boolean;
-  canonical?: string | null;
-  imgFile?: File | null;
-  deleteImageUrl?: string;
-  isImageChanged? : boolean;
-}
 
 
 

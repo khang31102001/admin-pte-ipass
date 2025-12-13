@@ -2,7 +2,6 @@
 import { Course } from "@/types/courses"
 import type React from "react"
 import { useRef } from "react"
-import Switch from "../form/switch/Switch";
 import { CoursesCategorySection } from "./CoursesCategorySection";
 import { CategoryItem } from "@/types/category";
 import { IMedia } from "@/types/media";
@@ -54,7 +53,7 @@ export default function PreviewSidebar({
   };
 
   
-
+  // console.log(typeof courseData.isFeatured, courseData.isFeatured);
   return (
     <div className="space-y-4">
 
@@ -151,31 +150,27 @@ export default function PreviewSidebar({
         <div className="p-4 space-y-6">
           {/* FEATURED SWITCH */}
           <div className="flex items-center justify-between">
-            <span className="text-sm text-slate-700 select-none">
-              Đánh dấu là khóa học nổi bật
-            </span>
+              <span className="text-sm text-slate-700 select-none">
+                Đánh dấu là khóa học nổi bật
+              </span>
 
-            <Switch
-              label="Nổi bật"
-              defaultChecked={courseData.isFeatured ?? false}
-              onChange={(checked) => updateCourseData({ isFeatured: checked })}
-            />
-          </div>
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={!!courseData.isFeatured}
+                  onChange={(e) =>
+                    updateCourseData({ isFeatured: e.target.checked })
+                  }
+                  className="h-5 w-5 rounded border-gray-300 text-brand-500 
+                            focus:ring-2 focus:ring-brand-500"
+                />
+                <span className="text-sm text-slate-700">Nổi bật</span>
+              </label>
+            </div>
 
-          {/* ACTIVE SWITCH */}
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-slate-700 select-none">
-              Kích hoạt khóa học
-            </span>
+          
 
-            <Switch
-              label="Kích hoạt"
-              defaultChecked={courseData.isDisabled ?? true}
-              onChange={(checked) => updateCourseData({ isDisabled: checked })}
-            />
-          </div>
 
-          {/* Divider */}
           <div className="border-t pt-4 space-y-3">
             {/* Title */}
             <div>
@@ -198,6 +193,12 @@ export default function PreviewSidebar({
               <p className="text-xs text-slate-500">Khoảng thời gian</p>
               <p className="text-sm font-medium">
                 {courseData.duration || "Có thể bỏ trống"}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-slate-500">lịch trình</p>
+              <p className="text-sm font-medium">
+                {courseData.schedule || "Có thể bỏ trống"}
               </p>
             </div>
           </div>

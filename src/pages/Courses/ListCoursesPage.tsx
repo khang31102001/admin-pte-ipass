@@ -9,132 +9,63 @@ import Button from "@/components/ui/button/Button";
 import SearchInput from "@/components/form/input/SearchInput";
 import { MoreVertical, Plus } from "lucide-react";
 import { Course } from "@/types/courses";
-import { DropdownItem } from "@/components/ui/dropdown/DropdownItem";
 import { useNavigate } from "react-router";
 import { ROUTES } from "@/config/routes";
 import { DataTablePagination } from "@/components/ui/pagination/DataTablePagination";
 import { useCoursesQuery } from "@/hooks/courses/useCoursesQuery";
-import { RenderConfirmDelete } from "@/components/common/ConfirmDelete";
 import ActionButtons from "@/components/common/ActionButtons";
 import { courseService } from "@/services/course/courseService";
-import { Dropdown } from "@/components/ui/dropdown/Dropdown";
+import ActionDropdown from "@/components/common/ActionDropdown";
+import { useConfirmDelete } from "@/hooks/common/useConfirmDelete";
+import { formatDate } from "@/lib/helper";
 
 type CourseColumnHandlers = {
   selectedIds: number[];
-  onToggleSelectAll: () => void;
   onToggleSelectOne: (courseId: number) => void;
-  openMenuId: number | null;
-  onToggleDropdown?: (courseId: number) => void;
-  onView?: (course: Course) => void;
-  onEdit?: (course: Course) => void;
-  onDelete?: (course: Course) => void;
+  onToggleDropdown?: () => void;
+
 };
 
 function createCourseColumns({
   selectedIds,
-  onToggleSelectAll,
   onToggleDropdown,
-  openMenuId,
   onToggleSelectOne,
-  onView,
-  onEdit,
-  onDelete,
+
 }: CourseColumnHandlers): TableColumn<Course>[] {
   return [
     {
       key: "select",
       header: (
-        <input
-          type="checkbox"
-          onChange={onToggleSelectAll}
-          checked={
-            selectedIds.length > 0 && selectedIds.length === selectedIds.length
-          }
-        />
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleDropdown?.();
+          }}
+          className="rounded p-1 hover:bg-white/10"
+        >
+          <MoreVertical className="h-4 w-4 text-white" />
+        </button>
       ),
       render: (row) => (
         <input
           type="checkbox"
-          checked={row.courseId ? selectedIds.includes(row.courseId) : false}
-          onChange={() => row.courseId && onToggleSelectOne(row.courseId)}
+          checked={selectedIds.includes(row.courseId)}
+          onChange={() => onToggleSelectOne(row.courseId)}
         />
       ),
     },
     { key: "courseId", header: "ID" },
-    { key: "courseName", header: "Name",  cellClassName: "max-w-[220px] truncate" },
+    { key: "courseName", header: "Name", cellClassName: "max-w-[220px] truncate" },
+    { key: "categoryType", header: "Category type" },
     { key: "level", header: "Level" },
-    { key: "mode", header: "Mode" },
-    { key: "language", header: "Language" },
-    { key: "price", header: "Price" },
-    {
-      key: "actions",
-      header: "Actions",
-      render: (row) => {
-           
-        if (!row.courseId) return null;
-
-        const isOpen = openMenuId === row.courseId;
-        const closeDropdown = () => {
-          onToggleDropdown(row.courseId!);
-        };
-
-        return (
-          <div className="relative flex pr-4">
-            <button
-              type="button"
-              onClick={() => onToggleDropdown(row.courseId!)}
-              className="inline-flex items-center justify-center h-9 w-9 rounded-full border border-gray-200 bg-white text-gray-500 shadow-sm hover:bg-gray-50 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800"
-            >
-              <MoreVertical className="h-4 w-4" />
-            </button>
-
-            {/* Dropdown */}
-            <Dropdown
-              isOpen={isOpen}
-              onClose={closeDropdown}
-              className="w-40 p-2 top-8 z-99999 "
-
-            >
-              <ul className="flex flex-col gap-1">
-                <li>
-                  <DropdownItem
-                    onItemClick={() => {
-                      onView(row);
-                      closeDropdown();
-                    }}
-                    className="block w-full rounded-lg px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5"
-                  >
-                    View
-                  </DropdownItem>
-                </li>
-                <li>
-                  <DropdownItem
-                    onItemClick={() => {
-                      onEdit(row);
-                      closeDropdown();
-                    }}
-                    className="block w-full rounded-lg px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5"
-                  >
-                    Edit
-                  </DropdownItem>
-                </li>
-                <li>
-                  <DropdownItem
-                    onItemClick={() => {
-                      onDelete(row);
-                      closeDropdown();
-                    }}
-                    className="block w-full rounded-lg px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40"
-                  >
-                    Delete
-                  </DropdownItem>
-                </li>
-              </ul>
-            </Dropdown>
-          </div>
-        );
-      },
+    { 
+      key: "createdAt", 
+      header: "create at", 
+      render: (row) => formatDate(row.createdAt) ?? "-",
     },
+    { key: "price", header: "Price" },
+
   ];
 }
 
@@ -164,13 +95,13 @@ const btnUI = {
 export default function ListCoursesPage() {
   const [search, setSearch] = useState("");
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const [openMenu, setOpenMenu] = useState<boolean | null>(false);
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [courseId, setCourseId] = useState<number | null>(null);
-  const { data, isLoading } = useCoursesQuery({
+  const {confirmDelete} = useConfirmDelete();
+  const { data, isLoading, refetch } = useCoursesQuery({
     page,
     pageSize,
     search,
@@ -179,44 +110,38 @@ export default function ListCoursesPage() {
   const total = data?.total ?? 0;
 
   // ----- HANDLERS -----
-  const handleViewCourse = (course: Course) => {
-    if (!course.slug) return;
-    navigate(ROUTES.COURSES.DETAIL(course.slug));
-  };
-  const handleEditCourse = (course: Course) => {
-    if (!course.slug) return;
-    navigate(ROUTES.COURSES.UPDATE_BY_SLUG(course.slug));
-  };
-
-  const handleDeleteCourse = async (course: Course) => {
-    if (!course.courseId) {
-      setIsDeleteOpen(false);
-    }
-
-    setIsDeleteOpen(true);
-    setCourseId(course.courseId);
-    // ví dụ: delete one or delete all
-
-    // await userService.deleteCourse(course.courseId);
-    // setCourses(prev => prev.filter(c => c.courseId !== course.courseId));
+  // const handleViewCourse = (course: Course) => {
+  //   if (!course.slug) return;
+  //   navigate(ROUTES.COURSES.DETAIL(course.slug));
+  // };
+  const handleEditCourse = () => {
+    if(!courseId) return;
+    const items = courses.find((i)=> i.courseId === courseId);
+    if (!items.slug) return;
+    navigate(ROUTES.COURSES.UPDATE(items.slug));
   };
 
-  const handleDeleteConfirmed = async () => {
-    try {
-      console.log("Deleting course with ID:", courseId);
-      if (courseId !== null) {
+  const handleDeleteCourse = async () => {
+    if (!courseId) return;
+
+   await confirmDelete(
+      async () => {
         await courseService.deleteCourse(courseId);
-        console.log("Course deleted successfully.");
+        await refetch();
         setPage(1);
         setPageSize(15);
-        setSearch(null);
+        setSearch("");
+        setSelectedIds([]);
+      },
+      {
+        title: "Xóa khóa học đã chọn?",
+        text: `Bạn chắc chắn muốn xóa  khoa học này?`,
       }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsDeleteOpen(false);
-    }
+    );
   };
+    
+  
+
 
   const handleToggleSelectOne = (courseId: number) => {
     setSelectedIds((prev) =>
@@ -224,20 +149,22 @@ export default function ListCoursesPage() {
         ? prev.filter((id) => id !== courseId)
         : [...prev, courseId]
     );
+
+    setCourseId(courseId);
   };
 
-  const handleToggleSelectAll = () => {
-    if (selectedIds.length === courses.length) {
-      setSelectedIds([]);
-    } else {
-      setSelectedIds(courses.map((c) => c.courseId!).filter(Boolean));
-    }
-  };
+  // const handleToggleSelectAll = () => {
+  //   if (selectedIds.length === courses.length) {
+  //     setSelectedIds([]);
+  //   } else {
+  //     setSelectedIds(courses.map((c) => c.courseId!).filter(Boolean));
+  //   }
+  // };
 
-  const handleToggleDropdown = (courseId: number) => {
-    setOpenMenuId((prev) => (prev === courseId ? null : courseId));
+  const handleToggleDropdown = () => {
+    setOpenMenu((prev) => (!prev));
   };
-
+  const closeMenu = () => setOpenMenu(null);
   const handleCreateCourse = () => {
     navigate(ROUTES.COURSES.CREATE);
   };
@@ -245,14 +172,26 @@ export default function ListCoursesPage() {
   // Tạo columns bằng factory function, truyền handler & state vào
   const columns = createCourseColumns({
     selectedIds,
-    onToggleSelectAll: handleToggleSelectAll,
     onToggleSelectOne: handleToggleSelectOne,
     onToggleDropdown: handleToggleDropdown,
-    openMenuId: openMenuId,
-    onView: handleViewCourse,
-    onEdit: handleEditCourse,
-    onDelete: handleDeleteCourse,
+
   });
+
+   const actions = [
+    {
+      key: "edit",
+      label: <>✏️ Update</>,
+      onClick: handleEditCourse,
+    },
+    {
+      key: "delete",
+      label: <>🗑 Delete selected</>,
+      onClick: handleDeleteCourse,
+      danger: true,
+      disabled: selectedIds.length === 0,
+    },
+  ];
+
 
   return (
     <>
@@ -279,7 +218,23 @@ export default function ListCoursesPage() {
             </div>
           ) : (
             <>
-              <TableComponent<Course> columns={columns} data={courses} />
+              <div className="relative">
+                  <TableComponent<Course>
+                  columns={columns}
+                  data={courses}
+                  onRowClick={(row) => {
+                    const item = row as Course;
+                    if (!item.slug) return;
+                    navigate(ROUTES.COURSES.UPDATE(item.slug));
+                  }}
+                />
+                <ActionDropdown
+                  isOpen={openMenu}
+                  onClose={closeMenu}
+                  actions={actions}
+                  className="top-8 left-8"
+                />
+              </div>
               <DataTablePagination
                 page={page}
                 pageSize={pageSize}
@@ -291,11 +246,7 @@ export default function ListCoursesPage() {
                   setPage(1);
                 }}
               />
-              <RenderConfirmDelete
-                isOpen={isDeleteOpen}
-                onClose={() => setIsDeleteOpen(false)}
-                onConfirm={handleDeleteConfirmed}
-              />
+            
             </>
           )}
         </ComponentCard>

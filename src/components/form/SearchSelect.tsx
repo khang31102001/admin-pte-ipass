@@ -9,9 +9,10 @@ export interface Option {
 interface SearchSelectProps {
   options: Option[];
   value: Option | null;
-  onChange: (value: Option) => void;
+  onChange: (value: Option | null) => void;
   placeholder?: string;
   defaultValue?: Option | null;
+  clearable?: boolean;
 }
 
 export default function SearchSelect({
@@ -20,6 +21,7 @@ export default function SearchSelect({
   onChange,
   placeholder = "Search...",
   defaultValue,
+  clearable = true,
 }: SearchSelectProps) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
@@ -44,21 +46,29 @@ export default function SearchSelect({
   }, []);
 
   const handleSelect = (option: Option) => {
+    if (option.value === "") {
+    onChange(null);
+    setQuery("");
+    setOpen(false);
+    return;
+  }
     onChange(option);
     setQuery(option.label);
     setOpen(false);
   };
 
-  useEffect(() => {
-    // sync value -> input
-    if (value) {
-      setQuery(value.label);
-    } else if (defaultValue) {
-      setQuery(defaultValue.label);
-    } else {
-      setQuery("");
-    }
-  }, [value, defaultValue]);
+ useEffect(() => {
+  if (value) setQuery(value.label);
+  else if (defaultValue) setQuery(defaultValue.label);
+  else setQuery("");
+}, [value, defaultValue]);
+
+const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setQuery("");
+    onChange(null);
+    setOpen(false);
+  };
 
   return (
     <div ref={wrapperRef} className="relative w-full mt-1 text-sm">
@@ -83,6 +93,16 @@ export default function SearchSelect({
           }}
           placeholder={placeholder}
         />
+          {clearable && (value || query) && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="absolute inset-y-0 right-7 flex items-center pr-2 text-gray-400 hover:text-gray-600"
+            aria-label="Clear"
+          >
+            ×
+          </button>
+        )}
 
         <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
           <ChevronsUpDown className="h-4 w-4 text-gray-400" />

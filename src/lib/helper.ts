@@ -24,6 +24,7 @@ export const formatDate = (value?: string) => {
   });
 };
 
+
 export const formatDateTimeLocal = (value?: string | null): string => {
   if (!value) return "";
 
@@ -66,3 +67,13 @@ export const fileToBase64 = (file: File) =>
     reader.onerror = () => reject(new Error("Failed to read file"));
     reader.readAsDataURL(file);
   });
+
+
+
+export function smoothNavigate(
+  navigate: (to: string) => void,
+  to: string
+) {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  setTimeout(() => navigate(to), 150);
+}

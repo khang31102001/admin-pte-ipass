@@ -5,6 +5,8 @@ export interface Course {
   courseId?: number | null;
   authorId?: number | null;
   image?: string | null;
+  deleteImageUrl?: string;
+  isImageChanged? : boolean;
   title?: string | null;
   slug?: string | null;
   description?: string | null;
@@ -15,11 +17,13 @@ export interface Course {
   duration?: string | null;
   tuition?: string | null;
   category?: CategoryItem | null;
+  categoryType?: string;
   categoryId?: number | null;
   createdAt?: string | null;
   updatedAt?: string | null;
   isFeatured?: boolean | null;
   isDisabled?: boolean | null;
+  schedule?: string;
   startDate?: string | null;
   endDate?: string | null;
   metaTitle?: string | null;
@@ -58,6 +62,8 @@ export interface CourseDetail {
   metaTitle?: string | null;
   metaDescription?: string | null;
   keywords?: string[] | null;
+  deleteImageUrl?: string;
+  isImageChanged? : boolean;
 
 }
 

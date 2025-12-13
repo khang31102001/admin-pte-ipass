@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Table,
   TableBody,
@@ -7,9 +8,10 @@ import {
 } from "../../ui/table";
 
 export interface TableColumn<T> {
-  key: keyof T | string; // accessor key
-  header: string | React.ReactNode;        // header label
-  render?: (row: T) => React.ReactNode; // custom render function
+  key: keyof T | string;
+  header: string | React.ReactNode;
+  render?: (row: T) => React.ReactNode;
+
   headerClassName?: string;
   cellClassName?: string;
 }
@@ -17,25 +19,38 @@ export interface TableColumn<T> {
 interface TableComponentProps<T> {
   columns: TableColumn<T>[];
   data: T[];
+  maxHeight?: string;
+  emptyText?: string;
+  onRowClick?: (row: T) => void;
+  isClickable?: boolean;
 }
 
 export default function TableComponent<T>({
   columns,
   data,
+  maxHeight = "70vh",
+  emptyText = "Không có dữ liệu",
+  onRowClick
 }: TableComponentProps<T>) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-      <div className="overflow-x-auto w-full ">
-        <Table className="!min-w-full table-auto">
-          {/* Table Header */}
-          <TableHeader className=" border-b border-gray-100 dark:border-white/[0.05]">
-            <TableRow>
+    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+      {/* accent top (optional) */}
+      {/* <div className="h-1 w-full bg-[#F6E10E]" /> */}
+
+      <div className="w-full overflow-auto table-scroll-wrapper smooth-scroll" style={{ maxHeight }}>
+        <Table className="min-w-[720px] table-auto">
+          {/* HEADER: bg #04016C */}
+          <TableHeader className="sticky top-0 z-10">
+            <TableRow className="bg-[#04016C]">
               {columns.map((col) => (
                 <TableCell
                   key={String(col.key)}
                   isHeader
                   className={[
-                    "px-4 py-2  font-bold text-gray-700 text-start text-theme-xs dark:text-gray-400 whitespace-nowrap",
+                    "px-3 py-2 sm:px-4 sm:py-3",
+                    "text-start text-[11px] sm:text-xs font-semibold uppercase tracking-wide",
+                    "text-white whitespace-nowrap",
+                    "border-b border-white/10",
                     col.headerClassName || "",
                   ].join(" ")}
                 >
@@ -45,28 +60,68 @@ export default function TableComponent<T>({
             </TableRow>
           </TableHeader>
 
-          {/* Table Body */}
-          <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-            {data.map((row, rowIndex) => (
-              <TableRow key={rowIndex}>
-                {columns.map((col) => (
-                  <TableCell
-                    key={String(col.key)}
-                    className={[
-                      "px-4 py-2 whitespace-nowrap font-medium text-gray-500 text-start text-theme-sm dark:text-gray-400 align-top",
-                      col.cellClassName || "",
-                    ].join(" ")}
-                  >
-                    {col.render
-                      ? col.render(row)
-                      : (row as any)[col.key]} {/* fallback nếu không có render */}
-                  </TableCell>
-                ))}
+          {/* BODY */}
+          <TableBody className="divide-y divide-gray-100">
+            {data.length === 0 ? (
+              <TableRow className="bg-white">
+                <TableCell className="px-4 py-10 text-center text-sm text-gray-500">
+                  {emptyText}
+                </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              data.map((row, rowIndex) => (
+                <TableRow
+                  key={rowIndex}
+                  className={[
+                    "cursor-pointer",
+                    "group transition-colors ",
+                    rowIndex % 2 === 0 ? "bg-white" : "bg-[#F9FAFB]",
+                    "hover:bg-brand-600",
+
+                  ].join(" ")}
+                >
+                  {columns.map((col) => {
+                    const content = col.render ? col.render(row) : (row as any)[col.key];
+                    const isClickable = !!onRowClick && col.key !== "select";
+                    return (
+                      <TableCell
+                        key={String(col.key)}
+                        className={[
+                          "px-3 py-2 sm:px-4 sm:py-3",
+                          "align-top text-start text-sm whitespace-nowrap",
+                          "text-[#111827]",
+                          "group-hover:text-white",
+                          "group-hover:[&_.muted]:text-white/80",
+                          "group-hover:[&_.badge]:border-white/25 group-hover:[&_.badge]:text-white",
+                          col.cellClassName || "",
+                        ].join(" ")}
+                      >
+                           {isClickable ? (
+                            <button
+                            type="button"
+                            className="w-full text-left hover:underline"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onRowClick?.(row);
+                            }}
+                          >
+                            {content}
+                          </button>
+                           ):(
+                            content
+                           ) }
+                      </TableCell>
+                    )
+                  })}
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>
+
+      {/* bottom bar */}
+      <div className="h-[2px] w-full bg-[#04016C]" />
     </div>
   );
 }

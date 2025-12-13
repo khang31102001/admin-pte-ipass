@@ -1,5 +1,7 @@
 
 import { News, NewsStatus } from "@/types/news";
+import { formatDateByInputType } from "@/utils/dateFormat";
+
 import React from "react";
 
 interface NewsSchedulingSectionProps {
@@ -57,7 +59,7 @@ export const NewsSchedulingSection: React.FC<NewsSchedulingSectionProps> = ({
           <input
             type="datetime-local"
             name="startDate"
-            value={startDate || ""}
+            value={ formatDateByInputType(startDate, "datetime-local") || ""}
             onChange={(e) => onChangeNewsData({ startDate: e.target.value })}
             className="w-full border border-[#E5E7EB] rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#3E3AA7]"
           />
@@ -71,14 +73,12 @@ export const NewsSchedulingSection: React.FC<NewsSchedulingSectionProps> = ({
           <input
             type="datetime-local"
             name="endDate"
-            value={endDate || ""}
+            value={formatDateByInputType(endDate, "datetime-local") || ""}
             onChange={(e) => onChangeNewsData({ endDate: e.target.value })}
             className="w-full border border-[#E5E7EB] rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#3E3AA7]"
           />
         </div>
       </div>
     </section>
-
-
   );
 };

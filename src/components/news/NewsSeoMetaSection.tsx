@@ -1,6 +1,6 @@
 import { News } from "@/types/news";
 import {KeyboardEvent} from "react";
-import Switch from "../form/switch/Switch";
+// import Switch from "../form/switch/Switch";
 
 interface NewsSeoMetaSectionProps {
   metaTitle: string;
@@ -14,7 +14,7 @@ interface NewsSeoMetaSectionProps {
 }
 
 export const NewsSeoMetaSection = ({
-  noindex = false,
+ 
   metaTitle,
   metaDescription,
   keywords,
@@ -103,7 +103,7 @@ export const NewsSeoMetaSection = ({
           )}
         </div>
 
-        <div>
+        {/* <div>
           <Switch
               label="Allow indexing"
               defaultChecked={!noindex}
@@ -115,7 +115,9 @@ export const NewsSeoMetaSection = ({
             <p className="mt-2 text-sm text-gray-500">
               Nếu tắt, bài viết sẽ không được index bởi Google.
             </p>
-        </div>
+        </div> */}
+
+
       </div>
     </section>
   );

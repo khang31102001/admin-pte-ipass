@@ -21,7 +21,7 @@ export function useCoursesQuery(params?: CoursesQueryParams) {
 export function useDetailCoursesQuery(slug?: string) {
   return useQuery<any, Error>({
     enabled: !!slug,
-    queryKey: ["courses", "detail", slug],
+    queryKey: ["courses", slug],
     queryFn: () => {
       if (!slug) {
         console.warn(" missing slug ???");

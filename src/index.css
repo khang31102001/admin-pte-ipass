@@ -793,3 +793,48 @@ span.flatpickr-weekday,
 .simplebar-scrollbar.simplebar-visible:before {
   @apply opacity-100;
 }
+
+.swal2-z-99999 {
+  z-index: 999999 !important;
+}
+
+/* Ẩn scrollbar mặc định */
+.table-scroll-wrapper {
+  overflow: auto;
+  scrollbar-width: none;            /* Firefox */
+}
+
+.table-scroll-wrapper::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+/* Khi hover -> hiện scrollbar */
+.table-scroll-wrapper:hover {
+  scrollbar-width: thin;            /* Firefox */
+}
+
+.table-scroll-wrapper:hover::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-thumb {
+  background-color: rgba(4, 1, 108, 0.35); /* #04016C */
+  border-radius: 999px;
+}
+
+.table-scroll-wrapper:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(4, 1, 108, 0.7);
+}
+
+.smooth-scroll {
+  scroll-behavior: smooth;              /* cuộn mượt khi scrollTo / anchor */
+  -webkit-overflow-scrolling: touch;    /* iOS mượt hơn */
+  overscroll-behavior: contain;         /* tránh “giật” bounce ảnh hưởng layout */
+}
+

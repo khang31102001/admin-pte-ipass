@@ -4,6 +4,7 @@ import Label from "@/components/form/Label";
 import { Course } from "@/types/courses";
 
 
+
 interface TimeAndTuitionTabProps {
   courseData: Course
   updateCourseData: (updates: Partial<Course>) => void
@@ -28,6 +29,13 @@ export default function TimeAndTuitionTab({ courseData, updateCourseData }: Time
     if (end && end < now) return "Already ended"
     return "Opening"
   }
+
+  const toDateInputValue = (iso?: string | null): string => {
+  if (!iso) return "";
+  return iso.slice(0, 10); 
+};
+
+
 
   return (
     <div className="space-y-6">
@@ -83,7 +91,7 @@ export default function TimeAndTuitionTab({ courseData, updateCourseData }: Time
         <Input
           id="startDate"
           type="date"
-          value={courseData.startDate}
+          value={toDateInputValue(courseData.startDate)}
           onChange={(e) => updateCourseData({ startDate: e.target.value })}
           className="mt-2"
         />
@@ -97,7 +105,7 @@ export default function TimeAndTuitionTab({ courseData, updateCourseData }: Time
         <Input
           id="endDate"
           type="date"
-          value={courseData.endDate}
+          value={toDateInputValue(courseData.endDate)}
           onChange={(e) => updateCourseData({ endDate: e.target.value })}
           className="mt-2"
         />

@@ -24,7 +24,7 @@ export const ROUTES = {
     LIST: "/courses",
     CREATE: "/courses/create",
     UPDATE_BY_SEARCH: "/courses/update",
-    UPDATE_BY_SLUG: (slug: string) => `/courses/update/${slug}`,
+    UPDATE: (slug: string) => `/courses/update/${slug}`,
     DETAIL: (slug: string) => `/courses/detail/${slug}`,
   },
 
@@ -36,14 +36,18 @@ export const ROUTES = {
     UPDATE: (slug: string) => `/news/update/${slug}`,
     DETAIL: (slug: string) => `/news/detail/${slug}`,
   },
-
-    ABOUT: {
+  // ─────────────── ABOUT ───────────────
+  ABOUT: {
     ROOT: "/abouts",
     LIST: "/abouts",
     CREATE: "/abouts/create",
   },
+  // ─────────────── TEACHER ───────────────
+   TEACHER: {
+    ROOT: "/teachers",
+    LIST: "/teachers",
+  },
 
-  KNOWLEDGES: "/knowledges",
   ALERTS: "/alerts",
   AVATARS: "/avatars",
   BADGE: "/badge",

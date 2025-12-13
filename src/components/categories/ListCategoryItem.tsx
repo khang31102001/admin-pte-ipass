@@ -12,7 +12,7 @@ interface CategoryTreeViewProps {
   onDelete?: (categoryId: number) => void;
 }
 
- const CategorySection: React.FC<CategoryTreeViewProps> = ({
+ const ListCategoryItem: React.FC<CategoryTreeViewProps> = ({
   tree = [],
   maxLevel = 3,
   onReorder,
@@ -36,6 +36,12 @@ interface CategoryTreeViewProps {
   const handleEdit = (slug: string) => {
     navigation(ROUTES.CATEGORIES.EDIT(slug));
   };
+  const handleDelelte= (id: number)=>{
+    if(id && id !== null){
+       onDelete?.(id)
+    }
+  }
+  
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
@@ -54,7 +60,7 @@ interface CategoryTreeViewProps {
             onDragStart={handleDragStart}
             draggingId={draggingId}
             onAddSubcategoryInline={onAddSubcategoryInline}
-            onDelete={onDelete}
+            onDelete={handleDelelte}
           />
         ))}
       </ul>
@@ -62,4 +68,4 @@ interface CategoryTreeViewProps {
   );
 };
 
-export default CategorySection;
+export default ListCategoryItem;

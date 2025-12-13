@@ -1,7 +1,7 @@
 import Input from "@/components/form/input/InputField"
 import TextArea from "@/components/form/input/TextArea"
 import Label from "@/components/form/Label"
-import { generateSlug, getBaseUrl } from "@/lib/helper"
+import { getBaseUrl } from "@/lib/helper"
 import { CategoryItem } from "@/types/category"
 import { Course } from "@/types/courses"
 import{
@@ -44,12 +44,7 @@ export default function BasicInformationTab({
 
 
 
-  const handleChangeTitle = (title: string) => {
-    updateCourseData({ 
-        title: title, 
-        slug: generateSlug(title)
-     });
-  };
+ 
 
     const addAudience = () => {
     if (newAudience.trim()) {
@@ -79,7 +74,7 @@ export default function BasicInformationTab({
           id="title"
           placeholder="PTE Foundation – Platform from 0 to 50+"
           value={courseData.title ?? ""}
-          onChange={(e)=> handleChangeTitle(e.target.value)}
+          onChange={(e)=> updateCourseData({title: e.target.value})}
           className="mt-2"
         />
       </div>

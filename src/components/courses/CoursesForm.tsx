@@ -13,10 +13,11 @@ import { CourseValidationErrors, isCourseValid, validateCourse } from "../../val
 import FormErrorSummary from "../common/FormErrorSummary";
 import { IMedia } from "@/types/media";
 import { toast } from "react-toastify";
+import { generateSlug } from "@/lib/helper";
 
-  type Mode = "create" | "update";
- type TabValue = "basic" | "content" | "time-tuition" | "seo";
- type TabItem = {
+type Mode = "create" | "update";
+type TabValue = "basic" | "content" | "time-tuition" | "seo";
+type TabItem = {
   id: number;
   label: string;
   value: TabValue;
@@ -55,7 +56,7 @@ const tabsConfig: TabItem[] = [
 ];
 interface CoursesFormProps {
   mode: Mode;
-  categories: CategoryItem[] ;
+  categories: CategoryItem[];
   initCourseData?: Course | null;
   onSubmit?: (form: FormData, courseId?: number) => void;
 }
@@ -70,8 +71,8 @@ export default function CoursesForm({
     title: "",
     slug: "",
     level: "",
-    category: null,
     categoryId: null,
+    categoryType: "",
     description: "",
     isDisabled: false,
     isFeatured: false,
@@ -87,26 +88,48 @@ export default function CoursesForm({
     schemaEnabled: true,
     schemaMode: "auto",
     schemaData: "",
-    ...initCourseData,
+  }
 
-  });
+  );
 
   const [imgPreview, setImgPreview] = useState<IMedia | null>({
     file: null,
-    preview: initCourseData?.image ?? "",
+    preview: "",
     isImageChanged: false,
-    deleteImageUrl: initCourseData?.image ?? undefined,
+    deleteImageUrl: "",
   });
 
-  useEffect(()=>{
-    if(initCourseData){
-      setCourseData((prev)=>({
+  useEffect(() => {
+    if (mode === "update" && initCourseData) {
+      setCourseData((prev) => ({
         ...prev,
         ...initCourseData
       }))
     }
 
-  }, [initCourseData])
+  }, [initCourseData, mode]);
+
+  useEffect(() => {
+    if (mode === "update" && initCourseData) {
+      setImgPreview((prev) => ({
+        ...prev,
+        preview: initCourseData.image ?? "",
+        deleteImageUrl: initCourseData.image ?? undefined,
+        isImageChanged: false,
+      }));
+    }
+  }, [mode, initCourseData]);
+
+  useEffect(() => {
+    if (mode !== "update" && courseData.title) {
+      setCourseData((prev) => ({
+        ...prev,
+        slug: generateSlug(prev.title),
+      }));
+    }
+  }, [courseData.title, mode]);
+
+
 
   const [errors, setErrors] = useState<CourseValidationErrors>({});
 
@@ -116,27 +139,56 @@ export default function CoursesForm({
   const isEdit = mode === "update";
 
 
-  const allCateggories = useMemo(()=>{
-    if(categories.length === 0) return [];
-    return categories.filter((cate)=> 
+  const allCateggories = useMemo(() => {
+    if (categories.length === 0) return [];
+    return categories.filter((cate) =>
       cate.categoryType === "COURSE_MENU" || cate.categoryType === "TEST"
     )
   }, [categories]);
 
-  
 
-    // console.log("check categories in form:", allCateggories);
+  useEffect(() => {
+    if (!courseData.categoryId) return;
+    const getId = (cate: CategoryItem) =>
+      (cate as any).categoryId ?? (cate as any).id;
+    const findCategoryById = (
+      items: CategoryItem[],
+      id: number
+    ): CategoryItem | null => {
+      for (const item of items) {
+        if (getId(item) === id) return item;
+
+        if (item.children?.length) {
+          const found = findCategoryById(item.children, id);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+
+    const found = findCategoryById(allCateggories, courseData.categoryId);
+    if (!found) return;
+
+    setCourseData((prev) => ({
+      ...prev,
+      categoryType: found.categoryType,
+    }));
+  }, [courseData.categoryId, allCateggories]);
+
+
+
+  // console.log("check categories in form:", allCateggories);
   const hanndleMediaChange = (media: Partial<IMedia | null>) => {
-  
-    setImgPreview((prev) => ({ 
-          ...prev, 
-          ...media, 
-          deleteImageUrl: isEdit ?
-                                  initCourseData?.image 
-                                  :  undefined ,
-          isImageChanged: isEdit ? true : false,
-      }));
-      
+
+    setImgPreview((prev) => ({
+      ...prev,
+      ...media,
+      deleteImageUrl: isEdit ?
+        initCourseData?.image
+        : undefined,
+      isImageChanged: isEdit ? true : false,
+    }));
+
     setCourseData((prev) => ({
       ...prev,
       image: media.preview ?? "",
@@ -145,40 +197,47 @@ export default function CoursesForm({
   const handleChangeCourseData = (updates: Partial<Course>) => {
     setCourseData((prev) => ({ ...prev, ...updates }));
   };
-
-  console.log("check imgPreview in form:", imgPreview);
+  console.log("CONTENT BEFORE SUBMIT:", courseData.content.slice(0, 80));
+  console.log("BENEFITS BEFORE SUBMIT:", (courseData.benefits ?? "").slice(0, 80));
+  // console.log("check imgPreview in form:", imgPreview);
+  // console.log("check audit courseData:", courseData);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const validatError = validateCourse(courseData);
     setErrors(validatError);
 
-    // console.log("check audit courseData:", courseData);
+
     if (!isCourseValid(validatError)) {
       // Có lỗi -> không cho save, có thể scroll lên đầu hoặc show toast
       toast.error("Vui lòng kiểm tra lại thông tin khóa học");
       return;
     }
 
-    // Handle form submission logic here
+    //  console.log("check courseData in form:", courseData);
     const formData = new FormData();
     if (imgPreview?.file) {
       formData.append("file", imgPreview.file);
+
     }
 
     if (courseData) {
-      const request = { ...courseData }; 
-      delete request.courseId; 
+      const request: Course = {
+        ...courseData,
+        deleteImageUrl: imgPreview?.deleteImageUrl ?? "",
+        isImageChanged: !!imgPreview?.isImageChanged,
+      };
+      delete request.courseId;
       delete request.image;
-      formData.append("request", request ? JSON.stringify(request) : "");
+      formData.append("request", request ? JSON.stringify(request) : null);
     }
 
-     if (onSubmit) {
-      onSubmit(formData, isEdit ? initCourseData?.courseId : undefined);
+    if (onSubmit) {
+      onSubmit(formData, isEdit ? initCourseData?.courseId : null);
     }
-    
+
   }
 
-    console.log("check courseData in form:", courseData);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Main Content */}

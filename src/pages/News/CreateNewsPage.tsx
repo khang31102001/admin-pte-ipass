@@ -8,57 +8,29 @@ import { useCategoryTreeQuery } from "@/hooks/category/useCategoryQuery";
 
 import { useLoading } from "@/hooks/loading/useLoading";
 import { newsService } from "@/services/news/newsService";
-import { IUpdateNewsRq, News } from "@/types/news";
-import {
-  isNewsValid,
-  NewsValidationErrors,
-  validateNews,
-} from "@/validators/newsValidation";
-import { useState } from "react";
+
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 
 
 
 const CreateNewsPage: React.FC = () => {
-
-  const [errors, setErrors] = useState<NewsValidationErrors>({});
   const navigate = useNavigate();
   const { withLoading, isLoading } = useLoading();
   const { data } = useCategoryTreeQuery({ categoryType: "NEWS" });
   const categories = data?.[0]?.children ?? [];
 
-
-
-  
   const handleOnSubmit = () => {
     const form = document.getElementById("news-form") as HTMLFormElement | null;
     form.requestSubmit();
 
   };
 
-  const handleCreateNews = async (newsData: IUpdateNewsRq) => {
-    const validation = validateNews(newsData as News);
-    setErrors(validation);
-
-    if (!isNewsValid(validation)) {
-      return;
-    }
-
+  const handleCreateNews = async (newsData: FormData) => {
+    
     try {
-      const formData = new FormData();
-      if (newsData.imgFile) {
-        formData.append("file", newsData.imgFile);
-      }
-      console.log("check audit create newsData:", newsData)
-      if (newsData) {
-        const request = { ...newsData };
-        // console.log("audit request: ",request )
-        delete request.image;
-        formData.append("request", request ? JSON.stringify(request) : "");
-      }
-      
-      await withLoading(newsService.createNews(formData));
+     
+      await withLoading(newsService.createNews(newsData));
 
       toast.success("Tạo tin tức thành công!");
       // navigate(ROUTES.NEWS.LIST);
@@ -98,7 +70,6 @@ const CreateNewsPage: React.FC = () => {
             mode="create"
             categories={categories}
             onSubmit={handleCreateNews}
-            errors={errors}
           />
         </ComponentCard>
       </div>

@@ -1,8 +1,16 @@
 import React, { useState } from "react";
 import { CategoryItem } from "@/types/category";
 import { generateSlug } from "@/lib/helper";
+import { useConfirmDelete } from "@/hooks/common/useConfirmDelete";
 
-
+const initialCateForm: CategoryItem = {
+  categoryId: undefined,
+  name: "",
+  slug: "",
+  parentId: null,
+  categoryType: "",
+  level: undefined,
+};
 
 interface CategoryTreeItemProps {
   node: CategoryItem;
@@ -34,23 +42,16 @@ const CategoryTreeItem: React.FC<CategoryTreeItemProps> = ({
   onDelete,
 }) => {
   const [showAddChild, setShowAddChild] = useState(false);
-  const [cateForm, setCateForm] = useState<CategoryItem>({
-    categoryId: undefined,
-    name: "",
-    slug: "",
-    parentId: null,
-    categoryType: "",
-    level: undefined,
-  });
+  const [cateForm, setCateForm] = useState<CategoryItem>(initialCateForm);
 
   const [isExpanded, setIsExpanded] = useState(false);
 
-
-
   const hasChildren = node.children && node.children.length > 0;
-
   // console.log("ccheck hasChildren", hasChildren);
   const indentClass = levelIndentClass[level] ?? "pl-0";
+  const {confirmDelete} =  useConfirmDelete();
+
+
 
   const handleChangeCate = (updates: Partial<CategoryItem>) => {
     setCateForm((prev) => ({
@@ -60,22 +61,23 @@ const CategoryTreeItem: React.FC<CategoryTreeItemProps> = ({
   }
 
   const handleNameChange = (value: string) => {
-  setCateForm((prev) => ({
-    ...prev,
-    name: value,
-    parentId: node.categoryId,
-    level: level + 1,
-    slug: prev.slug || generateSlug(value),
-  }));
-};
-  const handleAddChild = () => {
-    setShowAddChild(false);
-    onAddSubcategoryInline(cateForm);
+    setCateForm((prev) => ({
+      ...prev,
+      name: value,
+      parentId: node.categoryId,
+      level: level + 1,
+      slug: generateSlug(value),
+    }));
   };
 
-  const handleDelte = (categoryId: number) => {
-    onDelete(categoryId);
-  }
+  // console.log("check slug generate:",cateForm )
+  const handleAddChild = () => {
+    onAddSubcategoryInline(cateForm);
+    setCateForm(initialCateForm);
+    setShowAddChild(false);
+  };
+
+
 
   const isDragging = draggingId === node.categoryId;
   const handleRowClick = () => {
@@ -84,7 +86,7 @@ const CategoryTreeItem: React.FC<CategoryTreeItemProps> = ({
     }
   }
 
-//  console.log("node.categoryId", node);
+  //  console.log("node.categoryId", node.categoryId);
   return (
     <>
       <li
@@ -121,10 +123,22 @@ const CategoryTreeItem: React.FC<CategoryTreeItemProps> = ({
         </div>
 
         <div className="flex items-center gap-1.5 text-xs">
-           {level !== 1 && (
+          {level !== 1 && (
             <button
               type="button"
-              onClick={() => handleDelte(node.categoryId!)}
+              onClick={(e) => {
+                e.stopPropagation();
+
+                confirmDelete(
+                  async () => {
+                    await onDelete?.(node.categoryId);
+                  },
+                  {
+                    title: "Xóa danh mục?",
+                    text: `Danh mục "${node.name}" sẽ bị xóa vĩnh viễn!`,
+                  }
+                );
+              }}
               className="rounded border bg-red-400 border-gray-200 px-2 py-1 text-red-900 hover:bg-red-600 hover:text-white"
             >
               Delete
@@ -209,6 +223,7 @@ const CategoryTreeItem: React.FC<CategoryTreeItemProps> = ({
               onReorderDrop={onReorderDrop}
               onEdit={onEdit}
               onAddSubcategoryInline={onAddSubcategoryInline}
+              onDelete={onDelete}
             />
           ))
 

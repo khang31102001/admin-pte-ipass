@@ -21,6 +21,7 @@ const EditCategoriesPages: React.FC = () => {
   const { data } = useCategoryAllQuery();
   const categories = data?.items ?? [];
   const {data: categoryDetail} = useCategoryDetailQuery({slug});
+  
 
 
   const initCate = categoryDetail ? categoryDetail.items.at(0) : null;

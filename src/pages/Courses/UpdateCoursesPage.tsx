@@ -10,6 +10,8 @@ import { toast } from "react-toastify";
 import { useLoading } from "@/hooks/loading/useLoading";
 import { useDetailCoursesQuery } from "@/hooks/courses/useCoursesQuery";
 import { useCategoryTreeQuery } from "@/hooks/category/useCategoryQuery";
+import { ROUTES } from "@/config/routes";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 export default function UpdateCoursePage() {
@@ -19,7 +21,8 @@ export default function UpdateCoursePage() {
     const{data} = useDetailCoursesQuery(slug);
     const { data: cate } = useCategoryTreeQuery({ categoryType: "HEADER" });
     const categories = cate?.[0]?.children ?? [];
-
+    const queryClient = useQueryClient();
+    //  console.log("check data", data)
 
     const handleOnSubmit = () => {
        const form = document.getElementById("courses-form") as HTMLFormElement | null;
@@ -27,7 +30,7 @@ export default function UpdateCoursePage() {
    
      };
      const handleUpdateCourse = async (courseData: FormData, courseId?: number) => {
-    //    console.log("update courseData:", courseData);
+       console.log("update courseData:", courseData);
 
         if (!courseId) {
             console.warn("Course ID is missing. Cannot update the course.");
@@ -36,8 +39,10 @@ export default function UpdateCoursePage() {
 
        try {
          await withLoading(courseService.updateCourse(courseId, courseData));
+         await queryClient.invalidateQueries({ queryKey: ["courses"] });
+         await queryClient.invalidateQueries({ queryKey: ["courses", slug] }); 
          toast.success("Tạo khóa học thành công");
-         // navigate(ROUTES.COURSES.LIST);
+         navigate(ROUTES.COURSES.LIST);
        } catch (error) {
          console.error("Lỗi khi tạo khóa học:", error);
          toast.error("Có lỗi xảy ra khi tạo khóa học. Vui lòng thử lại.");

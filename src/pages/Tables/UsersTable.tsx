@@ -77,7 +77,6 @@ export default function UsersTable() {
       />
       <PageBreadcrumb pageTitle="Users" />
       <div className="space-y-6">
-        
         <ComponentCard title="User List">
           <TableComponent columns={columns} data={users} />
         </ComponentCard>

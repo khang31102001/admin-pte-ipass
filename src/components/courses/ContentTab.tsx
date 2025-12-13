@@ -62,16 +62,16 @@ export default function ContentTab({ courseData, updateCourseData }: ContentTabP
             size="sm"
             variant="outline"
             onClick={handleCheckSeo}
-            disabled={seoLoading || !courseData.content?.trim()}
+            disabled={seoLoading || !courseData?.content?.trim()}
           >
             {seoLoading ? "Đang phân tích..." : "Phân tích SEO bằng AI"}
           </Button>
         </div>
 
         <RichTextEditor
-          value={courseData.content}
-          onChange={(newContent) => {
-            updateCourseData({ content: newContent })
+          value={courseData?.content ?? ""}
+          onChange={(value) => {
+            updateCourseData({ content: value })
           }}
           variant="full"
         />

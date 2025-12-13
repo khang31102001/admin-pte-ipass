@@ -8,7 +8,7 @@ interface CoursesCategorySectionProps {
   value?: number | null;
   onChange: (categoryId: number | string | null) => void;
 }
-
+const parseId = (v: string) => (v === "" ? null : Number(v));
 // Helper lấy id & parentId cho chắc (tùy backend đặt tên)
 const getId = (cate: CategoryItem) =>
   (cate as any).categoryId ?? (cate as any).id;
@@ -73,6 +73,8 @@ export const CoursesCategorySection: React.FC<CoursesCategorySectionProps> = ({
   }
 }, [value, categories]);
 
+
+
   // Cấp 2: children của parent đã chọn
   const childCategories = useMemo(() => {
     if (!selectedParentId) return [];
@@ -88,10 +90,18 @@ export const CoursesCategorySection: React.FC<CoursesCategorySectionProps> = ({
   }, [categories, selectedChildId]);
 
   const toOptions = (list: CategoryItem[]): Option[] =>
-    list.map((cate) => ({
+  [
+    {
+      label: "-- Select category --",
+      value: ""
+
+    },
+    ...list.map((cate) => ({
       label: cate.name,
       value: String(getId(cate)),
-    }));
+    })),
+  ]
+
 
   // Cấp 1: root categories (mảng categories bạn truyền vào đã là root)
   const parentOptions = useMemo(() => toOptions(categories), [categories]);
@@ -112,12 +122,11 @@ export const CoursesCategorySection: React.FC<CoursesCategorySectionProps> = ({
     childOptions.find((opt) => opt.value === String(selectedChildId)) ?? null;
 
   const selectedGrandChildOption =
-    grandChildOptions.find((opt) => opt.value === String(selectedGrandChildId)) ??
-    null;
+    grandChildOptions.find((opt) => opt.value === String(selectedGrandChildId)) ?? null;
 
   // Khi chọn parent (cấp 1)
   const handleChangeParent = (valueStr: string) => {
-    const id = Number(valueStr) || null;
+    const id = parseId(valueStr);
     setSelectedParentId(id);
     setSelectedChildId(null);
     setSelectedGrandChildId(null);
@@ -136,12 +145,12 @@ export const CoursesCategorySection: React.FC<CoursesCategorySectionProps> = ({
 
   // Khi chọn child (cấp 2)
   const handleChangeChild = (valueStr: string) => {
-    const id = Number(valueStr) || null;
+    const id = parseId(valueStr);
     setSelectedChildId(id);
     setSelectedGrandChildId(null);
 
     if (id === null) {
-      onChange(null);
+      onChange(selectedParentId);
       return;
     }
 
@@ -152,9 +161,16 @@ export const CoursesCategorySection: React.FC<CoursesCategorySectionProps> = ({
     onChange(id);
   };
 
+  useEffect(() => {
+  console.log("prop value(categoryId):", value);
+  console.log("selectedParentId:", selectedParentId);
+  console.log("selectedChildId:", selectedChildId);
+  console.log("selectedGrandChildId:", selectedGrandChildId);
+}, [value, selectedParentId, selectedChildId, selectedGrandChildId]);
+
   // Khi chọn grand child (cấp 3)
   const handleChangeGrandChild = (valueStr: string) => {
-    const id = Number(valueStr) || null;
+    const id = parseId(valueStr);
     setSelectedGrandChildId(id);
     onChange(id);
   };
@@ -181,14 +197,14 @@ export const CoursesCategorySection: React.FC<CoursesCategorySectionProps> = ({
               key={`parentOptions`}
                 options={parentOptions}
                 value={selectedParentOption}
-                onChange={(opt) => handleChangeParent(opt.value)}
+                onChange={(opt) => handleChangeParent(opt?.value ?? "")}
                 placeholder="Chọn danh mục chính..."
               />
             </div>
           </div>
 
           {/* Child */}
-          {childOptions.length > 0 && (
+          {childOptions.length > 0 && selectedParentOption && (
             <div>
               <Label htmlFor="category-child" className="text-sm font-medium">
                 Danh mục cấp 2
@@ -198,7 +214,7 @@ export const CoursesCategorySection: React.FC<CoursesCategorySectionProps> = ({
                   key={`childOptions${selectedParentId}`}
                   options={childOptions}
                   value={selectedChildOption}
-                  onChange={(opt) => handleChangeChild(opt.value)}
+                  onChange={(opt) => handleChangeChild(opt?.value ?? "")}
                   placeholder="Chọn danh mục con..."
                 />
               </div>
@@ -206,7 +222,7 @@ export const CoursesCategorySection: React.FC<CoursesCategorySectionProps> = ({
           )}
 
           {/* Grand child */}
-          {grandChildOptions.length > 0 && (
+          {grandChildOptions.length > 0 && selectedChildOption  && (
             <div>
               <Label
                 htmlFor="category-grandchild"
@@ -219,7 +235,7 @@ export const CoursesCategorySection: React.FC<CoursesCategorySectionProps> = ({
                   key={`grand-${selectedChildId}`} 
                   options={grandChildOptions}
                   value={selectedGrandChildOption}
-                  onChange={(opt) => handleChangeGrandChild(opt.value)}
+                  onChange={(opt) => handleChangeGrandChild(opt?.value ?? "")}
                   placeholder="Chọn danh mục chi tiết..."
                 />
               </div>

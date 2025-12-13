@@ -10,6 +10,7 @@ import { courseService } from "@/services/course/courseService";
 import { useLoading } from "@/hooks/loading/useLoading";
 import { toast } from "react-toastify";
 import { useCategoryTreeQuery } from "@/hooks/category/useCategoryQuery";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function CreateCoursePage() {
 
@@ -19,6 +20,7 @@ export default function CreateCoursePage() {
   const { withLoading, isLoading } = useLoading();
   const { data } = useCategoryTreeQuery({ categoryType: "HEADER" });
   const categories = data?.[0]?.children ?? [];
+  const queryClient = useQueryClient(); 
 
   // console.log("check data:", data);
 
@@ -29,11 +31,11 @@ export default function CreateCoursePage() {
   };
   const handleCreateCourse = async (courseData: FormData) => {
    
-     
     try {
       await withLoading(courseService.createCourse(courseData));
+      await queryClient.refetchQueries({ queryKey: ["courses"] });
       toast.success("Tạo khóa học thành công");
-      // navigate(ROUTES.COURSES.LIST);
+      navigate(ROUTES.COURSES.LIST);
     } catch (error) {
       console.error("Lỗi khi tạo khóa học:", error);
       toast.error("Có lỗi xảy ra khi tạo khóa học. Vui lòng thử lại.");

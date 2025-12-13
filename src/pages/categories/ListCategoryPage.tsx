@@ -2,11 +2,11 @@
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import ComponentCard from "../../components/common/ComponentCard";
 import PageMeta from "../../components/common/PageMeta";
-import CategorySection from "@/components/categories/CategorySection";
 import {  useCategoryTreeQuery } from "@/hooks/category/useCategoryQuery";
 import { CategoryItem } from "@/types/category";
 import { categoryService } from "@/services/category/categoryService";
 import { toast } from "react-toastify";
+import ListCategoryItem from "@/components/categories/ListCategoryItem";
 
 
 
@@ -37,7 +37,17 @@ export default function ListCategoryPage() {
   }
 
   const handleDelelte = async(categoryId: number) => {
-    console.log("Delete categoryId", categoryId);
+    console.log("categoryId")
+    if(!categoryId){
+      console.error("Category ID is required for update.");
+    }
+    try{
+        // console.log("Delete categoryId", categoryId);
+        await categoryService.deleteCategory(categoryId);
+        await refetch();
+    }catch(e){
+      console.error("Delete cate error! ", e)
+    }
   }
 
   return (
@@ -53,7 +63,7 @@ export default function ListCategoryPage() {
           desc="Quản lý danh sách và trạng thái các khóa học."
 
         >
-            <CategorySection
+            <ListCategoryItem
               tree={CATEGORIES}
               onAddSubcategoryInline={handleAddSubcategoryInline}
               onDelete={handleDelelte}

@@ -7,10 +7,10 @@ import NewsForm from "@/components/news/NewsForm";
 import { ROUTES } from "@/config/routes";
 import { newsService } from "@/services/news/newsService";
 import { toast } from "react-toastify";
-import { IUpdateNewsRq } from "@/types/news";
-import { mapToUpdateRq } from "@/mapper/news-mapper";
 import { useLoading } from "@/hooks/loading/useLoading";
 import { useNewsDetailQuery } from "@/hooks/news/useNewsQuery";
+import { smoothNavigate } from "@/lib/helper";
+import { useCategoryTreeQuery } from "@/hooks/category/useCategoryQuery";
 
 
 
@@ -18,8 +18,11 @@ import { useNewsDetailQuery } from "@/hooks/news/useNewsQuery";
 const EditNewsPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { data, isLoading } = useNewsDetailQuery(slug);
-  const {withLoading, isLoading: loadingUpdate} =useLoading();
+  const { data, isLoading, refetch } = useNewsDetailQuery(slug);
+  const {withLoading, isLoading: loadingUpdate} = useLoading();
+   const { data: cate } = useCategoryTreeQuery({ categoryType: "NEWS" });
+    const categories = cate?.[0]?.children ?? [];
+    console.log("check news",data);
 
 
   const handleOnSubmit = () => {
@@ -28,29 +31,14 @@ const EditNewsPage: React.FC = () => {
 
   };
 
-  const handleCreateNews = async(newsData: IUpdateNewsRq) => {
-      // console.log("audit check newsData.newsId :", newsData.newsId)
-    if (!newsData?.newsId) return;
+  const handleCreateNews = async(newsData: FormData, newsId: number) => {
+    if (!newsId) return;
 
     try {
-      const formData = new FormData();
-      if (newsData.imgFile) {
-        formData.append("file", newsData.imgFile)
-      }
-      const request = mapToUpdateRq(newsData);
-
-      if (newsData) {
-        formData.append("request", request ? JSON.stringify(request) : null);
-      }
-
-      console.log("audit check newsData :", newsData )
-      // console.log("📦 DEBUG FORM DATA:");
-      // for (const [key, value] of formData.entries()) {
-      //   console.log(key, value);
-      // }
-       await withLoading(newsService.updateNews(newsData.newsId, formData));
+       await withLoading(newsService.updateNews(newsId, newsData));
       toast.success("Cập nhật tin tức thành công!");
-      // navigate(ROUTES.NEWS.LIST);
+      await refetch();
+      smoothNavigate(navigate, ROUTES.NEWS.LIST);
     } catch (e) {
       console.log(" có lỗi sãy ra:", e)
       toast.error("Có lỗi khi cập nhật tin tức");
@@ -93,7 +81,7 @@ const EditNewsPage: React.FC = () => {
             <NewsForm
               mode="update"
               initnewsData={data}
-              categories={[]}
+              categories={categories}
               onSubmit={handleCreateNews}
             />
           ) : (

@@ -4,7 +4,6 @@ import Home from "@/pages/Dashboard/Home";
 import UserProfiles from "@/pages/UserProfiles";
 import Blank from "@/pages/Blank";
 import FormElements from "@/pages/Forms/FormElements";
-import UsersTable from "@/pages/Tables/UsersTable";
 import KnowledgesTable from "@/pages/Tables/KnowledgesTable";
 import Alerts from "@/pages/UiElements/Alerts";
 import Avatars from "@/pages/UiElements/Avatars";
@@ -26,6 +25,7 @@ import CourseDetailPage from "@/pages/Courses/CourseDetailPage";
 import CreateAboutPage from "@/pages/about/CreateAboutPage";
 import ListCategoryPage from "@/pages/categories/ListCategoryPage";
 import EditCategoriesPages from "@/pages/categories/EditCategoriesPages";
+import ListTeacherPage from "@/pages/Teacher/ListTeacherPage";
 
 export const protectedRoutes: RouteObject[] = [
   {
@@ -58,12 +58,6 @@ export const protectedRoutes: RouteObject[] = [
       {
         path: "form-elements",
         element: <FormElements />,
-      },
-
-      // //users
-      {
-        path: "users",
-        element: <UsersTable />,
       },
 
       {
@@ -110,7 +104,7 @@ export const protectedRoutes: RouteObject[] = [
       },
 
       // ───────── NEWS ─────────
-      // //news/...
+
       {
         path: "news",
         children: [
@@ -144,6 +138,18 @@ export const protectedRoutes: RouteObject[] = [
             path: "create",
             element: <CreateAboutPage />,
           },
+ 
+        ],
+      },
+
+        {
+        path: "teachers",
+        children: [
+          {
+            index: true,
+            element: <ListTeacherPage />,
+          },
+         
  
         ],
       },

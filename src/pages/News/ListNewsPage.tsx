@@ -9,49 +9,43 @@ import Button from "@/components/ui/button/Button";
 import SearchInput from "@/components/form/input/SearchInput";
 import { MoreVertical, Plus } from "lucide-react";
 import { News } from "@/types/news";
-import { Dropdown } from "@/components/ui/dropdown/Dropdown";
-import { DropdownItem } from "@/components/ui/dropdown/DropdownItem";
 import { useNavigate } from "react-router";
 import { ROUTES } from "@/config/routes";
 import { DataTablePagination } from "@/components/ui/pagination/DataTablePagination";
-import { RenderConfirmDelete } from "@/components/common/ConfirmDelete";
 import ActionButtons from "@/components/common/ActionButtons";
 import { useNewsQuery } from "@/hooks/news/useNewsQuery";
 import { newsService } from "@/services/news/newsService";
-import { useQueryClient } from "@tanstack/react-query";
+import { formatDate } from "@/lib/helper";
+import { useConfirmDelete } from "@/hooks/common/useConfirmDelete";
+import ActionDropdown from "@/components/common/ActionDropdown";
 
 type NewsColumnHandlers = {
   selectedIds: number[];
-  allSelected: boolean;
-  onToggleSelectAll: () => void;
   onToggleSelectOne: (newsId: number) => void;
-  openMenuId: number | null;
-  onToggleDropdown?: (newsId: number) => void;
+  onToggleDropdown?: () => void;
   onView?: (news: News) => void;
-  onEdit?: (news: News) => void;
-  onDelete?: (news: News) => void;
 };
 
 function createNewsColumns({
   selectedIds,
-  allSelected,
-  onToggleSelectAll,
   onToggleDropdown,
-  openMenuId,
   onToggleSelectOne,
-  onView,
-  onEdit,
-  onDelete,
 }: NewsColumnHandlers): TableColumn<News>[] {
   return [
+
     {
       key: "select",
       header: (
-        <input
-          type="checkbox"
-          onChange={onToggleSelectAll}
-          checked={allSelected}
-        />
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleDropdown?.();
+          }}
+          className="rounded p-1 hover:bg-white/10"
+        >
+          <MoreVertical className="h-4 w-4 text-white" />
+        </button>
       ),
       render: (row) => (
         <input
@@ -61,80 +55,19 @@ function createNewsColumns({
         />
       ),
     },
-    { key: "newsId", header: "ID", cellClassName: "whitespace-nowrap w-[60px]"  },
-    { key: "title", header: "Title", cellClassName: "max-w-[320px] whitespace-nowrap truncate" },
+    { key: "newsId", header: "ID", cellClassName: "whitespace-nowrap w-[60px]" },
+    {
+      key: "title",
+      header: "Title",
+      cellClassName: "max-w-[320px] whitespace-nowrap truncate",
+    },
     { key: "categoryType", header: "Category type" },
     { key: "author", header: "Author" },
     { key: "status", header: "Status" },
     {
       key: "createdAt",
       header: "Created",
-      render: (row) => row.createdAt || "-",
-    },
-    {
-      key: "actions",
-      header: "Actions",
-      render: (row) => {
-        if (!row.newsId) return null;
-        const isOpen = openMenuId === row.newsId;
-        const closeDropdown = () => {
-          onToggleDropdown?.(row.newsId);
-        };
-
-        return (
-          <div className="relative flex justify-end pr-4">
-            <button
-              type="button"
-              onClick={() => onToggleDropdown?.(row.newsId)}
-              className="inline-flex items-center justify-center h-9 w-9 rounded-full border border-gray-200 bg-white text-gray-500 shadow-sm hover:bg-gray-50 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800"
-            >
-              <MoreVertical className="h-4 w-4" />
-            </button>
-
-            <Dropdown
-              isOpen={isOpen}
-              onClose={closeDropdown}
-              className="!absolute !right-0 !top-10 !z-[999] !mt-0 flex w-40 flex-col rounded-2xl border border-gray-200 bg-white p-2 shadow-lg dark:border-gray-700 dark:bg-gray-900"
-            >
-              <ul className="flex flex-col gap-1">
-                <li>
-                  <DropdownItem
-                    onItemClick={() => {
-                      onView?.(row);
-                      closeDropdown();
-                    }}
-                    className="block w-full rounded-lg px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5"
-                  >
-                    View
-                  </DropdownItem>
-                </li>
-                <li>
-                  <DropdownItem
-                    onItemClick={() => {
-                      onEdit?.(row);
-                      closeDropdown();
-                    }}
-                    className="block w-full rounded-lg px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5"
-                  >
-                    Edit
-                  </DropdownItem>
-                </li>
-                <li>
-                  <DropdownItem
-                    onItemClick={() => {
-                      onDelete?.(row);
-                      closeDropdown();
-                    }}
-                    className="block w-full rounded-lg px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40"
-                  >
-                    Delete
-                  </DropdownItem>
-                </li>
-              </ul>
-            </Dropdown>
-          </div>
-        );
-      },
+      render: (row) => formatDate(row.createdAt) || "-",
     },
   ];
 }
@@ -162,64 +95,61 @@ const btnUI = {
   },
 };
 
+
+
 export default function ListNewsPage() {
   const [search, setSearch] = useState("");
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const [openMenu, setOpenMenu] = useState<boolean>(false);
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [newsId, setNewsId] = useState<number | null>(null);
-  const queryClient = useQueryClient();
-  const { data, isLoading } = useNewsQuery({
+  const { confirmDelete } = useConfirmDelete();
+
+  const { data, isLoading, refetch } = useNewsQuery({
     page,
     pageSize,
     search,
   });
   const news = data?.items ?? [];
   const total = data?.total ?? 0;
-  console.log("new:", news);
+  // console.log("new:", news);
 
-  const allIds = news.map((item) => item.newsId);
-  const allSelected =
-    allIds.length > 0 && allIds.every((id) => selectedIds.includes(id));
+  // const allIds = news.map((item) => item.newsId);
+  // const allSelected =
+  //   allIds.length > 0 && allIds.every((id) => selectedIds.includes(id));
 
-  const handleViewNews = (item: News) => {
-    if (!item.slug) return;
-    navigate(ROUTES.NEWS.DETAIL(item.slug));
+
+
+
+  const handleEditNews = () => {
+    if (!newsId) return;
+    const items = news.find((i) => i.newsId === newsId);
+    if (!items.slug) return;
+    navigate(ROUTES.NEWS.UPDATE(items.slug));
   };
-  const handleEditNews = (item: News) => {
-    if (!item.slug) return;
-    navigate(ROUTES.NEWS.UPDATE(item.slug));
-  };
+  // console.log(" chekc newid", newsId)
+  const handleDeleteNews = async () => {
 
-  const handleDeleteNews = async (item: News) => {
-    if (!item.newsId) {
-      setIsDeleteOpen(false);
-      return;
-    }
+    if (!newsId) return;
 
-    setIsDeleteOpen(true);
-    setNewsId(item.newsId);
-  };
-
-  const handleDeleteConfirmed = async () => {
-    try {
-      if (newsId !== null) {
+    await confirmDelete(
+      async () => {
         await newsService.deleteNews(newsId);
-        await queryClient.invalidateQueries({ queryKey: ["news"] });
+        await refetch();
         setPage(1);
         setPageSize(15);
         setSearch("");
         setSelectedIds([]);
+      },
+      {
+        title: "Xóa tin tức đã chọn?",
+        text: `Bạn chắc chắn muốn xóa tin tức này?`,
       }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsDeleteOpen(false);
-    }
+    );
   };
+
 
   const handleToggleSelectOne = (newsId: number) => {
     setSelectedIds((prev) =>
@@ -227,19 +157,21 @@ export default function ListNewsPage() {
         ? prev.filter((id) => id !== newsId)
         : [...prev, newsId]
     );
+    setNewsId(newsId);
   };
 
-  const handleToggleSelectAll = () => {
-    if (allSelected) {
-      setSelectedIds([]);
-    } else {
-      setSelectedIds(allIds);
-    }
-  };
+  // const handleToggleSelectAll = () => {
+  //   if (allSelected) {
+  //     setSelectedIds([]);
+  //   } else {
+  //     setSelectedIds(allIds);
+  //   }
+  // };
 
-  const handleToggleDropdown = (newsId: number) => {
-    setOpenMenuId((prev) => (prev === newsId ? null : newsId));
+  const handleToggleDropdown = () => {
+    setOpenMenu((v) => (!v));
   };
+  const closeMenu = () => setOpenMenu(null);
 
   const handleCreateNews = () => {
     navigate(ROUTES.NEWS.CREATE);
@@ -247,15 +179,24 @@ export default function ListNewsPage() {
 
   const columns = createNewsColumns({
     selectedIds,
-    allSelected,
-    onToggleSelectAll: handleToggleSelectAll,
     onToggleSelectOne: handleToggleSelectOne,
     onToggleDropdown: handleToggleDropdown,
-    openMenuId: openMenuId,
-    onView: handleViewNews,
-    onEdit: handleEditNews,
-    onDelete: handleDeleteNews,
   });
+
+  const actions = [
+    {
+      key: "edit",
+      label: <>✏️ Update</>,
+      onClick: handleEditNews,
+    },
+    {
+      key: "delete",
+      label: <>🗑 Delete selected</>,
+      onClick: handleDeleteNews,
+      danger: true,
+      disabled: selectedIds.length === 0,
+    },
+  ];
 
   return (
     <>
@@ -285,7 +226,26 @@ export default function ListNewsPage() {
                 </div>
               ) : (
                 <>
-                  <TableComponent<News> columns={columns} data={news} />
+
+                  <div className="relative">
+                    <TableComponent<News>
+                      columns={columns}
+                      data={news}
+                      onRowClick={(row) => {
+                        const item = row as News;
+                        if (!item.slug) return;
+                        navigate(ROUTES.NEWS.UPDATE(item.slug));
+                      }}
+                    />
+
+                    <ActionDropdown
+                      isOpen={openMenu}
+                      onClose={closeMenu}
+                      actions={actions}
+                      className="top-8 left-8"
+                    />
+
+                  </div>
                   <DataTablePagination
                     page={page}
                     pageSize={pageSize}
@@ -299,11 +259,7 @@ export default function ListNewsPage() {
                   />
                 </>
               )}
-              <RenderConfirmDelete
-                isOpen={isDeleteOpen}
-                onClose={() => setIsDeleteOpen(false)}
-                onConfirm={handleDeleteConfirmed}
-              />
+
             </>
           )}
         </ComponentCard>

@@ -13,10 +13,9 @@ import { NewsSchedulingSection } from "./NewsSchedulingSection";
 import { CategoryItem } from "@/types/category";
 import { generateSlug } from "@/lib/helper";
 import { News, NewsStatus } from "@/types/news";
-import { NewsValidationErrors } from "@/validators/newsValidation";
+import { isNewsValid, NewsValidationErrors, validateNews } from "@/validators/newsValidation";
 import FormErrorSummary from "../common/FormErrorSummary";
 import { IMedia } from "@/types/media";
-import { mapToFormSubmit } from "@/mapper/news-mapper";
 
 export type Mode = "create" | "update";
 
@@ -32,9 +31,7 @@ interface NewsFormProps {
   initnewsData?: News | null;
   categories?: CategoryItem[];
   authors?: AuthorOption[];
-  onSubmit: (IUpdateNewsRq) => void;
-  errors?: NewsValidationErrors;
-
+  onSubmit: (form: FormData, newsId?: number | null ) => void;
 
 }
 
@@ -49,6 +46,7 @@ const defaultValues: News = {
   startDate: "",
   endDate: "",
   categoryId: undefined,
+  categoryType: "",
   category: null,
   author: undefined,
   metaTitle: "",
@@ -64,7 +62,6 @@ const NewsForm: React.FC<NewsFormProps> = ({
   mode,
   initnewsData = null,
   categories = [],
-  errors,
   onSubmit
 }) => {
 
@@ -77,15 +74,27 @@ const NewsForm: React.FC<NewsFormProps> = ({
 
   const [coverPreview, setCoverPreview] = useState<IMedia | null>({
     file: null,
-    preview: initnewsData?.image ?? "",
+    preview:  "",
     isImageChanged: false,
-    deleteImageUrl: initnewsData?.image ??  undefined,
+    deleteImageUrl: ""
   });
+
+  const [errors, setErrors] = useState<NewsValidationErrors>({});
 
   const isEdit = mode === "update";
 
   // console.log("ccheck audit newsdata:", newsData)
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
+
+   useEffect(() => {
+    if (isEdit ) {
+      setNewsData((prev) => ({
+        ...prev,
+        ...initnewsData,
+      
+      }))
+    }
+  }, [initnewsData, isEdit]);
 
   useEffect(() => {
     if (!isEdit && !slugManuallyEdited) {
@@ -95,7 +104,51 @@ const NewsForm: React.FC<NewsFormProps> = ({
         
       }))
     }
-  }, [newsData?.title, slugManuallyEdited, isEdit])
+  }, [newsData?.title, slugManuallyEdited, isEdit]);
+
+  useEffect(()=>{
+    if(mode === "update"){
+     setCoverPreview((prev) => ({
+      ...prev,
+        preview: initnewsData.image ?? "",
+        deleteImageUrl: initnewsData.image ?? "",
+        isImageChanged: false,
+    }));
+    }
+
+  },[initnewsData, mode]);
+
+  
+  useEffect(() => {
+    if (!newsData.categoryId) return;
+
+    const getId = (cate: CategoryItem) =>
+      (cate as any).categoryId ?? (cate as any).id;
+
+    const findCategoryById = (
+      items: CategoryItem[],
+      id: number
+    ): CategoryItem | null => {
+      for (const item of items) {
+        if (getId(item) === id) return item;
+
+        if (item.children?.length) {
+          const found = findCategoryById(item.children, id);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+
+    const found = findCategoryById(categories, newsData.categoryId);
+
+    if (!found) return;
+
+    setNewsData((prev) => ({
+      ...prev,
+      categoryType: found.categoryType,
+    }));
+  }, [newsData.categoryId, categories]);
 
 
 
@@ -104,7 +157,7 @@ const NewsForm: React.FC<NewsFormProps> = ({
           ...prev,
         ...update,
         isImageChanged: isEdit ? true : false,
-        deleteImageUrl: isEdit ? initnewsData?.image : ""
+        deleteImageUrl: isEdit ? initnewsData.image : "",
       }));
 
      
@@ -113,7 +166,7 @@ const NewsForm: React.FC<NewsFormProps> = ({
         image: update.preview, 
       }))
   }
-  console.log("check audit coverPreview:", coverPreview)
+  console.log("check audit coverPreview:", coverPreview);
   const handleSlugManualEdit =  () => {
     setSlugManuallyEdited(true);
   };
@@ -122,13 +175,34 @@ const NewsForm: React.FC<NewsFormProps> = ({
     setNewsData((prev) => ({ ...prev, ...updates }))
   }
 
-  console.log("check audit coverPreview.file:", coverPreview.file);
+  // console.log("check audit coverPreview.file:", coverPreview.file);
   const handleSumit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    const form = mapToFormSubmit(newsData, coverPreview);
-    console.log("form audit:",form )
-    onSubmit?.(form);
+    const validation = validateNews(newsData);
+    setErrors(validation);
+
+    if (!isNewsValid(validation)) {
+      return;
+    }
+
+    const formData = new FormData();
+    if(coverPreview.file){
+      formData.append('file', coverPreview.file);
+    }
+
+    if(newsData){
+      const payload: News = {
+        ...newsData,
+        isImageChanged: !!coverPreview.isImageChanged,
+        deleteImageUrl: coverPreview.deleteImageUrl,
+      }
+      delete payload.image;
+      delete payload.newsId;
+      formData.append('request', JSON.stringify(payload) ??  null);
+    }
+
+
+    onSubmit?.(formData, isEdit ? initnewsData?.newsId : null);
   }
 
 
@@ -167,7 +241,7 @@ const NewsForm: React.FC<NewsFormProps> = ({
             {/* RIGHT SIDEBAR */}
             <aside className="lg:sticky lg:top-20 h-fit space-y-6 lg:space-y-7">
               <NewsCategorySection
-                categories={categories ?? []}
+                categories={categories}
                 value={newsData?.categoryId as number}
                 onChange={(cateId) => handleUpdateNewsData({ categoryId: Number(cateId) })}
               />

@@ -48,7 +48,7 @@ export function useCategoryAllQuery() {
 
 export function useCategoryDetailQuery(params?: CategoryQueryParams) {
   return useQuery<any, Error>({
-    queryKey: ["category", "detail", params],
+    queryKey: ["categories", params],
     queryFn: () => categoryService.getCategoryList(params),
     placeholderData: keepPreviousData,
     staleTime: 30_000,
