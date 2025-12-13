@@ -166,7 +166,7 @@ const NewsForm: React.FC<NewsFormProps> = ({
         image: update.preview, 
       }))
   }
-  console.log("check audit coverPreview:", coverPreview);
+  // console.log("check audit coverPreview:", coverPreview);
   const handleSlugManualEdit =  () => {
     setSlugManuallyEdited(true);
   };
@@ -204,6 +204,8 @@ const NewsForm: React.FC<NewsFormProps> = ({
 
     onSubmit?.(formData, isEdit ? initnewsData?.newsId : null);
   }
+
+  // console.log(" news content", newsData.content)
 
 
   return (

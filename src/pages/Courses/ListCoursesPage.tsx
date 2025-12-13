@@ -57,14 +57,18 @@ function createCourseColumns({
     },
     { key: "courseId", header: "ID" },
     { key: "courseName", header: "Name", cellClassName: "max-w-[220px] truncate" },
-    { key: "categoryType", header: "Category type" },
+    { key: "slug", header: "url" , cellClassName: "max-w-[220px] truncate"},
     { key: "level", header: "Level" },
     { 
       key: "createdAt", 
       header: "create at", 
       render: (row) => formatDate(row.createdAt) ?? "-",
     },
-    { key: "price", header: "Price" },
+    { 
+      key: "createBy", 
+      header: "Author" ,
+      render:(row)=> formatDate(row.createdBy)
+    },
 
   ];
 }

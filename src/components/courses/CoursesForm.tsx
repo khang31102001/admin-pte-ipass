@@ -197,8 +197,9 @@ export default function CoursesForm({
   const handleChangeCourseData = (updates: Partial<Course>) => {
     setCourseData((prev) => ({ ...prev, ...updates }));
   };
-  console.log("CONTENT BEFORE SUBMIT:", courseData.content.slice(0, 80));
-  console.log("BENEFITS BEFORE SUBMIT:", (courseData.benefits ?? "").slice(0, 80));
+  // console.log("CONTENT BEFORE SUBMIT:", courseData.content.slice(0, 80));
+  // console.log("BENEFITS BEFORE SUBMIT:", (courseData.benefits ?? "").slice(0, 80));
+  // console.log("check content:", courseData.content )
   // console.log("check imgPreview in form:", imgPreview);
   // console.log("check audit courseData:", courseData);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
