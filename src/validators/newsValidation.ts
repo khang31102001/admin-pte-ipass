@@ -37,7 +37,7 @@ export function validateNews(news: News): NewsValidationErrors {
     errors.content = "Vui lòng nhập nội dung bài viết";
   } else if (typeof news.content === "string") {
     const wordCount = countWords(news.content);
-    if (wordCount > 3000) {
+    if (wordCount > 2000) {
       errors.content = `Nội dung không được vượt quá 3000 từ (hiện tại: ${wordCount} từ)`;
     }
   }

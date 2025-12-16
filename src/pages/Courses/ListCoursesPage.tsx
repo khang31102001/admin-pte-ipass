@@ -5,9 +5,9 @@ import PageMeta from "../../components/common/PageMeta";
 import TableComponent, {
   TableColumn,
 } from "../../components/tables/BasicTables/TableComponent";
-import Button from "@/components/ui/button/Button";
+
 import SearchInput from "@/components/form/input/SearchInput";
-import { MoreVertical, Plus } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 import { Course } from "@/types/courses";
 import { useNavigate } from "react-router";
 import { ROUTES } from "@/config/routes";
@@ -81,19 +81,6 @@ const btnUI = {
       onChange={(v) => setSearch(v)}
     />
   ),
-
-  actions: {
-    create: (onCreate: () => void) => (
-      <Button
-        onClick={onCreate}
-        size="sm"
-        variant="primary"
-        startIcon={<Plus className="h-4 w-4" />}
-      >
-        Thêm Khóa Học
-      </Button>
-    ),
-  },
 };
 
 export default function ListCoursesPage() {

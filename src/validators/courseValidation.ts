@@ -31,20 +31,30 @@ export function validateCourse(course: Course): CourseValidationErrors {
   // }
 
   // Mô tả ngắn
-  if (course.description && course.description.length > 250) {
+  if (isEmpty(course.description) && course.description.length > 250) {
     errors.description = "Mô tả ngắn tối đa 250 ký tự";
   }
 
   // Nội dung chi tiết
- if (isEmpty(course.content)) {
-  errors.content = "Vui lòng nhập nội dung khóa học";
-} else {
-  const wordCount = countWords(course.content);
+  if (isEmpty(course.content)) {
+    errors.content = "Vui lòng nhập nội dung khóa học";
+    } else {
+      const wordCount = countWords(course.content);
 
-  if (wordCount > 2000) {
-    errors.content = `Nội dung không được vượt quá 2000 từ (hiện tại: ${wordCount} từ)`;
-  }
-}
+      if (wordCount > 2000) {
+        errors.content = `Nội dung không được vượt quá 2000 từ (hiện tại: ${wordCount} từ)`;
+      }
+    }
+
+ if (isEmpty(course.benefits)) {
+    errors.content = "Vui lòng nhập lợi ít khóa học";
+    } else {
+      const wordCount = countWords(course.benefits);
+
+      if (wordCount > 700) {
+        errors.benefits = `Lợi ít không được vượt quá 2000 từ (hiện tại: ${wordCount} từ)`;
+      }
+    }
 
   // Thời lượng
   if (isEmpty(course.duration)) {
@@ -62,6 +72,16 @@ export function validateCourse(course: Course): CourseValidationErrors {
   if (course.metaDescription && course.metaDescription.length > 160) {
     errors.metaDescription = "Meta description nên dưới 160 ký tự";
   }
+
+  if(course.keywords.length > 10){
+    errors.keywords = "Không nên vượt quá 10 từ khóa";
+  }
+
+  course.keywords?.forEach((kw) => {
+  if (kw.length > 40) {
+    errors.keywords = `Từ khóa "${kw}" không nên vượt quá 40 ký tự`;
+  }
+});
 
   return errors;
 }

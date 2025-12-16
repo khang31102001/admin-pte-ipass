@@ -12,8 +12,9 @@ import {
   // PlugInIcon,
   // UserCircleIcon,
 } from "../icons";
-import { useSidebar } from "../context/SidebarContext";
+
 import { mainNavItems, NavItem, othersNavItems } from "@/config/sidebar";
+import { useSidebar } from "@/contexts/SidebarContext";
 
 
 const AppSidebar: React.FC = () => {

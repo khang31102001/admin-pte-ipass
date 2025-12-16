@@ -26,6 +26,7 @@ import CreateAboutPage from "@/pages/about/CreateAboutPage";
 import ListCategoryPage from "@/pages/categories/ListCategoryPage";
 import EditCategoriesPages from "@/pages/categories/EditCategoriesPages";
 import ListTeacherPage from "@/pages/Teacher/ListTeacherPage";
+import CreateTeacherPage from "@/pages/Teacher/CreateTeacherPage";
 
 export const protectedRoutes: RouteObject[] = [
   {
@@ -76,7 +77,7 @@ export const protectedRoutes: RouteObject[] = [
       },
 
 
-    
+// ───────── COURSE ─────────
       {
         path: "courses",
         children: [
@@ -103,7 +104,7 @@ export const protectedRoutes: RouteObject[] = [
         ],
       },
 
-      // ───────── NEWS ─────────
+// ───────── NEWS ─────────
 
       {
         path: "news",
@@ -142,12 +143,23 @@ export const protectedRoutes: RouteObject[] = [
         ],
       },
 
+ // ───────── TEACHER ─────────
+
         {
         path: "teachers",
         children: [
           {
             index: true,
             element: <ListTeacherPage />,
+          },
+            {
+            path: "create",
+            element: <CreateTeacherPage />,
+          },
+
+            {
+            path: "update",
+            element: <UpdateCoursePage />,
           },
          
  

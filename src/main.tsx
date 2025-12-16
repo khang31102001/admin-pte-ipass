@@ -5,17 +5,16 @@ import "swiper/swiper-bundle.css";
 import "flatpickr/dist/flatpickr.css";
 import App from "./App.tsx";
 import { AppWrapper } from "./components/common/PageMeta.tsx";
-import { ThemeProvider } from "./context/ThemeContext.tsx";
+
 import { ReactQueryProvider } from "./providers/ReactQueryProvider.tsx";
+import { ThemeProvider } from "./contexts/ThemeContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
-  // <StrictMode>
     <ThemeProvider>
       <AppWrapper>
-       <ReactQueryProvider>
-         <App />
-       </ReactQueryProvider>
+        <ReactQueryProvider>
+          <App />
+        </ReactQueryProvider>
       </AppWrapper>
     </ThemeProvider>
-  // </StrictMode>,
 );

@@ -1,24 +1,49 @@
 import ComponentCard from "../../common/ComponentCard";
-import { useDropzone } from "react-dropzone";
-// import Dropzone from "react-dropzone";
+import {  Accept, useDropzone } from "react-dropzone";
 
-const DropzoneComponent: React.FC = () => {
+interface DropzoneProps {
+  title?: string;
+  description?: string;
+  onFilesChange: (files: File[]) => void;
+  maxSizeMB?: number;
+   recommendedWidth?: number;
+   recommendedHeight?: number;
+  accept?: Accept;
+  maxFiles?: number;
+  disabled?: boolean;
+}
+
+const DropzoneComponent = ({
+  title = "Upload files",
+  description = "Drag and drop your PNG, JPG, WebP, SVG images here or browse",
+  onFilesChange,
+  maxSizeMB,
+  recommendedWidth,
+  recommendedHeight,
+  accept = {
+    "image/png": [],
+    "image/jpeg": [],
+    "image/webp": [],
+    "image/svg+xml": [],
+  },
+  maxFiles = 1,
+  disabled = false,
+
+}:DropzoneProps) => {
   const onDrop = (acceptedFiles: File[]) => {
     console.log("Files dropped:", acceptedFiles);
-    // Handle file uploads here
+    if(onFilesChange) onFilesChange(acceptedFiles);
   };
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: {
-      "image/png": [],
-      "image/jpeg": [],
-      "image/webp": [],
-      "image/svg+xml": [],
-    },
-  });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ 
+          onDrop,
+          accept,
+          maxFiles,
+          disabled,
+        });
+
   return (
-    <ComponentCard title="Dropzone">
+    <ComponentCard title={title} desc={description}>
       <div className="transition border border-gray-300 border-dashed cursor-pointer dark:hover:border-brand-500 dark:border-gray-700 rounded-xl hover:border-brand-500">
         <form
           {...getRootProps()}
@@ -59,9 +84,22 @@ const DropzoneComponent: React.FC = () => {
               {isDragActive ? "Drop Files Here" : "Drag & Drop Files Here"}
             </h4>
 
-            <span className=" text-center mb-5 block w-full max-w-[290px] text-sm text-gray-700 dark:text-gray-400">
-              Drag and drop your PNG, JPG, WebP, SVG images here or browse
-            </span>
+            <div className="mt-3 space-y-1 text-sm text-gray-500">
+                {maxSizeMB && (
+                  <p>• Dung lượng tối đa: <b>{maxSizeMB}MB</b></p>
+                )}
+
+                {recommendedWidth && recommendedHeight && (
+                  <p>
+                    • Kích thước đề xuất:{" "}
+                    <b>
+                      {recommendedWidth} × {recommendedHeight}px
+                    </b>
+                  </p>
+                )}
+              </div>
+
+       
 
             <span className="font-medium underline text-theme-sm text-brand-500">
               Browse File

@@ -11,6 +11,8 @@ import { useLoading } from "@/hooks/loading/useLoading";
 import { toast } from "react-toastify";
 import { useCategoryTreeQuery } from "@/hooks/category/useCategoryQuery";
 import { useQueryClient } from "@tanstack/react-query";
+import { courseKeys } from "@/hooks/courses/useCoursesQuery";
+import { smoothNavigate } from "@/lib/helper";
 
 export default function CreateCoursePage() {
 
@@ -26,6 +28,9 @@ export default function CreateCoursePage() {
 
   const handleOnSubmit = () => {
     const form = document.getElementById("courses-form") as HTMLFormElement | null;
+    if(!form) {
+      console.error("Không tìm thấy form courses-form.")
+    }
     form.requestSubmit();
 
   };
@@ -33,9 +38,9 @@ export default function CreateCoursePage() {
    
     try {
       await withLoading(courseService.createCourse(courseData));
-      await queryClient.refetchQueries({ queryKey: ["courses"] });
+      await queryClient.invalidateQueries({ queryKey: courseKeys.list()});
       toast.success("Tạo khóa học thành công");
-      navigate(ROUTES.COURSES.LIST);
+      smoothNavigate( navigate, ROUTES.COURSES.LIST);
     } catch (error) {
       console.error("Lỗi khi tạo khóa học:", error);
       toast.error("Có lỗi xảy ra khi tạo khóa học. Vui lòng thử lại.");

@@ -6,6 +6,7 @@ import { CoursesCategorySection } from "./CoursesCategorySection";
 import { CategoryItem } from "@/types/category";
 import { IMedia } from "@/types/media";
 import { processImageForWeb } from "@/lib/image";
+import DropzoneComponent from "../form/form-elements/DropZone";
 
 interface PreviewSidebarProps {
   onChangeMedia?: (media: IMedia | null) => void
@@ -137,8 +138,26 @@ export default function PreviewSidebar({
               </div>
             )}
           </div>
+
+       
         </div>
       </div>
+
+         <DropzoneComponent
+              title="Hình ảnh khóa học"
+              description="PNG, JPG, WebP"
+              maxSizeMB={2}
+              recommendedWidth={1200}
+              recommendedHeight={675}
+              accept={{
+                "image/jpeg": [".jpg", ".jpeg"],
+                "image/png": [".png"],
+                "image/webp": [".webp"],
+              }}
+              onFilesChange={(files) => {
+                console.log("check file:", files[0])
+              }}
+            />
 
       <div className="border rounded-lg bg-white shadow-sm">
         {/* Header */}
@@ -161,8 +180,7 @@ export default function PreviewSidebar({
                   onChange={(e) =>
                     updateCourseData({ isFeatured: e.target.checked })
                   }
-                  className="h-5 w-5 rounded border-gray-300 text-brand-500 
-                            focus:ring-2 focus:ring-brand-500"
+                  className="h-5 w-5 rounded border-gray-300 text-brand-500 focus:none focus:none"
                 />
                 <span className="text-sm text-slate-700">Nổi bật</span>
               </label>
