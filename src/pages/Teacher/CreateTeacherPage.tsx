@@ -5,7 +5,6 @@ import PageMeta from "../../components/common/PageMeta"
 import TeacherForm from "@/components/teacher/teacherForm"
 import ActionButtons from "@/components/common/ActionButtons"
 import { toast } from "react-toastify"
-import { ITeacher } from "@/types/teacher"
 import { useNavigate } from "react-router"
 import { ROUTES } from "@/config/routes"
 
@@ -20,7 +19,7 @@ export default function CreateTeacherPage() {
   }
 
   // Nhận data từ TeacherForm
-  const handleCreateTeacher = async (teacherData: ITeacher) => {
+  const handleCreateTeacher = async (teacherData: FormData) => {
     try {
       console.log("CREATE TEACHER:", teacherData)
 

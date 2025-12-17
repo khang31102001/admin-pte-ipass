@@ -18,5 +18,8 @@ export interface ITeacher {
   createdBy?: string;
   updatedBy?: string;
   version?: number | null;
+  isImageChanged?: boolean,
+  deleteImageUrl?: string,
+
 }
 

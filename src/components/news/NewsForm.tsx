@@ -86,7 +86,7 @@ const NewsForm: React.FC<NewsFormProps> = ({
   // console.log("ccheck audit newsdata:", newsData)
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
 
-   useEffect(() => {
+ useEffect(() => {
     if (isEdit ) {
       setNewsData((prev) => ({
         ...prev,

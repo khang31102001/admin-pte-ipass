@@ -34,12 +34,9 @@ export default function EditTeacherPage() {
     form?.requestSubmit()
   }
 
-  const handleUpdateTeacher = async (teacherData: ITeacher, id?: number | null) => {
+  const handleUpdateTeacher = async (teacherData: FormData, id?: number | null) => {
     try {
       console.log("UPDATE TEACHER:", id, teacherData)
-
-      // TODO: call API update
-      // await teacherService.update(id!, teacherData)
 
       toast.success("Cập nhật giáo viên thành công!")
       // navigate(ROUTES.TEACHER.LIST)
