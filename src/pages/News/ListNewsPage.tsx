@@ -199,11 +199,11 @@ export default function ListNewsPage() {
 
   ];
 
-  if(isLoading){
-     return <ListSkeleton rows={10} variant="table"/>
+  if (isLoading) {
+    return <ListSkeleton rows={10} variant="table" />
   }
 
-  if(!isLoading && news.length === 0){
+  if (!isLoading && news.length === 0) {
     return (
       <EmptyState
         title="Hiện tại chưa có tin tức nào"
@@ -231,39 +231,47 @@ export default function ListNewsPage() {
             <ActionButtons saveLabel="Thêm tin tức" onSave={handleCreateNews} />
           }
         >
-          <>
+          {!isLoading && news.length === 0 ? (
+            <EmptyState
+              title="Hiện tại chưa có tin tức nào"
+              description="Vui lòng tạo tin tức mới để bắt đầu quản lý nội dung"
+              action={<button className="rounded-lg bg-[#04016C] px-4 py-2 text-xs font-medium text-white">➕ Tạo Tin</button>}
+            />
+          ) : (
+            <>
+              <div className="relative">
+                <TableComponent<News>
+                  columns={columns}
+                  data={news}
+                  onRowClick={(row) => {
+                    const item = row as News;
+                    if (!item.slug) return;
+                    navigate(ROUTES.NEWS.UPDATE(item.slug));
+                  }}
+                />
 
-            <div className="relative">
-              <TableComponent<News>
-                columns={columns}
-                data={news}
-                onRowClick={(row) => {
-                  const item = row as News;
-                  if (!item.slug) return;
-                  navigate(ROUTES.NEWS.UPDATE(item.slug));
+                <ActionDropdown
+                  isOpen={openMenu}
+                  onClose={closeMenu}
+                  actions={actions}
+                  className="top-8 left-8"
+                />
+
+              </div>
+              <DataTablePagination
+                page={page}
+                pageSize={pageSize}
+                total={total}
+                pageSizeOptions={[15, 30, 50, 100]}
+                onPageChange={setPage}
+                onPageSizeChange={(size) => {
+                  setPageSize(size);
+                  setPage(1);
                 }}
               />
+            </>
+          )}
 
-              <ActionDropdown
-                isOpen={openMenu}
-                onClose={closeMenu}
-                actions={actions}
-                className="top-8 left-8"
-              />
-
-            </div>
-            <DataTablePagination
-              page={page}
-              pageSize={pageSize}
-              total={total}
-              pageSizeOptions={[15, 30, 50, 100]}
-              onPageChange={setPage}
-              onPageSizeChange={(size) => {
-                setPageSize(size);
-                setPage(1);
-              }}
-            />
-          </>
         </ComponentCard>
       </div>
     </>

@@ -185,20 +185,8 @@ export default function ListCoursesPage() {
     },
   ];
 
-  if (isLoading) {
-    return <ListSkeleton rows={10} variant="table" />
-  }
-
-  if (!isLoading && courses.length === 0) {
-    return (
-      <EmptyState
-        title="Hiện tại chưa có khóa học nào"
-        description="Vui lòng tạo khóa học mới để bắt đầu quản lý nội dung"
-        action={<button className="rounded-lg bg-[#04016C] px-4 py-2 text-xs font-medium text-white">➕ Tạo Khóa học</button>}
-      />
-    );
-  }
-
+  if (isLoading) return <ListSkeleton rows={10} variant="table" />
+  
   return (
     <>
       <PageMeta
@@ -218,37 +206,49 @@ export default function ListCoursesPage() {
             />
           }
         >
-          <>
-            <div className="relative">
-              <TableComponent<Course>
-                columns={columns}
-                data={courses}
-                onRowClick={(row) => {
-                  const item = row as Course;
-                  if (!item.slug) return;
-                  navigate(ROUTES.COURSES.UPDATE(item.slug));
-                }}
-              />
-              <ActionDropdown
-                isOpen={openMenu}
-                onClose={closeMenu}
-                actions={actions}
-                className="top-8 left-8"
-              />
-            </div>
-            <DataTablePagination
-              page={page}
-              pageSize={pageSize}
-              total={total}
-              pageSizeOptions={[15, 30, 50, 100]}
-              onPageChange={setPage}
-              onPageSizeChange={(size) => {
-                setPageSize(size);
-                setPage(1);
-              }}
+          {!isLoading && courses.length === 0 ? (
+            <EmptyState
+              title="Hiện tại chưa có khóa học nào"
+              description="Vui lòng tạo khóa học mới để bắt đầu quản lý nội dung"
+              action={<button className="rounded-lg bg-[#04016C] px-4 py-2 text-xs font-medium text-white">➕ Tạo Khóa học</button>}
             />
 
-          </>
+          ) : (
+
+            <>
+              <div className="relative">
+                <TableComponent<Course>
+                  columns={columns}
+                  data={courses}
+                  onRowClick={(row) => {
+                    const item = row as Course;
+                    if (!item.slug) return;
+                    navigate(ROUTES.COURSES.UPDATE(item.slug));
+                  }}
+                />
+                <ActionDropdown
+                  isOpen={openMenu}
+                  onClose={closeMenu}
+                  actions={actions}
+                  className="top-8 left-8"
+                />
+              </div>
+              <DataTablePagination
+                page={page}
+                pageSize={pageSize}
+                total={total}
+                pageSizeOptions={[15, 30, 50, 100]}
+                onPageChange={setPage}
+                onPageSizeChange={(size) => {
+                  setPageSize(size);
+                  setPage(1);
+                }}
+              />
+
+            </>
+
+          )}
+
         </ComponentCard>
       </div>
     </>

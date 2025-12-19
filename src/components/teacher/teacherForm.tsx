@@ -91,12 +91,8 @@ export default function TeacherForm({
     const handleChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const imgFile = e.target.files?.[0];
         if (!imgFile) return;
-
         const { file, previewUrl } = await processImageForWeb(imgFile);
-
-     
         updateTeacher({ image: previewUrl });
-
         setImgPreview((prev) => ({
             ...prev,
             file,
@@ -104,8 +100,6 @@ export default function TeacherForm({
             isImageChanged: isEdit ? true : false,
             deleteImageUrl: isEdit ? (initialData?.image ?? prev.deleteImageUrl ?? "") : "",
         }));
-
-   
              e.target.value = "";
         };
 

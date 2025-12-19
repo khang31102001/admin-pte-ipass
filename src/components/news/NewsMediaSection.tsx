@@ -1,18 +1,14 @@
 import { processImageForWeb } from "@/lib/image";
+import { IMedia } from "@/types/media";
 import { News } from "@/types/news";
 import React, { ChangeEvent, useRef } from "react";
 
-export interface MediaState {
-  file?: File | null;
-  preview?: string;
-  deleteImageUrl?: string;
-  isImageChanged?: boolean;
 
-}
 interface NewsMediaSectionProps {
   coverPreview?: string;
   onChangeNewsData?: (updates: Partial<News>) => void;
-  onChangeImge?: (imgPreview: Partial<MediaState>) => void;
+  onChangeImge?: (imgPreview: Partial<IMedia>) => void;
+  
 }
 
 export const NewsMediaSection: React.FC<NewsMediaSectionProps> = ({
@@ -30,7 +26,7 @@ export const NewsMediaSection: React.FC<NewsMediaSectionProps> = ({
     const imgFile = e.target.files?.[0];
     if (imgFile) {
       const { file, previewUrl } = await processImageForWeb(imgFile);
-      onChangeImge({
+      onChangeImge?.({
         file: file,
         preview: previewUrl,
       });

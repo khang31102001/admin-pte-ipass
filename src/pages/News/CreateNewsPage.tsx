@@ -7,7 +7,10 @@ import { ROUTES } from "@/config/routes";
 import { useCategoryTreeQuery } from "@/hooks/category/useCategoryQuery";
 
 import { useLoading } from "@/hooks/loading/useLoading";
+import { newsKeys } from "@/hooks/news/useNewsQuery";
+import { smoothNavigate } from "@/lib/helper";
 import { newsService } from "@/services/news/newsService";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
@@ -19,6 +22,7 @@ const CreateNewsPage: React.FC = () => {
   const { withLoading, isLoading } = useLoading();
   const { data } = useCategoryTreeQuery({ categoryType: "NEWS" });
   const categories = data?.[0]?.children ?? [];
+  const queryClient = useQueryClient();
 
   const handleOnSubmit = () => {
     const form = document.getElementById("news-form") as HTMLFormElement | null;
@@ -27,13 +31,12 @@ const CreateNewsPage: React.FC = () => {
   };
 
   const handleCreateNews = async (newsData: FormData) => {
-    
+    // xem xét Loading → Success → Invalidate → Navigate
     try {
-     
       await withLoading(newsService.createNews(newsData));
-
+      queryClient.invalidateQueries({queryKey: newsKeys.all})
       toast.success("Tạo tin tức thành công!");
-      // navigate(ROUTES.NEWS.LIST);
+      smoothNavigate(navigate, ROUTES.NEWS.LIST);
     } catch (error) {
       console.error(error);
       toast.error("Có lỗi xảy ra khi tạo tin tức, vui lòng thử lại.");

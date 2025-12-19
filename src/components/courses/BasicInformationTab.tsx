@@ -17,6 +17,8 @@ interface BasicInformationTabProps {
   categories?: CategoryItem[];
   courseData: Course;
   updateCourseData: (updates: Partial<Course>) => void;
+  onSlugManualEdit?: (editSlug: boolean) => void;
+  isEdit?: boolean;
 }
 
 export const LEVEL = [
@@ -29,13 +31,17 @@ export const LEVEL = [
 
 export default function BasicInformationTab({
   courseData,
+  isEdit = false,
+  onSlugManualEdit,
   updateCourseData,
 }: BasicInformationTabProps) {
+
+
   const [charCount, setCharCount] = useState(
     courseData.description?.length ?? 0
   );
-  const [newAudience, setNewAudience] = useState("");
 
+  const [newAudience, setNewAudience] = useState("");
   const BASE_URL = getBaseUrl();
 
   useEffect(() => {
@@ -88,8 +94,11 @@ export default function BasicInformationTab({
           <Input
             id="slug"
             value={courseData.slug ?? ""}
-            onChange={(e) => updateCourseData({ slug: e.target.value })}
-            disabled={true}
+            onChange={(e) =>{
+                onSlugManualEdit?.(true);
+               updateCourseData({ slug: e.target.value })
+            }}
+            disabled={isEdit}
             placeholder="tự động tạo từ tiêu đề....."
           />
         </div>

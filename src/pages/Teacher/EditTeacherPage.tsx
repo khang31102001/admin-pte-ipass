@@ -10,12 +10,15 @@ import { teacherKeys, useTeacherDetailQuery } from "@/hooks/teacher/useTeachersQ
 import { useLoading } from "@/hooks/loading/useLoading"
 import { teachersService } from "@/services/teacher/teacherService"
 import { useQueryClient } from "@tanstack/react-query"
+import EmptyState from "@/components/common/EmptyState"
+import PageLoading from "@/components/loading/PageLoading"
+import { smoothNavigate } from "@/lib/helper"
 
 export default function EditTeacherPage() {
     const { slug } = useParams<{ slug: string }>();
     const navigate = useNavigate();
-    const {data} = useTeacherDetailQuery(slug);
-    const {withLoading, isLoading} = useLoading();
+    const {data, isLoading, error} = useTeacherDetailQuery(slug);
+    const {withLoading, isLoading: isSaving} = useLoading();
     const teacher = data ?? null;
     const queryClient = useQueryClient(); 
 
@@ -32,12 +35,37 @@ export default function EditTeacherPage() {
       await withLoading(teachersService.updateTeachers(id, teacherData));
       await queryClient.invalidateQueries({ queryKey: teacherKeys.all });
       toast.success("Cập nhật giáo viên thành công!")
-      navigate(ROUTES.TEACHER.LIST);
+      smoothNavigate( navigate,ROUTES.TEACHER.LIST)
     } catch (error) {
       console.error(error)
       toast.error("Có lỗi xảy ra khi cập nhật giáo viên.")
     }
   }
+
+   if (!slug) return <EmptyState title="Đường dẫn không hợp lệ" />;
+  if (isLoading) return <PageLoading title="Đang tải dử liệu" />
+  if (error) return <EmptyState title="Không thể tải dữ liệu" />;
+  if (!teacher) {
+    return (
+      <>
+        <PageMeta title="Không tìm thấy tin tức | Admin Dashboard" description="Tin tức không tồn tại hoặc đã bị xóa." />
+        <PageBreadcrumb pageTitle="Cập nhật khóa học" />
+        <EmptyState
+          title="Không tìm thấy khóa học"
+          description="Vui lòng kiểm tra lại đường dẫn hoặc quay lại danh sách."
+          action={
+            <button
+              onClick={() => navigate(-1)}
+              className="rounded-lg bg-[#04016C] px-4 py-2 text-xs font-medium text-white hover:opacity-90"
+            >
+              ← Quay lại danh sách
+            </button>
+          }
+        />
+      </>
+    );
+  }
+
 
   return (
     <>
@@ -58,15 +86,17 @@ export default function EditTeacherPage() {
               }}
               onSave={handleOnSubmit}
               saveLabel="Lưu thay đổi"
-              isSaving={isLoading}
+              isSaving={isSaving}
             />
           }
         >
-          <TeacherForm
+         <div className={isSaving ? "pointer-events-none opacity-60" : ""}>
+           <TeacherForm
             mode="update"
             initialData={teacher}
             onSubmit={handleUpdateTeacher}
           />
+         </div>
         </ComponentCard>
    
     </>

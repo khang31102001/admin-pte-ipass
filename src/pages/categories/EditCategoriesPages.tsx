@@ -1,12 +1,15 @@
 import { CategoryForm } from "@/components/categories/CategoryForm";
 import ActionButtons from "@/components/common/ActionButtons";
 import ComponentCard from "@/components/common/ComponentCard";
+import EmptyState from "@/components/common/EmptyState";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import PageMeta from "@/components/common/PageMeta";
-import { useCategoryAllQuery, useCategoryDetailQuery } from "@/hooks/category/useCategoryQuery";
+import PageLoading from "@/components/loading/PageLoading";
+import { categoryKeys, useCategoryAllQuery, useCategoryDetailQuery } from "@/hooks/category/useCategoryQuery";
 import { useLoading } from "@/hooks/loading/useLoading";
 import { categoryService } from "@/services/category/categoryService";
 import { CategoryItem } from "@/types/category";
+import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "react-toastify";
 
@@ -17,11 +20,11 @@ const EditCategoriesPages: React.FC = () => {
 
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { withLoading ,isLoading } = useLoading();
-  const { data } = useCategoryAllQuery();
+  const { withLoading , isLoading:isSaving } = useLoading();
+  const { data, isLoading, error } = useCategoryAllQuery();
   const categories = data?.items ?? [];
   const {data: categoryDetail} = useCategoryDetailQuery({slug});
-  
+   const queryClient = useQueryClient(); 
 
 
   const initCate = categoryDetail ? categoryDetail.items.at(0) : null;
@@ -39,8 +42,8 @@ const EditCategoriesPages: React.FC = () => {
       return;
     }
       try{
-        console.log("Update category", cate);
-        await withLoading(categoryService.updateCategory(cate, cate.categoryId!))
+        await withLoading(categoryService.updateCategory(cate, cate.categoryId!));
+        queryClient.invalidateQueries({queryKey: categoryKeys.all})
         toast.success("Cập nhật danh mục thành công");
       }catch(err){
         console.error("Failed to update category:", err);
@@ -48,6 +51,30 @@ const EditCategoriesPages: React.FC = () => {
       }
    
   };
+
+    if (!slug) return <EmptyState title="Đường dẫn không hợp lệ" />;
+    if (isLoading) return <PageLoading title="Đang tải thông tin" />
+    if (error) return <EmptyState title="Không thể tải dữ liệu" />;
+    if (!initCate) {
+        return (
+            <>
+                <PageMeta title="Không tìm thấy tin tức | Admin Dashboard" description="Tin tức không tồn tại hoặc đã bị xóa." />
+                <PageBreadcrumb pageTitle="Cập nhật khóa học" />
+                <EmptyState
+                    title="Không tìm thấy khóa học"
+                    description="Vui lòng kiểm tra lại đường dẫn hoặc quay lại danh sách."
+                    action={
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="rounded-lg bg-[#04016C] px-4 py-2 text-xs font-medium text-white hover:opacity-90"
+                        >
+                            ← Quay lại danh sách
+                        </button>
+                    }
+                />
+            </>
+        );
+    }
 
 
   return (
@@ -69,7 +96,7 @@ const EditCategoriesPages: React.FC = () => {
               onCancel={()=> navigate(-1)}
               onSave={handleOnSubmit}
               saveLabel="Lưu danh mục"
-              isSaving={isLoading}
+              isSaving={isSaving}
             />
           }
         >

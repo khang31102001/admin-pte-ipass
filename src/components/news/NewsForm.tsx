@@ -31,7 +31,7 @@ interface NewsFormProps {
   initnewsData?: News | null;
   categories?: CategoryItem[];
   authors?: AuthorOption[];
-  onSubmit: (form: FormData, newsId?: number | null ) => void;
+  onSubmit: (form: FormData, newsId?: number | null) => void;
 
 }
 
@@ -56,6 +56,23 @@ const defaultValues: News = {
   isFeatured: false,
 };
 
+function makeInitialNews(init?: News | null): News {
+  return {
+    ...defaultValues,
+    ...(init ?? {}),
+    keywords: init?.keywords ?? [],
+    tags: init?.tags ?? [],
+  };
+}
+
+function makeInitialMedia(init?: News | null): IMedia {
+  return {
+    file: null,
+    preview: init?.image ?? "",
+    isImageChanged: false,
+    deleteImageUrl: "",
+  };
+}
 
 
 const NewsForm: React.FC<NewsFormProps> = ({
@@ -64,61 +81,33 @@ const NewsForm: React.FC<NewsFormProps> = ({
   categories = [],
   onSubmit
 }) => {
-
-  const [newsData, setNewsData] = useState<News>({
-     ...defaultValues,
-    ...initnewsData,
-    keywords: initnewsData?.keywords ?? [],
-    tags: initnewsData?.tags ?? [],
-  });
-
-  const [coverPreview, setCoverPreview] = useState<IMedia | null>({
-    file: null,
-    preview:  "",
-    isImageChanged: false,
-    deleteImageUrl: ""
-  });
-
-  const [errors, setErrors] = useState<NewsValidationErrors>({});
-
   const isEdit = mode === "update";
-
-  // console.log("ccheck audit newsdata:", newsData)
-  const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
-
- useEffect(() => {
-    if (isEdit ) {
-      setNewsData((prev) => ({
-        ...prev,
-        ...initnewsData,
-      
-      }))
-    }
-  }, [initnewsData, isEdit]);
+  const [newsData, setNewsData] = useState<News>(() => makeInitialNews(initnewsData));
+  const [image, setImage] = useState<IMedia>(() => makeInitialMedia(initnewsData));
+  const [errors, setErrors] = useState<NewsValidationErrors>({});
+  const [isSlugEdited, setIsSlugEdited] = useState(false);
 
   useEffect(() => {
-    if (!isEdit && !slugManuallyEdited) {
-      setNewsData((prev) => ({
-        ...prev,
-        slug: generateSlug(newsData?.title)
-        
-      }))
-    }
-  }, [newsData?.title, slugManuallyEdited, isEdit]);
+    setNewsData(makeInitialNews(initnewsData));
+    setImage(makeInitialMedia(initnewsData));
+    setErrors({});
+    setIsSlugEdited(false);
 
-  useEffect(()=>{
-    if(mode === "update"){
-     setCoverPreview((prev) => ({
+  }, [initnewsData, mode]);
+
+  useEffect(() => {
+    if (isEdit) return;
+    if (!newsData?.title) return;
+    if (isSlugEdited) return;
+    setNewsData((prev) => ({
       ...prev,
-        preview: initnewsData.image ?? "",
-        deleteImageUrl: initnewsData.image ?? "",
-        isImageChanged: false,
-    }));
-    }
+      slug: generateSlug(prev?.title)
 
-  },[initnewsData, mode]);
+    }))
+  }, [newsData?.title, isSlugEdited, isEdit]);
 
-  
+
+
   useEffect(() => {
     if (!newsData.categoryId) return;
 
@@ -152,23 +141,22 @@ const NewsForm: React.FC<NewsFormProps> = ({
 
 
 
-  const handleChangeImageState =(update: Partial<IMedia>)=>{
-      setCoverPreview((prev)=>({
-          ...prev,
-        ...update,
-        isImageChanged: isEdit ? true : false,
-        deleteImageUrl: isEdit ? initnewsData.image : "",
-      }));
+  const handleUpdateImage = (update: Partial<IMedia>) => {
+    setImage((prev) => ({
+      ...prev,
+      ...update,
+      isImageChanged: isEdit ? true : false,
+      deleteImageUrl: isEdit ? initnewsData.image : "",
+    }));
 
-     
-      setNewsData((prev)=>({
-        ...prev,
-        image: update.preview, 
-      }))
+    setNewsData((prev) => ({
+      ...prev,
+      image: update.preview,
+    }))
   }
   // console.log("check audit coverPreview:", coverPreview);
-  const handleSlugManualEdit =  () => {
-    setSlugManuallyEdited(true);
+  const handleSlugManualEdit = () => {
+    setIsSlugEdited(true);
   };
 
   const handleUpdateNewsData = (updates: Partial<News>) => {
@@ -186,19 +174,19 @@ const NewsForm: React.FC<NewsFormProps> = ({
     }
 
     const formData = new FormData();
-    if(coverPreview.file){
-      formData.append('file', coverPreview.file);
+    if (image.file) {
+      formData.append('file', image.file);
     }
 
-    if(newsData){
+    if (newsData) {
       const payload: News = {
         ...newsData,
-        isImageChanged: !!coverPreview.isImageChanged,
-        deleteImageUrl: coverPreview.deleteImageUrl,
+        isImageChanged: !!image.isImageChanged,
+        deleteImageUrl: image.deleteImageUrl,
       }
       delete payload.image;
       delete payload.newsId;
-      formData.append('request', JSON.stringify(payload) ??  null);
+      formData.append('request', JSON.stringify(payload) ?? null);
     }
 
 
@@ -228,8 +216,8 @@ const NewsForm: React.FC<NewsFormProps> = ({
               />
 
               <NewsMediaSection
-                coverPreview={coverPreview?.preview}
-                onChangeImge={handleChangeImageState}
+                coverPreview={image?.preview}
+                onChangeImge={handleUpdateImage}
               />
 
               <NewsSchedulingSection

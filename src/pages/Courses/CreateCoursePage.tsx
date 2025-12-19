@@ -35,7 +35,7 @@ export default function CreateCoursePage() {
 
   };
   const handleCreateCourse = async (courseData: FormData) => {
-   
+   // xem xét Loading → Success → Invalidate → Navigate
     try {
       await withLoading(courseService.createCourse(courseData));
       await queryClient.invalidateQueries({ queryKey: courseKeys.list()});

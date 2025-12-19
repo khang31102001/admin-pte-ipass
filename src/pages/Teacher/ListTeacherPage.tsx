@@ -205,9 +205,7 @@ export default function ListTeacherPage() {
         title="Quản lý giáo viên | Admin Dashboard"
         description="Danh sách giáo viên và quản lý thông tin giảng dạy trong hệ thống."
       />
-
       <PageBreadcrumb pageTitle="Quản lý giáo viên" />
-
       <div className="space-y-6">
         <ComponentCard
           title="Danh sách giáo viên"
@@ -226,9 +224,15 @@ export default function ListTeacherPage() {
             />
           }
         >
-          <>
-            <div className="relative">
-              {teachers.length > 0 ? (
+          {!isLoading && teachers.length === 0 ? (
+            <EmptyState
+              title="Hiện tại chưa có giáo viên nào"
+              description="Vui lòng tạo giáo viên mới để bắt đầu quản lý nội dung"
+              action={<button className="rounded-lg bg-[#04016C] px-4 py-2 text-xs font-medium text-white">➕ Tạo giáo viên</button>}
+            />
+          ) : (
+            <>
+              <div className="relative">
                 <>
                   <TableComponent<ITeacher>
                     columns={columns}
@@ -247,18 +251,7 @@ export default function ListTeacherPage() {
                     className="top-8 left-8"
                   />
                 </>
-              ) : (
-                <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50 py-16 text-center">
-                  <p className="text-sm font-medium text-gray-600">
-                    Hiện tại chưa có giáo viên nào
-                  </p>
-                  <p className="mt-1 text-xs text-gray-500">
-                    Vui lòng tạo giáo viên mới để bắt đầu quản lý nội dung
-                  </p>
-                </div>
-              )}
-            </div>
-            {teachers.length > 0 && (
+              </div>
               <DataTablePagination
                 page={page}
                 pageSize={pageSize}
@@ -270,11 +263,8 @@ export default function ListTeacherPage() {
                   setPage(1);
                 }}
               />
-            )}
-
-
-          </>
-
+            </>
+          )}
 
         </ComponentCard>
       </div>

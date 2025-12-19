@@ -8,9 +8,12 @@ import { ROUTES } from "@/config/routes";
 import { newsService } from "@/services/news/newsService";
 import { toast } from "react-toastify";
 import { useLoading } from "@/hooks/loading/useLoading";
-import { useNewsDetailQuery } from "@/hooks/news/useNewsQuery";
+import { newsKeys, useNewsDetailQuery } from "@/hooks/news/useNewsQuery";
 import { smoothNavigate } from "@/lib/helper";
 import { useCategoryTreeQuery } from "@/hooks/category/useCategoryQuery";
+import PageLoading from "@/components/loading/PageLoading";
+import EmptyState from "@/components/common/EmptyState";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 
@@ -18,11 +21,12 @@ import { useCategoryTreeQuery } from "@/hooks/category/useCategoryQuery";
 const EditNewsPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { data, isLoading, refetch } = useNewsDetailQuery(slug);
-  const {withLoading, isLoading: loadingUpdate} = useLoading();
-   const { data: cate } = useCategoryTreeQuery({ categoryType: "NEWS" });
-    const categories = cate?.[0]?.children ?? [];
-    console.log("check news",data);
+  const { data: news, isLoading,error  } = useNewsDetailQuery(slug);
+  const { withLoading, isLoading: isSaving } = useLoading();
+  const { data: cate } = useCategoryTreeQuery({ categoryType: "NEWS" });
+  const categories = cate?.[0]?.children ?? [];
+  const queryClient = useQueryClient();
+ 
 
 
   const handleOnSubmit = () => {
@@ -31,13 +35,13 @@ const EditNewsPage: React.FC = () => {
 
   };
 
-  const handleCreateNews = async(newsData: FormData, newsId: number) => {
+  const handleCreateNews = async (newsData: FormData, newsId: number) => {
     if (!newsId) return;
 
     try {
-       await withLoading(newsService.updateNews(newsId, newsData));
+      await withLoading(newsService.updateNews(newsId, newsData));
+      queryClient.invalidateQueries({queryKey: newsKeys.all})
       toast.success("Cập nhật tin tức thành công!");
-      await refetch();
       smoothNavigate(navigate, ROUTES.NEWS.LIST);
     } catch (e) {
       console.log(" có lỗi sãy ra:", e)
@@ -45,11 +49,33 @@ const EditNewsPage: React.FC = () => {
     }
   }
 
-
-
   const handleCancel = () => {
     navigate(ROUTES.NEWS.LIST);
   };
+
+  if (!slug) return <EmptyState title="Đường dẫn không hợp lệ" />;
+  if (isLoading) return <PageLoading title="Đang tải tin tức" />
+  if (error) return <EmptyState title="Không thể tải dữ liệu" />;
+  if (!news) {
+    return (
+      <>
+        <PageMeta title="Không tìm thấy tin tức | Admin Dashboard" description="Tin tức không tồn tại hoặc đã bị xóa." />
+        <PageBreadcrumb pageTitle="Cập nhật khóa học" />
+        <EmptyState
+          title="Không tìm thấy khóa học"
+          description="Vui lòng kiểm tra lại đường dẫn hoặc quay lại danh sách."
+          action={
+            <button
+              onClick={() => navigate(-1)}
+              className="rounded-lg bg-[#04016C] px-4 py-2 text-xs font-medium text-white hover:opacity-90"
+            >
+              ← Quay lại danh sách
+            </button>
+          }
+        />
+      </>
+    );
+  }
 
   return (
     <>
@@ -69,26 +95,20 @@ const EditNewsPage: React.FC = () => {
               saveLabel="Lưu thay đổi"
               onSave={handleOnSubmit}
               onCancel={handleCancel}
-              isSaving={loadingUpdate}
+              isSaving={isSaving}
             />
           }
         >
-          {isLoading ? (
-            <div className="py-10 text-center text-sm text-gray-500">
-              Đang tải dữ liệu...
-            </div>
-          ) : data ? (
+          <div className={isSaving ? "pointer-events-none opacity-60" : ""}>
             <NewsForm
               mode="update"
-              initnewsData={data}
+              initnewsData={news}
               categories={categories}
               onSubmit={handleCreateNews}
             />
-          ) : (
-            <div className="py-10 text-center text-sm text-red-500">
-              Không tìm thấy dữ liệu tin tức.
-            </div>
-          )}
+
+          </div>
+
         </ComponentCard>
       </div>
     </>

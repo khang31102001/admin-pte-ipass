@@ -1,8 +1,10 @@
 // src/config/sidebar.tsx
-import { BookOpen, InfoIcon, Layers, Newspaper, UserCog } from "lucide-react";
+import { BookOpen, InfoIcon, Layers, Newspaper, UserCog, Settings} from "lucide-react";
 import {  PageIcon, PieChartIcon, BoxCubeIcon, PlugInIcon } from "../icons";
 import { ROUTES } from "./routes";
-// hoặc import từ chỗ bạn đang dùng hiện tại
+
+
+
 
 export type NavSubItem = {
   name: string;
@@ -35,11 +37,6 @@ export const mainNavItems: NavItem[] = [
     name: "Quản lý tin tức",
     icon: <Newspaper />,
     path: ROUTES.NEWS.LIST,
-  },
-  {
-    icon: <InfoIcon />,
-    name: "Về chúng tôi",
-    path: ROUTES.ABOUT.ROOT,
   },
 
   {
@@ -86,4 +83,130 @@ export const othersNavItems: NavItem[] = [
       { name: "Sign Up", path: "/signup", pro: false },
     ],
   },
+];
+
+export const systemNavItems: NavItem[] = [
+  {
+    icon: <Settings size={18} />,
+    name: "System Settings",
+    subItems: [
+      {
+        name: "General",
+        path: "/settings/general",
+        pro: false,
+      },
+      {
+        name: "Domain & SEO",
+        path: "/settings/seo",
+        pro: false,
+      },
+      {
+        name: "Learning Settings",
+        path: "/settings/learning",
+        pro: false,
+      },
+    ],
+  },
+    {
+    icon: <InfoIcon />,
+    name: "Về chúng tôi",
+    path: ROUTES.ABOUT.ROOT,
+  },
+
+
+  // {
+  //   icon: <CreditCard size={18} />,
+  //   name: "Payment & Billing",
+  //   subItems: [
+  //     {
+  //       name: "Payment Gateway",
+  //       path: "/settings/payment",
+  //       pro: false,
+  //     },
+  //     {
+  //       name: "Coupons & Discounts",
+  //       path: "/settings/coupons",
+  //       pro: false,
+  //     },
+  //   ],
+  // },
+
+  // {
+  //   icon: <Mail size={18} />,
+  //   name: "Email & Notification",
+  //   subItems: [
+  //     {
+  //       name: "SMTP Settings",
+  //       path: "/settings/email",
+  //       pro: false,
+  //     },
+  //     {
+  //       name: "Email Templates",
+  //       path: "/settings/email-templates",
+  //       pro: false,
+  //     },
+  //   ],
+  // },
+
+  // {
+  //   icon: <Shield size={18} />,
+  //   name: "Security",
+  //   subItems: [
+  //     {
+  //       name: "Authentication",
+  //       path: "/settings/security/auth",
+  //       pro: false,
+  //     },
+  //     {
+  //       name: "Access Control",
+  //       path: "/settings/security/roles",
+  //       pro: false,
+  //     },
+  //     {
+  //       name: "Audit Logs",
+  //       path: "/settings/security/audit-logs",
+  //       pro: false,
+  //     },
+  //   ],
+  // },
+
+  // {
+  //   icon: <Plug size={18} />,
+  //   name: "Integrations",
+  //   subItems: [
+  //     {
+  //       name: "Analytics",
+  //       path: "/settings/integrations/analytics",
+  //       pro: false,
+  //     },
+  //     {
+  //       name: "CRM / Webhooks",
+  //       path: "/settings/integrations/crm",
+  //       pro: false,
+  //     },
+  //   ],
+  // },
+
+  // {
+  //   icon: <User size={18} />,
+  //   name: "Account",
+  //   subItems: [
+  //     {
+  //       name: "Profile",
+  //       path: "/account/profile",
+  //       pro: false,
+  //     },
+  //     {
+  //       name: "Change Password",
+  //       path: "/account/password",
+  //       pro: false,
+  //     },
+  //   ],
+  // },
+
+  // {
+  //   icon: <LogOut size={18} />,
+  //   name: "Logout",
+  //   path: "/logout",
+  // },
 ];

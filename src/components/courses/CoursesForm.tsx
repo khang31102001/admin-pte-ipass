@@ -23,10 +23,51 @@ type TabItem = {
   value: TabValue;
   content: React.ComponentType<{
     courseData: Course;
+    isEdit?: boolean;
+    onSlugManualEdit?: (editSlug: boolean) => void;
     updateCourseData: (updates: Partial<Course>) => void;
     categories?: CategoryItem[] | [];
   }>;
 };
+
+const defaultValues: Course = {
+  title: "",
+  slug: "",
+  level: "",
+  categoryId: null,
+  categoryType: "",
+  description: "",
+  isDisabled: false,
+  isFeatured: false,
+  image: null,
+  content: "",
+  duration: "",
+  startDate: "",
+  endDate: "",
+  metaTitle: "",
+  metaDescription: "",
+  audience: [],
+  keywords: [],
+  schemaEnabled: true,
+  schemaMode: "auto",
+  schemaData: "",
+}
+
+function makeInitialCourse(init?: Course | null): Course {
+  return {
+    ...defaultValues,
+    ...(init ?? {}),
+  };
+}
+
+function makeInitialMedia(init?: Course | null): IMedia {
+  return {
+    file: null,
+    preview: init?.image ?? "",
+    isImageChanged: false,
+    deleteImageUrl: "",
+  };
+}
 
 const tabsConfig: TabItem[] = [
   {
@@ -66,78 +107,34 @@ export default function CoursesForm({
   initCourseData = null,
   onSubmit,
 }: CoursesFormProps) {
-
-  const [courseData, setCourseData] = useState<Course>({
-    title: "",
-    slug: "",
-    level: "",
-    categoryId: null,
-    categoryType: "",
-    description: "",
-    isDisabled: false,
-    isFeatured: false,
-    image: null,
-    content: "",
-    duration: "",
-    startDate: "",
-    endDate: "",
-    metaTitle: "",
-    metaDescription: "",
-    audience: [],
-    keywords: [],
-    schemaEnabled: true,
-    schemaMode: "auto",
-    schemaData: "",
-  }
-
-  );
-
-  const [imgPreview, setImgPreview] = useState<IMedia | null>({
-    file: null,
-    preview: "",
-    isImageChanged: false,
-    deleteImageUrl: "",
-  });
+  const isEdit = mode === "update";
+  const [courseData, setCourseData] = useState<Course>(() => makeInitialCourse(initCourseData));
+  const [image, setImage] = useState<IMedia | null>(() => makeInitialMedia(initCourseData));
+  const [isSlugEdited, setIsSlugEdited] = useState(false);
+  const [errors, setErrors] = useState<CourseValidationErrors>({});
+  const [activeTab, setActiveTab] = useState<number>(tabsConfig[0].id ?? 1);
 
   useEffect(() => {
-    if (mode === "update" && initCourseData) {
-      setCourseData((prev) => ({
-        ...prev,
-        ...initCourseData
-      }))
-    }
-
+    setCourseData(makeInitialCourse(initCourseData));
+    setImage(makeInitialMedia(initCourseData));
+    setErrors({});
+    setIsSlugEdited(false);
   }, [initCourseData, mode]);
 
-  useEffect(() => {
-    if (mode === "update" && initCourseData) {
-      setImgPreview((prev) => ({
-        ...prev,
-        preview: initCourseData.image ?? "",
-        deleteImageUrl: initCourseData.image ?? undefined,
-        isImageChanged: false,
-      }));
-    }
-  }, [mode, initCourseData]);
 
   useEffect(() => {
-    if (mode !== "update" && courseData.title) {
-      setCourseData((prev) => ({
-        ...prev,
-        slug: generateSlug(prev.title),
-      }));
-    }
-  }, [courseData.title, mode]);
+    if (isEdit) return;
+    if (!courseData?.title) return;
+    if (isSlugEdited) return;
+    setCourseData((prev) => ({
+      ...prev,
+      slug: generateSlug(prev.title),
+    }));
+  }, [courseData?.title, isEdit, isSlugEdited]);
 
 
-
-  const [errors, setErrors] = useState<CourseValidationErrors>({});
-
-  const [activeTab, setActiveTab] = useState<number>(tabsConfig[0].id ?? 1);
   const activeTabConfig = tabsConfig.find((tab) => tab.id === activeTab) ?? tabsConfig[0];
   const ActiveTabComponent = activeTabConfig.content;
-  const isEdit = mode === "update";
-
 
   const allCateggories = useMemo(() => {
     if (categories.length === 0) return [];
@@ -176,25 +173,24 @@ export default function CoursesForm({
   }, [courseData.categoryId, allCateggories]);
 
 
-
-  // console.log("check categories in form:", allCateggories);
-  const hanndleMediaChange = (media: Partial<IMedia | null>) => {
-
-    setImgPreview((prev) => ({
+  const hanndleUpdateMedia = (update: Partial<IMedia | null>) => {
+    setImage((prev) => ({
       ...prev,
-      ...media,
-      deleteImageUrl: isEdit ?
-        initCourseData?.image
-        : undefined,
+      ...update,
       isImageChanged: isEdit ? true : false,
+      deleteImageUrl: isEdit ? initCourseData.image : ""
     }));
 
     setCourseData((prev) => ({
       ...prev,
-      image: media.preview ?? "",
+      image: update.preview ?? "",
     }));
   }
-  const handleChangeCourseData = (updates: Partial<Course>) => {
+
+  const handleSlugManualEdit = (enable: boolean) => {
+    setIsSlugEdited(enable)
+  }
+  const handleUpdateCourseData = (updates: Partial<Course>) => {
     setCourseData((prev) => ({ ...prev, ...updates }));
   };
 
@@ -212,20 +208,20 @@ export default function CoursesForm({
 
     //  console.log("check courseData in form:", courseData);
     const formData = new FormData();
-    if (imgPreview?.file) {
-      formData.append("file", imgPreview.file);
+    if (image?.file) {
+      formData.append("file", image.file);
 
     }
 
     if (courseData) {
-      const request: Course = {
+      const payload: any = {
         ...courseData,
-        deleteImageUrl: imgPreview?.deleteImageUrl ?? "",
-        isImageChanged: !!imgPreview?.isImageChanged,
+        isImageChanged: image.isImageChanged,
+        deleteImageUrl: image?.deleteImageUrl ?? "",
       };
-      delete request.courseId;
-      delete request.image;
-      formData.append("request", request ? JSON.stringify(request) : null);
+      delete payload.courseId;
+      delete payload.image;
+      formData.append("request", payload ? JSON.stringify(payload) : null);
     }
 
     if (onSubmit) {
@@ -253,20 +249,21 @@ export default function CoursesForm({
               <div className="px-4 py-2">
                 <ActiveTabComponent
                   courseData={courseData}
-                  updateCourseData={handleChangeCourseData}
+                  updateCourseData={handleUpdateCourseData}
+                  isEdit={isEdit}
+                  onSlugManualEdit={handleSlugManualEdit}
                   categories={[]}
                 />
               </div>
             </Tabs>
           </form>
 
-
           {/* Right Column - Preview & Settings */}
           <aside className="lg:sticky lg:top-20 h-fit space-y-6 lg:space-y-7">
             <PreviewSidebar
               courseData={courseData}
-              onChangeMedia={hanndleMediaChange}
-              updateCourseData={handleChangeCourseData}
+              onChangeMedia={hanndleUpdateMedia}
+              updateCourseData={handleUpdateCourseData}
               categories={allCateggories}
             />
           </aside>

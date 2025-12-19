@@ -32,3 +32,8 @@ export default function LoadingState({
     </div>
   );
 }
+
+//   if (isLoading) {
+//     return <ListSkeleton rows={10} variant="table" />; // ✅ best practice
+//     // return <LoadingState />; // option nhẹ
+//   }

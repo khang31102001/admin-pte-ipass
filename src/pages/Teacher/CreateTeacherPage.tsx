@@ -11,6 +11,7 @@ import { useLoading } from "@/hooks/loading/useLoading"
 import { teachersService } from "@/services/teacher/teacherService"
 import { useQueryClient } from "@tanstack/react-query"
 import { teacherKeys } from "@/hooks/teacher/useTeachersQuery"
+import { smoothNavigate } from "@/lib/helper"
 
 export default function CreateTeacherPage() {
 
@@ -23,11 +24,12 @@ export default function CreateTeacherPage() {
     form?.requestSubmit()
   }
   const handleCreateTeacher = async (teacherData: FormData) => {
+    // xem xét Loading → Success → Invalidate → Navigate
     try {
       await withLoading(teachersService.createTeachers(teacherData));
       await queryClient.invalidateQueries({queryKey: teacherKeys.all});
       toast.success("Tạo giáo viên thành công!");
-      navigate(ROUTES.TEACHER.LIST)
+      smoothNavigate(navigate, ROUTES.COURSES.LIST)
     } catch (error) {
       console.error(error)
       toast.error("Có lỗi xảy ra khi tạo giáo viên, vui lòng thử lại.")

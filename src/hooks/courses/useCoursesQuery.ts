@@ -110,7 +110,7 @@ export function useCoursesQuery(params?: CoursesQueryParams) {
   });
 }
 
-export function useDetailCoursesQuery(slug?: string) {
+export function useCourseDetailQuery(slug?: string) {
   return useQuery<any, Error>({
     enabled: !!slug,
     queryKey: courseKeys.detail(slug),
