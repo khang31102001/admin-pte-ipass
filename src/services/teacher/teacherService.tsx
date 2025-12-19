@@ -1,5 +1,5 @@
 import api from "@/api/axiosClient";
-import { get, post, put, httpDelete } from "@/api/http";
+import { get, post, put,  httpDeleteWithBody } from "@/api/http";
 
 export class TeacherService {
   async getAllTeachers(params: any): Promise<any> {
@@ -39,8 +39,8 @@ export class TeacherService {
     return response;
   }
 
-  async deleteNews(id: number): Promise<any> {
-    const response = await httpDelete(`/teachers/${id}`);
+  async deleteTeachers(ids: any[]): Promise<any> {
+    const response = await httpDeleteWithBody(`/teachers`,{ids: ids});
     return response;
   }
 }

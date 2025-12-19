@@ -1,6 +1,6 @@
 import api from "@/api/axiosClient";
 import { NewsItemsRes } from "../../types/news";
-import { get, post, put, httpDelete } from "@/api/http";
+import { get, post, put, httpDeleteWithBody } from "@/api/http";
 
 export class NewsService {
   async getAllNews(params: any): Promise<NewsItemsRes> {
@@ -40,10 +40,11 @@ export class NewsService {
     return response;
   }
 
-  async deleteNews(id: number): Promise<any> {
-    const response = await httpDelete(`/news/${id}`);
+  async deleteNews(ids: any[]): Promise<any> {
+    const response = await httpDeleteWithBody('/news', {ids: ids});
     return response;
   }
+
 }
 
 export const newsService = new NewsService();

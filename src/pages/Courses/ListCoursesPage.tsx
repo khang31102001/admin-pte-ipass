@@ -18,6 +18,8 @@ import { courseService } from "@/services/course/courseService";
 import ActionDropdown from "@/components/common/ActionDropdown";
 import { useConfirmDelete } from "@/hooks/common/useConfirmDelete";
 import { formatDate } from "@/lib/helper";
+import ListSkeleton from "@/components/loading/ListSkeleton";
+import EmptyState from "@/components/common/EmptyState";
 
 type CourseColumnHandlers = {
   selectedIds: number[];
@@ -57,17 +59,17 @@ function createCourseColumns({
     },
     { key: "courseId", header: "ID" },
     { key: "courseName", header: "Name", cellClassName: "max-w-[220px] truncate" },
-    { key: "slug", header: "url" , cellClassName: "max-w-[220px] truncate"},
+    { key: "slug", header: "url", cellClassName: "max-w-[220px] truncate" },
     { key: "level", header: "Level" },
-    { 
-      key: "createdAt", 
-      header: "create at", 
+    {
+      key: "createdAt",
+      header: "create at",
       render: (row) => formatDate(row.createdAt) ?? "-",
     },
-    { 
-      key: "createBy", 
-      header: "Author" ,
-      render:(row)=> formatDate(row.createdBy)
+    {
+      key: "createBy",
+      header: "Author",
+      render: (row) => formatDate(row.createdBy)
     },
 
   ];
@@ -91,7 +93,7 @@ export default function ListCoursesPage() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
   const [courseId, setCourseId] = useState<number | null>(null);
-  const {confirmDelete} = useConfirmDelete();
+  const { confirmDelete } = useConfirmDelete();
   const { data, isLoading, refetch } = useCoursesQuery({
     page,
     pageSize,
@@ -106,18 +108,18 @@ export default function ListCoursesPage() {
   //   navigate(ROUTES.COURSES.DETAIL(course.slug));
   // };
   const handleEditCourse = () => {
-    if(!courseId) return;
-    const items = courses.find((i)=> i.courseId === courseId);
+    if (!courseId) return;
+    const items = courses.find((i) => i.courseId === courseId);
     if (!items.slug) return;
     navigate(ROUTES.COURSES.UPDATE(items.slug));
   };
 
   const handleDeleteCourse = async () => {
-    if (!courseId) return;
+    if (!selectedIds || selectedIds.length === 0) return;
 
-   await confirmDelete(
+    await confirmDelete(
       async () => {
-        await courseService.deleteCourse(courseId);
+        await courseService.deleteCourse(selectedIds);
         await refetch();
         setPage(1);
         setPageSize(15);
@@ -130,8 +132,8 @@ export default function ListCoursesPage() {
       }
     );
   };
-    
-  
+
+
 
 
   const handleToggleSelectOne = (courseId: number) => {
@@ -168,7 +170,7 @@ export default function ListCoursesPage() {
 
   });
 
-   const actions = [
+  const actions = [
     {
       key: "edit",
       label: <>✏️ Update</>,
@@ -183,6 +185,19 @@ export default function ListCoursesPage() {
     },
   ];
 
+  if (isLoading) {
+    return <ListSkeleton rows={10} variant="table" />
+  }
+
+  if (!isLoading && courses.length === 0) {
+    return (
+      <EmptyState
+        title="Hiện tại chưa có khóa học nào"
+        description="Vui lòng tạo khóa học mới để bắt đầu quản lý nội dung"
+        action={<button className="rounded-lg bg-[#04016C] px-4 py-2 text-xs font-medium text-white">➕ Tạo Khóa học</button>}
+      />
+    );
+  }
 
   return (
     <>
@@ -203,43 +218,37 @@ export default function ListCoursesPage() {
             />
           }
         >
-          {isLoading ? (
-            <div className="py-10 text-center text-sm text-gray-500">
-              Đang tải dữ liệu...
-            </div>
-          ) : (
-            <>
-              <div className="relative">
-                  <TableComponent<Course>
-                  columns={columns}
-                  data={courses}
-                  onRowClick={(row) => {
-                    const item = row as Course;
-                    if (!item.slug) return;
-                    navigate(ROUTES.COURSES.UPDATE(item.slug));
-                  }}
-                />
-                <ActionDropdown
-                  isOpen={openMenu}
-                  onClose={closeMenu}
-                  actions={actions}
-                  className="top-8 left-8"
-                />
-              </div>
-              <DataTablePagination
-                page={page}
-                pageSize={pageSize}
-                total={total}
-                pageSizeOptions={[15, 30, 50, 100]}
-                onPageChange={setPage}
-                onPageSizeChange={(size) => {
-                  setPageSize(size);
-                  setPage(1);
+          <>
+            <div className="relative">
+              <TableComponent<Course>
+                columns={columns}
+                data={courses}
+                onRowClick={(row) => {
+                  const item = row as Course;
+                  if (!item.slug) return;
+                  navigate(ROUTES.COURSES.UPDATE(item.slug));
                 }}
               />
-            
-            </>
-          )}
+              <ActionDropdown
+                isOpen={openMenu}
+                onClose={closeMenu}
+                actions={actions}
+                className="top-8 left-8"
+              />
+            </div>
+            <DataTablePagination
+              page={page}
+              pageSize={pageSize}
+              total={total}
+              pageSizeOptions={[15, 30, 50, 100]}
+              onPageChange={setPage}
+              onPageSizeChange={(size) => {
+                setPageSize(size);
+                setPage(1);
+              }}
+            />
+
+          </>
         </ComponentCard>
       </div>
     </>

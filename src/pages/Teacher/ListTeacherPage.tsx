@@ -14,6 +14,9 @@ import { MoreVertical } from "lucide-react";
 import { formatDate } from "@/lib/helper";
 import ActionButtons from "@/components/common/ActionButtons";
 import SearchInput from "@/components/form/input/SearchInput";
+import { teachersService } from "@/services/teacher/teacherService";
+import ListSkeleton from "@/components/loading/ListSkeleton";
+import EmptyState from "@/components/common/EmptyState";
 
 type TeachersColumnHandlers = {
   selectedIds: number[];
@@ -114,7 +117,7 @@ export default function ListTeacherPage() {
     pageSize,
     search,
   });
-  console.log("teachers audit data:", data);
+  // console.log("teachers audit data:", data);
   const teachers = data?.items ?? [];
   const total = data?.total ?? 0;
 
@@ -126,10 +129,11 @@ export default function ListTeacherPage() {
   };
 
   const handleDeleteTeacher = async () => {
-    if (!teacherId) return;
+    if (!selectedIds || selectedIds.length === 0) return;
 
     await confirmDelete(
       async () => {
+        await teachersService.deleteTeachers(selectedIds)
         await refetch();
         setPage(1);
         setPageSize(15);
@@ -181,6 +185,20 @@ export default function ListTeacherPage() {
     },
   ];
 
+  if (isLoading) {
+    return <ListSkeleton rows={10} variant="table" />
+  }
+
+  if (!isLoading && teachers.length === 0) {
+    return (
+      <EmptyState
+        title="Hiện tại chưa có giáo viên nào"
+        description="Vui lòng tạo giáo viên mới để bắt đầu quản lý nội dung"
+        action={<button className="rounded-lg bg-[#04016C] px-4 py-2 text-xs font-medium text-white">➕ Tạo giáo viên</button>}
+      />
+    );
+  }
+
   return (
     <>
       <PageMeta
@@ -195,7 +213,7 @@ export default function ListTeacherPage() {
           title="Danh sách giáo viên"
           desc="Module này sẽ sớm được phát triển. Hiện tại bạn có thể xem giao diện khung để chuẩn bị cho dữ liệu."
           filtersSlot={
-             <SearchInput
+            <SearchInput
               value={search}
               placeholder="Tìm khóa học..."
               onChange={(v) => setSearch(v)}
@@ -203,65 +221,61 @@ export default function ListTeacherPage() {
           }
           actionsSlot={
             <ActionButtons
-              saveLabel="Thêm viên"
-              onSave={()=>navigate(ROUTES.TEACHER.CREATE)}
+              saveLabel="Thêm"
+              onSave={() => navigate(ROUTES.TEACHER.CREATE)}
             />
           }
         >
-          {isLoading ? (
-            <div className="py-10 text-center text-sm text-gray-500">
-              Đang tải dữ liệu...
-            </div>
-          ) : (
-            <>
-              <div className="relative">
-                {teachers.length > 0 ? (
-                  <>
-                    <TableComponent<ITeacher>
-                      columns={columns}
-                      data={teachers}
-                      onRowClick={(row) => {
-                        const item = row as ITeacher;
-                        if (!item.slug) return;
-                        navigate(ROUTES.TEACHER.UPDATE(item.slug));
-                      }}
-                    />
+          <>
+            <div className="relative">
+              {teachers.length > 0 ? (
+                <>
+                  <TableComponent<ITeacher>
+                    columns={columns}
+                    data={teachers}
+                    onRowClick={(row) => {
+                      const item = row as ITeacher;
+                      if (!item.slug) return;
+                      navigate(ROUTES.TEACHER.UPDATE(item.slug));
+                    }}
+                  />
 
-                    <ActionDropdown
-                      isOpen={openMenu}
-                      onClose={closeMenu}
-                      actions={actions}
-                      className="top-8 left-8"
-                    />
-                  </>
-                ) : (
-                  <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50 py-16 text-center">
-                    <p className="text-sm font-medium text-gray-600">
-                      Hiện tại chưa có giáo viên nào
-                    </p>
-                    <p className="mt-1 text-xs text-gray-500">
-                      Vui lòng tạo giáo viên mới để bắt đầu quản lý nội dung
-                    </p>
-                  </div>
-                )}
-              </div>
-              {teachers.length > 0 && (
-                <DataTablePagination
-                  page={page}
-                  pageSize={pageSize}
-                  total={total}
-                  pageSizeOptions={[15, 30, 50, 100]}
-                  onPageChange={setPage}
-                  onPageSizeChange={(size) => {
-                    setPageSize(size);
-                    setPage(1);
-                  }}
-                />
+                  <ActionDropdown
+                    isOpen={openMenu}
+                    onClose={closeMenu}
+                    actions={actions}
+                    className="top-8 left-8"
+                  />
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50 py-16 text-center">
+                  <p className="text-sm font-medium text-gray-600">
+                    Hiện tại chưa có giáo viên nào
+                  </p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Vui lòng tạo giáo viên mới để bắt đầu quản lý nội dung
+                  </p>
+                </div>
               )}
+            </div>
+            {teachers.length > 0 && (
+              <DataTablePagination
+                page={page}
+                pageSize={pageSize}
+                total={total}
+                pageSizeOptions={[15, 30, 50, 100]}
+                onPageChange={setPage}
+                onPageSizeChange={(size) => {
+                  setPageSize(size);
+                  setPage(1);
+                }}
+              />
+            )}
 
 
-            </>
-          )}
+          </>
+
+
         </ComponentCard>
       </div>
     </>

@@ -14,7 +14,7 @@ import { ROUTES } from "@/config/routes";
 import { useQueryClient } from "@tanstack/react-query";
 
 
-export default function UpdateCoursePage() {
+export default function EditCoursesPage() {
     const { slug } = useParams<{ slug: string }>();
      const { withLoading, isLoading } = useLoading();
      const navigate = useNavigate();

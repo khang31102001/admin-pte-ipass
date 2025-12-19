@@ -43,20 +43,31 @@ export function validateTeacher(teacher: ITeacher): TeacherValidationErrors {
   }
 
   // ===== Score rules =====
-  // Cho phép 0-100 hoặc 79.5 (1 số thập phân)
-  const scoreRegex = /^(\d{1,2}(\.\d)?|100(\.0)?)$/
-  const validateScore = (value: unknown, field: keyof ITeacher, label: string) => {
-    if (isEmpty(value)) {
+
+ const scoreRegex = /^([0-8](\.[0-9])?|9(\.[0-5])?)$/
+
+  const validateScore = (
+    value: unknown,
+    field: keyof ITeacher,
+    label: string
+  ) => {
+
+    if (value === null || value === undefined || value === "") {
       errors[field] = `Vui lòng nhập điểm ${label}`
+      return
+    }
+
+    const num = Number(value)
+    if (Number.isNaN(num)) {
+      errors[field] = `Điểm ${label} phải là số`
       return
     }
     const s = String(value).trim()
     if (!scoreRegex.test(s)) {
-      errors[field] = `Điểm ${label} không hợp lệ (0-100 hoặc 79.5)`
+      errors[field] = `Điểm ${label} không hợp lệ (0–9.5, ví dụ: 8.5)`
       return
     }
   }
-
   validateScore(teacher.overallScore, "overallScore", "Overall")
   validateScore(teacher.listeningScore, "listeningScore", "Listening")
   validateScore(teacher.speakingScore, "speakingScore", "Speaking")

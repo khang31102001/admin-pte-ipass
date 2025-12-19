@@ -43,3 +43,9 @@ export async function httpDelete<T>(path: string, params?: QueryParams): Promise
   const { data } = await api.delete<T>(`${path}${toQuery(params)}`);
   return data;
 }
+
+/** DELETE + with body */
+export async function httpDeleteWithBody<T, B = unknown>(path: string, body?: B): Promise<T> {
+  const { data } = await api.delete<T>(path, {data: body});
+  return data;
+}

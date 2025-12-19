@@ -18,6 +18,8 @@ import { newsService } from "@/services/news/newsService";
 import { formatDate } from "@/lib/helper";
 import { useConfirmDelete } from "@/hooks/common/useConfirmDelete";
 import ActionDropdown from "@/components/common/ActionDropdown";
+import ListSkeleton from "@/components/loading/ListSkeleton";
+import EmptyState from "@/components/common/EmptyState";
 
 type NewsColumnHandlers = {
   selectedIds: number[];
@@ -114,14 +116,12 @@ export default function ListNewsPage() {
   });
   const news = data?.items ?? [];
   const total = data?.total ?? 0;
+
   // console.log("new:", news);
 
   // const allIds = news.map((item) => item.newsId);
   // const allSelected =
   //   allIds.length > 0 && allIds.every((id) => selectedIds.includes(id));
-
-
-
 
   const handleEditNews = () => {
     if (!newsId) return;
@@ -129,14 +129,14 @@ export default function ListNewsPage() {
     if (!items.slug) return;
     navigate(ROUTES.NEWS.UPDATE(items.slug));
   };
-  // console.log(" chekc newid", newsId)
+
   const handleDeleteNews = async () => {
 
-    if (!newsId) return;
+    if (!selectedIds || selectedIds.length === 0) return;
 
     await confirmDelete(
       async () => {
-        await newsService.deleteNews(newsId);
+        await newsService.deleteNews(selectedIds);
         await refetch();
         setPage(1);
         setPageSize(15);
@@ -196,7 +196,24 @@ export default function ListNewsPage() {
       danger: true,
       disabled: selectedIds.length === 0,
     },
+
   ];
+
+  if(isLoading){
+     return <ListSkeleton rows={10} variant="table"/>
+  }
+
+  if(!isLoading && news.length === 0){
+    return (
+      <EmptyState
+        title="Hiện tại chưa có tin tức nào"
+        description="Vui lòng tạo tin tức mới để bắt đầu quản lý nội dung"
+        action={<button className="rounded-lg bg-[#04016C] px-4 py-2 text-xs font-medium text-white">➕ Tạo Tin</button>}
+      />
+    );
+  }
+
+
 
   return (
     <>
@@ -214,54 +231,39 @@ export default function ListNewsPage() {
             <ActionButtons saveLabel="Thêm tin tức" onSave={handleCreateNews} />
           }
         >
-          {isLoading ? (
-            <div className="py-10 text-center text-sm text-gray-500">
-              Đang tải dữ liệu...
+          <>
+
+            <div className="relative">
+              <TableComponent<News>
+                columns={columns}
+                data={news}
+                onRowClick={(row) => {
+                  const item = row as News;
+                  if (!item.slug) return;
+                  navigate(ROUTES.NEWS.UPDATE(item.slug));
+                }}
+              />
+
+              <ActionDropdown
+                isOpen={openMenu}
+                onClose={closeMenu}
+                actions={actions}
+                className="top-8 left-8"
+              />
+
             </div>
-          ) : (
-            <>
-              {news.length === 0 ? (
-                <div className="py-10 text-center text-sm text-gray-500">
-                  Hiện chưa có tin tức nào.
-                </div>
-              ) : (
-                <>
-
-                  <div className="relative">
-                    <TableComponent<News>
-                      columns={columns}
-                      data={news}
-                      onRowClick={(row) => {
-                        const item = row as News;
-                        if (!item.slug) return;
-                        navigate(ROUTES.NEWS.UPDATE(item.slug));
-                      }}
-                    />
-
-                    <ActionDropdown
-                      isOpen={openMenu}
-                      onClose={closeMenu}
-                      actions={actions}
-                      className="top-8 left-8"
-                    />
-
-                  </div>
-                  <DataTablePagination
-                    page={page}
-                    pageSize={pageSize}
-                    total={total}
-                    pageSizeOptions={[15, 30, 50, 100]}
-                    onPageChange={setPage}
-                    onPageSizeChange={(size) => {
-                      setPageSize(size);
-                      setPage(1);
-                    }}
-                  />
-                </>
-              )}
-
-            </>
-          )}
+            <DataTablePagination
+              page={page}
+              pageSize={pageSize}
+              total={total}
+              pageSizeOptions={[15, 30, 50, 100]}
+              onPageChange={setPage}
+              onPageSizeChange={(size) => {
+                setPageSize(size);
+                setPage(1);
+              }}
+            />
+          </>
         </ComponentCard>
       </div>
     </>

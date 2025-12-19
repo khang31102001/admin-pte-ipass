@@ -7,24 +7,27 @@ import ActionButtons from "@/components/common/ActionButtons"
 import { toast } from "react-toastify"
 import { useNavigate } from "react-router"
 import { ROUTES } from "@/config/routes"
+import { useLoading } from "@/hooks/loading/useLoading"
+import { teachersService } from "@/services/teacher/teacherService"
+import { useQueryClient } from "@tanstack/react-query"
+import { teacherKeys } from "@/hooks/teacher/useTeachersQuery"
 
 export default function CreateTeacherPage() {
 
-
-  // Submit từ ActionButtons (header)
+  const { withLoading, isLoading } = useLoading();
+   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  
   const handleOnSubmit = () => {
     const form = document.getElementById("form-teacher") as HTMLFormElement | null
     form?.requestSubmit()
   }
-
-  // Nhận data từ TeacherForm
   const handleCreateTeacher = async (teacherData: FormData) => {
     try {
-      console.log("CREATE TEACHER:", teacherData)
-
-      toast.success("Tạo giáo viên thành công!")
-      // navigate(ROUTES.TEACHER.LIST)
+      await withLoading(teachersService.createTeachers(teacherData));
+      await queryClient.invalidateQueries({queryKey: teacherKeys.all});
+      toast.success("Tạo giáo viên thành công!");
+      navigate(ROUTES.TEACHER.LIST)
     } catch (error) {
       console.error(error)
       toast.error("Có lỗi xảy ra khi tạo giáo viên, vui lòng thử lại.")
@@ -39,8 +42,6 @@ export default function CreateTeacherPage() {
       />
 
       <PageBreadcrumb pageTitle="Tạo giáo viên" />
-
-      <div className="space-y-6">
         <ComponentCard
           title="Tạo giáo viên mới"
           desc="Nhập đầy đủ thông tin giáo viên trước khi lưu vào hệ thống."
@@ -52,6 +53,7 @@ export default function CreateTeacherPage() {
               }}
               onSave={handleOnSubmit}
               saveLabel="Lưu"
+              isSaving={isLoading}
             />
           }
         >
@@ -60,7 +62,7 @@ export default function CreateTeacherPage() {
             onSubmit={handleCreateTeacher}
           />
         </ComponentCard>
-      </div>
+      
     </>
   )
 }

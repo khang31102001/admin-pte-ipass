@@ -1,6 +1,8 @@
 import { teachersService } from "@/services/teacher/teacherService";
 import { ITeacher } from "@/types/teacher";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
+
+
 export interface TeacherItemsRes {
   items: ITeacher[];
   page: number;
@@ -78,7 +80,7 @@ export function useTeacherDetailQuery(slug?: string) {
         console.warn("Missing slug!");
         throw new Error("Missing slug");
       }
-      return teachersService.getTeacherDetail(slug);
+      return teachersService.getTeacherDetail({slug:slug });
     },
     placeholderData: keepPreviousData,
     staleTime: 1000 * 30,

@@ -6,7 +6,7 @@ import { CoursesCategorySection } from "./CoursesCategorySection";
 import { CategoryItem } from "@/types/category";
 import { IMedia } from "@/types/media";
 import { processImageForWeb } from "@/lib/image";
-import DropzoneComponent from "../form/form-elements/DropZone";
+
 
 interface PreviewSidebarProps {
   onChangeMedia?: (media: IMedia | null) => void
@@ -143,21 +143,7 @@ export default function PreviewSidebar({
         </div>
       </div>
 
-         <DropzoneComponent
-              title="Hình ảnh khóa học"
-              description="PNG, JPG, WebP"
-              maxSizeMB={2}
-              recommendedWidth={1200}
-              recommendedHeight={675}
-              accept={{
-                "image/jpeg": [".jpg", ".jpeg"],
-                "image/png": [".png"],
-                "image/webp": [".webp"],
-              }}
-              onFilesChange={(files) => {
-                console.log("check file:", files[0])
-              }}
-            />
+       
 
       <div className="border rounded-lg bg-white shadow-sm">
         {/* Header */}

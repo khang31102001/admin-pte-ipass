@@ -1,6 +1,6 @@
 import api from "@/api/axiosClient";
 import { CourseItemsRes } from "./../../types/courses";
-import { get, post, put, httpDelete } from "@/api/http";
+import { get, post, put, httpDeleteWithBody } from "@/api/http";
 
 export class CourseService {
   async getAllCourses(params: any): Promise<CourseItemsRes> {
@@ -39,8 +39,8 @@ export class CourseService {
     return response;
   }
 
-  async deleteCourse(id: number): Promise<any> {
-    const response = await httpDelete(`/courses/${id}`);
+  async deleteCourse(ids: any[]): Promise<any> {
+    const response = await httpDeleteWithBody('/courses', {ids: ids});
     return response;
   }
 }

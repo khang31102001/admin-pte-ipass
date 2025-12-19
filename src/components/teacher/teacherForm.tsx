@@ -31,16 +31,15 @@ const defaultValues: ITeacher = {
     bio: "",
     content: "",
     image: "",
-    overallScore: "",
-    listeningScore: "",
-    speakingScore: "",
-    readingScore: "",
-    writingScore: "",
+    overallScore: 0,
+    listeningScore: 0,
+    speakingScore: 0,
+    readingScore: 0,
+    writingScore: 0,
     createdAt: "",
     updatedAt: "",
     createdBy: "",
     updatedBy: "",
-    version: 1,
     isImageChanged: false,
     deleteImageUrl: "",
 }
@@ -102,7 +101,7 @@ export default function TeacherForm({
             ...prev,
             file,
             preview: previewUrl,
-            isImageChanged: true,
+            isImageChanged: isEdit ? true : false,
             deleteImageUrl: isEdit ? (initialData?.image ?? prev.deleteImageUrl ?? "") : "",
         }));
 
@@ -144,12 +143,14 @@ export default function TeacherForm({
         )
     }
 
-    console.log("audit check coverPreview:", imgPreview);
+    // console.log("audit check coverPreview:", imgPreview);
+    console.log("audit check teacher data:", teacherData)
+    
     return (
         <form
             id="form-teacher"
             onSubmit={handleSubmit}
-            className="max-w-6xl space-y-6 rounded-xl border border-gray-200 bg-white p-6"
+            className=" w-full space-y-6 rounded-xl border border-gray-200 bg-white p-6"
         >
             <FormErrorSummary errors={errors} />
 
@@ -213,6 +214,7 @@ export default function TeacherForm({
                             <div key={key} data-field={key}>
                                 <Label className="text-sm font-semibold text-[#04016C]">{label} *</Label>
                                 <Input
+                                    type="number"
                                     value={teacherData[key]}
                                     onChange={(e) =>
                                         updateTeacher({ [key]: e.target.value } as Partial<ITeacher>)

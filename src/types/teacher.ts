@@ -7,11 +7,11 @@ export interface ITeacher {
   content?: string;
   image?: string;
 
-  overallScore: string;
-  listeningScore: string;
-  speakingScore: string;
-  readingScore: string;
-  writingScore: string;
+  overallScore?: number | null;
+  listeningScore?: number | null;
+  speakingScore?: number | null;
+  readingScore?: number | null;
+  writingScore?: number | null;
 
   createdAt?: string;
   updatedAt?: string;

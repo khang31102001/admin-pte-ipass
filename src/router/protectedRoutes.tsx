@@ -4,7 +4,6 @@ import Home from "@/pages/Dashboard/Home";
 import UserProfiles from "@/pages/UserProfiles";
 import Blank from "@/pages/Blank";
 import FormElements from "@/pages/Forms/FormElements";
-import KnowledgesTable from "@/pages/Tables/KnowledgesTable";
 import Alerts from "@/pages/UiElements/Alerts";
 import Avatars from "@/pages/UiElements/Avatars";
 import Badges from "@/pages/UiElements/Badges";
@@ -20,13 +19,14 @@ import CreateNewsPage from "@/pages/News/CreateNewsPage";
 import EditNewsPage from "@/pages/News/EditNewsPage";
 import ListNewsPage from "@/pages/News/ListNewsPage";
 import NewsDetailPage from "@/pages/News/NewsDetailPage";
-import UpdateCoursePage from "@/pages/Courses/UpdateCoursesPage";
 import CourseDetailPage from "@/pages/Courses/CourseDetailPage";
 import CreateAboutPage from "@/pages/about/CreateAboutPage";
 import ListCategoryPage from "@/pages/categories/ListCategoryPage";
 import EditCategoriesPages from "@/pages/categories/EditCategoriesPages";
 import ListTeacherPage from "@/pages/Teacher/ListTeacherPage";
 import CreateTeacherPage from "@/pages/Teacher/CreateTeacherPage";
+import EditTeacherPage from "@/pages/Teacher/EditTeacherPage";
+import EditCoursesPage from "@/pages/Courses/EditCoursesPage";
 
 export const protectedRoutes: RouteObject[] = [
   {
@@ -89,13 +89,9 @@ export const protectedRoutes: RouteObject[] = [
             path: "create",
             element: <CreateCoursePage />,
           },
-           {
-            path: "update",
-            element: <UpdateCoursePage />,
-          },
           {
             path: "update/:slug",
-            element: <UpdateCoursePage />,
+            element: <EditCoursesPage />,
           },
           {
             path: "detail/:slug",
@@ -158,8 +154,8 @@ export const protectedRoutes: RouteObject[] = [
           },
 
             {
-            path: "update",
-            element: <UpdateCoursePage />,
+            path: "update/:slug",
+            element: <EditTeacherPage />,
           },
          
  
@@ -167,11 +163,7 @@ export const protectedRoutes: RouteObject[] = [
       },
 
 
-      // //knowledges
-      {
-        path: "knowledges",
-        element: <KnowledgesTable />,
-      },
+   
 
       // //alerts
       {

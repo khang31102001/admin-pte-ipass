@@ -47,7 +47,7 @@ export const ROUTES = {
     ROOT: "/teachers",
     LIST: "/teachers",
     CREATE: "/teachers/create",
-    UPDATE: (slug: string) => `/teacher/update/${slug}`,
+    UPDATE: (slug: string) => `/teachers/update/${slug}`,
   },
 
   ALERTS: "/alerts",
